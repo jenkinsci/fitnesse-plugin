@@ -9,7 +9,7 @@
 
   <groupId>org.jvnet.hudson.plugins</groupId>
   <artifactId>fitnesse</artifactId>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Hudson Fitnesse plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Fitnesse+Plugin</url>
