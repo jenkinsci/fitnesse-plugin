@@ -1,0 +1,1489 @@
+<?xml version="1.0"?>
+<testResults>
+  <FitNesseVersion>v20100103</FitNesseVersion>
+  <rootPath>TestDecisionTable</rootPath>
+    <result>
+    <counts>
+      <right>16</right>
+      <wrong>2</wrong>
+      <ignores>0</ignores>
+      <exceptions>0</exceptions>
+    </counts>
+    <content><![CDATA[<br/><div class="setup">
+	<div style="float: right;" class="meta"><a href="javascript:expandAll();">Expand All</a> | <a href="javascript:collapseAll();">Collapse All</a></div>
+	<a href="javascript:toggleCollapsable('1709010965588307365');">
+		<img src="/files/images/collapsableClosed.gif" class="left" id="img1709010965588307365"/>
+	</a>
+&nbsp;<span class="meta">Set Up: <a href="WaferSlim.SuiteBranchPython2.SuiteAll.SetUp">.WaferSlim.SuiteBranchPython2.SuiteAll.SetUp</a> <a href="WaferSlim.SuiteBranchPython2.SuiteAll.SetUp?edit&amp;redirectToReferer=true&amp;redirectAction=">(edit)</a></span>
+	<div class="hidden" id="1709010965588307365"><table border="1" cellspacing="0" _TABLENUMBER=7151028948633272397>
+<tr><td>import</td>
+</tr>
+<tr><td>waferslim.fixtures</td>
+</tr>
+</table>
+</div>
+</div>
+Example of a Slim DecisionTable --<br/>based on <a href="http://fitnesse.org/FitNesse.UserGuide.SliM.DecisionTable">http://fitnesse.org/FitNesse.UserGuide.SliM.DecisionTable</a><br/><br/><table border="1" cellspacing="0" _TABLENUMBER=7160095299312696079>
+<tr><td>import</td>
+</tr>
+<tr><td>waferslim.examples.decision_table</td>
+</tr>
+</table>
+<br/><table border="1" cellspacing="0" _TABLENUMBER=2584301441008308260>
+<tr><td colspan="4"><span class="pass">should I buy milk</span></td>
+</tr>
+<tr><td>cash in wallet</td>
+<td>credit card</td>
+<td>pints of milk remaining</td>
+<td>go to store?</td>
+</tr>
+<tr><td>0</td>
+<td>no</td>
+<td>0</td>
+<td><span class="pass">no</span></td>
+</tr>
+<tr><td>10</td>
+<td>no</td>
+<td>0</td>
+<td><span class="pass">yes</span></td>
+</tr>
+<tr><td>0</td>
+<td>yes</td>
+<td>0</td>
+<td><span class="pass">yes</span></td>
+</tr>
+<tr><td>10</td>
+<td>yes</td>
+<td>0</td>
+<td><span class="pass">yes</span></td>
+</tr>
+<tr><td>0</td>
+<td>no</td>
+<td>1</td>
+<td><span class="pass">no</span></td>
+</tr>
+<tr><td>10</td>
+<td>no</td>
+<td>1</td>
+<td><span class="pass">no</span></td>
+</tr>
+<tr><td>0</td>
+<td>yes</td>
+<td>1</td>
+<td><span class="pass">no</span></td>
+</tr>
+<tr><td>10</td>
+<td>yes</td>
+<td>1</td>
+<td>[no] <span class="fail">expected [nope]</span></td>
+</tr>
+</table>
+<br/><table border="1" cellspacing="0" _TABLENUMBER=2519722935855072590>
+<tr><td colspan="4"><span class="pass">should I buy milk alternative implementation</span></td>
+</tr>
+<tr><td>cash in wallet</td>
+<td>credit card</td>
+<td>pints of milk remaining</td>
+<td>go to store?</td>
+</tr>
+<tr><td>0</td>
+<td>no</td>
+<td>0</td>
+<td><span class="pass">no</span></td>
+</tr>
+<tr><td>10</td>
+<td>no</td>
+<td>0</td>
+<td><span class="pass">yes</span></td>
+</tr>
+<tr><td>0</td>
+<td>yes</td>
+<td>0</td>
+<td><span class="pass">yes</span></td>
+</tr>
+<tr><td>10</td>
+<td>yes</td>
+<td>0</td>
+<td><span class="pass">yes</span></td>
+</tr>
+<tr><td>0</td>
+<td>no</td>
+<td>1</td>
+<td><span class="pass">no</span></td>
+</tr>
+<tr><td>10</td>
+<td>no</td>
+<td>1</td>
+<td><span class="pass">no</span></td>
+</tr>
+<tr><td>0</td>
+<td>yes</td>
+<td>1</td>
+<td><span class="pass">no</span></td>
+</tr>
+<tr><td>10</td>
+<td>yes</td>
+<td>1</td>
+<td>[no] <span class="fail">expected [nope]</span></td>
+</tr>
+</table>
+<br/>This test will pass apart from the last row in each table<br/>whose "nope" values will be red.<br/>]]></content>
+    <relativePageName>TestDecisionTable</relativePageName>
+    
+        <tables>
+            <table>
+        <name>import_0</name>
+                <row>
+                    <col><![CDATA[import]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[waferslim.fixtures]]></col>
+          
+        </row>
+        
+      </table>
+            <table>
+        <name>import_1</name>
+                <row>
+                    <col><![CDATA[import]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[waferslim.examples.decision_table]]></col>
+          
+        </row>
+        
+      </table>
+            <table>
+        <name>decisionTable_2</name>
+                <row>
+                    <col><![CDATA[pass(should I buy milk)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[cash in wallet]]></col>
+                    <col><![CDATA[credit card]]></col>
+                    <col><![CDATA[pints of milk remaining]]></col>
+                    <col><![CDATA[go to store?]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[no]]></col>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[pass(no)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[10]]></col>
+                    <col><![CDATA[no]]></col>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[pass(yes)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[yes]]></col>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[pass(yes)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[10]]></col>
+                    <col><![CDATA[yes]]></col>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[pass(yes)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[no]]></col>
+                    <col><![CDATA[1]]></col>
+                    <col><![CDATA[pass(no)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[10]]></col>
+                    <col><![CDATA[no]]></col>
+                    <col><![CDATA[1]]></col>
+                    <col><![CDATA[pass(no)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[yes]]></col>
+                    <col><![CDATA[1]]></col>
+                    <col><![CDATA[pass(no)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[10]]></col>
+                    <col><![CDATA[yes]]></col>
+                    <col><![CDATA[1]]></col>
+                    <col><![CDATA[[no] fail(expected [nope])]]></col>
+          
+        </row>
+        
+      </table>
+            <table>
+        <name>decisionTable_3</name>
+                <row>
+                    <col><![CDATA[pass(should I buy milk alternative implementation)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[cash in wallet]]></col>
+                    <col><![CDATA[credit card]]></col>
+                    <col><![CDATA[pints of milk remaining]]></col>
+                    <col><![CDATA[go to store?]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[no]]></col>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[pass(no)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[10]]></col>
+                    <col><![CDATA[no]]></col>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[pass(yes)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[yes]]></col>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[pass(yes)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[10]]></col>
+                    <col><![CDATA[yes]]></col>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[pass(yes)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[no]]></col>
+                    <col><![CDATA[1]]></col>
+                    <col><![CDATA[pass(no)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[10]]></col>
+                    <col><![CDATA[no]]></col>
+                    <col><![CDATA[1]]></col>
+                    <col><![CDATA[pass(no)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[0]]></col>
+                    <col><![CDATA[yes]]></col>
+                    <col><![CDATA[1]]></col>
+                    <col><![CDATA[pass(no)]]></col>
+          
+        </row>
+                <row>
+                    <col><![CDATA[10]]></col>
+                    <col><![CDATA[yes]]></col>
+                    <col><![CDATA[1]]></col>
+                    <col><![CDATA[[no] fail(expected [nope])]]></col>
+          
+        </row>
+        
+      </table>
+      
+    </tables>
+    
+    
+    <instructions>
+            <instructionResult>
+        <instruction><![CDATA[[import_0_0, import, waferslim.fixtures]]]></instruction>
+        <slimResult><![CDATA[OK]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[import_1_0, import, waferslim.examples.decision_table]]]></instruction>
+        <slimResult><![CDATA[OK]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_0, make, decisionTable_2, ShouldIBuyMilk]]]></instruction>
+        <slimResult><![CDATA[OK]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_2_0</instructionId>
+          <col>0</col>
+          <row>0</row>
+          <type>ConstructionExpectation</type>
+                    <actual><![CDATA[OK]]></actual>
+                              <expected><![CDATA[should I buy milk]]></expected>
+                              <evaluationMessage><![CDATA[pass(should I buy milk)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_1, call, decisionTable_2, table, [[cash in wallet, credit card, pints of milk remaining, go to store?], [0, no, 0, no], [10, no, 0, yes], [0, yes, 0, yes], [10, yes, 0, yes], [0, no, 1, no], [10, no, 1, no], [0, yes, 1, no], [10, yes, 1, nope]]]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS table ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_2, call, decisionTable_2, reset]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS reset ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_3, call, decisionTable_2, setCashInWallet, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_3</instructionId>
+          <col>0</col>
+          <row>2</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_4, call, decisionTable_2, setCreditCard, no]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_4</instructionId>
+          <col>1</col>
+          <row>2</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[no]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_5, call, decisionTable_2, setPintsOfMilkRemaining, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_5</instructionId>
+          <col>2</col>
+          <row>2</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_6, call, decisionTable_2, execute]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS execute ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_7, call, decisionTable_2, goToStore]]]></instruction>
+        <slimResult><![CDATA[no]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_2_7</instructionId>
+          <col>3</col>
+          <row>2</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[no]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[pass(no)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_8, call, decisionTable_2, reset]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS reset ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_9, call, decisionTable_2, setCashInWallet, 10]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_9</instructionId>
+          <col>0</col>
+          <row>3</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[10]]></expected>
+                              <evaluationMessage><![CDATA[10]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_10, call, decisionTable_2, setCreditCard, no]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_10</instructionId>
+          <col>1</col>
+          <row>3</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[no]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_11, call, decisionTable_2, setPintsOfMilkRemaining, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_11</instructionId>
+          <col>2</col>
+          <row>3</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_12, call, decisionTable_2, execute]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS execute ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_13, call, decisionTable_2, goToStore]]]></instruction>
+        <slimResult><![CDATA[yes]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_2_13</instructionId>
+          <col>3</col>
+          <row>3</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[yes]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[pass(yes)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_14, call, decisionTable_2, reset]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS reset ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_15, call, decisionTable_2, setCashInWallet, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_15</instructionId>
+          <col>0</col>
+          <row>4</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_16, call, decisionTable_2, setCreditCard, yes]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_16</instructionId>
+          <col>1</col>
+          <row>4</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[yes]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_17, call, decisionTable_2, setPintsOfMilkRemaining, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_17</instructionId>
+          <col>2</col>
+          <row>4</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_18, call, decisionTable_2, execute]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS execute ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_19, call, decisionTable_2, goToStore]]]></instruction>
+        <slimResult><![CDATA[yes]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_2_19</instructionId>
+          <col>3</col>
+          <row>4</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[yes]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[pass(yes)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_20, call, decisionTable_2, reset]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS reset ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_21, call, decisionTable_2, setCashInWallet, 10]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_21</instructionId>
+          <col>0</col>
+          <row>5</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[10]]></expected>
+                              <evaluationMessage><![CDATA[10]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_22, call, decisionTable_2, setCreditCard, yes]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_22</instructionId>
+          <col>1</col>
+          <row>5</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[yes]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_23, call, decisionTable_2, setPintsOfMilkRemaining, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_23</instructionId>
+          <col>2</col>
+          <row>5</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_24, call, decisionTable_2, execute]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS execute ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_25, call, decisionTable_2, goToStore]]]></instruction>
+        <slimResult><![CDATA[yes]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_2_25</instructionId>
+          <col>3</col>
+          <row>5</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[yes]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[pass(yes)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_26, call, decisionTable_2, reset]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS reset ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_27, call, decisionTable_2, setCashInWallet, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_27</instructionId>
+          <col>0</col>
+          <row>6</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_28, call, decisionTable_2, setCreditCard, no]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_28</instructionId>
+          <col>1</col>
+          <row>6</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[no]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_29, call, decisionTable_2, setPintsOfMilkRemaining, 1]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_29</instructionId>
+          <col>2</col>
+          <row>6</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[1]]></expected>
+                              <evaluationMessage><![CDATA[1]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_30, call, decisionTable_2, execute]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS execute ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_31, call, decisionTable_2, goToStore]]]></instruction>
+        <slimResult><![CDATA[no]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_2_31</instructionId>
+          <col>3</col>
+          <row>6</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[no]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[pass(no)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_32, call, decisionTable_2, reset]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS reset ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_33, call, decisionTable_2, setCashInWallet, 10]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_33</instructionId>
+          <col>0</col>
+          <row>7</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[10]]></expected>
+                              <evaluationMessage><![CDATA[10]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_34, call, decisionTable_2, setCreditCard, no]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_34</instructionId>
+          <col>1</col>
+          <row>7</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[no]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_35, call, decisionTable_2, setPintsOfMilkRemaining, 1]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_35</instructionId>
+          <col>2</col>
+          <row>7</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[1]]></expected>
+                              <evaluationMessage><![CDATA[1]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_36, call, decisionTable_2, execute]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS execute ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_37, call, decisionTable_2, goToStore]]]></instruction>
+        <slimResult><![CDATA[no]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_2_37</instructionId>
+          <col>3</col>
+          <row>7</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[no]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[pass(no)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_38, call, decisionTable_2, reset]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS reset ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_39, call, decisionTable_2, setCashInWallet, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_39</instructionId>
+          <col>0</col>
+          <row>8</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_40, call, decisionTable_2, setCreditCard, yes]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_40</instructionId>
+          <col>1</col>
+          <row>8</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[yes]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_41, call, decisionTable_2, setPintsOfMilkRemaining, 1]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_41</instructionId>
+          <col>2</col>
+          <row>8</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[1]]></expected>
+                              <evaluationMessage><![CDATA[1]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_42, call, decisionTable_2, execute]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS execute ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_43, call, decisionTable_2, goToStore]]]></instruction>
+        <slimResult><![CDATA[no]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_2_43</instructionId>
+          <col>3</col>
+          <row>8</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[no]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[pass(no)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_44, call, decisionTable_2, reset]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS reset ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_45, call, decisionTable_2, setCashInWallet, 10]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_45</instructionId>
+          <col>0</col>
+          <row>9</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[10]]></expected>
+                              <evaluationMessage><![CDATA[10]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_46, call, decisionTable_2, setCreditCard, yes]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_46</instructionId>
+          <col>1</col>
+          <row>9</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[yes]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_47, call, decisionTable_2, setPintsOfMilkRemaining, 1]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_2_47</instructionId>
+          <col>2</col>
+          <row>9</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[1]]></expected>
+                              <evaluationMessage><![CDATA[1]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_48, call, decisionTable_2, execute]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS execute ShouldIBuyMilk>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_2_49, call, decisionTable_2, goToStore]]]></instruction>
+        <slimResult><![CDATA[no]]></slimResult>
+                <expectation>
+          <status>wrong</status>
+          <instructionId>decisionTable_2_49</instructionId>
+          <col>3</col>
+          <row>9</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[no]]></actual>
+                              <expected><![CDATA[nope]]></expected>
+                              <evaluationMessage><![CDATA[[no] fail(expected [nope])]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_0, make, decisionTable_3, ShouldIBuyMilkAlternativeImplementation]]]></instruction>
+        <slimResult><![CDATA[OK]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_3_0</instructionId>
+          <col>0</col>
+          <row>0</row>
+          <type>ConstructionExpectation</type>
+                    <actual><![CDATA[OK]]></actual>
+                              <expected><![CDATA[should I buy milk alternative implementation]]></expected>
+                              <evaluationMessage><![CDATA[pass(should I buy milk alternative implementation)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_1, call, decisionTable_3, table, [[cash in wallet, credit card, pints of milk remaining, go to store?], [0, no, 0, no], [10, no, 0, yes], [0, yes, 0, yes], [10, yes, 0, yes], [0, no, 1, no], [10, no, 1, no], [0, yes, 1, no], [10, yes, 1, nope]]]]]></instruction>
+        <slimResult><![CDATA[__EXCEPTION__: message:<<NO_METHOD_IN_CLASS table ShouldIBuyMilkAlternativeImplementation>>]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_2, call, decisionTable_3, reset]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_3, call, decisionTable_3, setCashInWallet, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_3</instructionId>
+          <col>0</col>
+          <row>2</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_4, call, decisionTable_3, setCreditCard, no]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_4</instructionId>
+          <col>1</col>
+          <row>2</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[no]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_5, call, decisionTable_3, setPintsOfMilkRemaining, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_5</instructionId>
+          <col>2</col>
+          <row>2</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_6, call, decisionTable_3, execute]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_7, call, decisionTable_3, goToStore]]]></instruction>
+        <slimResult><![CDATA[no]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_3_7</instructionId>
+          <col>3</col>
+          <row>2</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[no]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[pass(no)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_8, call, decisionTable_3, reset]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_9, call, decisionTable_3, setCashInWallet, 10]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_9</instructionId>
+          <col>0</col>
+          <row>3</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[10]]></expected>
+                              <evaluationMessage><![CDATA[10]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_10, call, decisionTable_3, setCreditCard, no]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_10</instructionId>
+          <col>1</col>
+          <row>3</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[no]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_11, call, decisionTable_3, setPintsOfMilkRemaining, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_11</instructionId>
+          <col>2</col>
+          <row>3</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_12, call, decisionTable_3, execute]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_13, call, decisionTable_3, goToStore]]]></instruction>
+        <slimResult><![CDATA[yes]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_3_13</instructionId>
+          <col>3</col>
+          <row>3</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[yes]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[pass(yes)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_14, call, decisionTable_3, reset]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_15, call, decisionTable_3, setCashInWallet, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_15</instructionId>
+          <col>0</col>
+          <row>4</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_16, call, decisionTable_3, setCreditCard, yes]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_16</instructionId>
+          <col>1</col>
+          <row>4</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[yes]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_17, call, decisionTable_3, setPintsOfMilkRemaining, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_17</instructionId>
+          <col>2</col>
+          <row>4</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_18, call, decisionTable_3, execute]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_19, call, decisionTable_3, goToStore]]]></instruction>
+        <slimResult><![CDATA[yes]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_3_19</instructionId>
+          <col>3</col>
+          <row>4</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[yes]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[pass(yes)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_20, call, decisionTable_3, reset]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_21, call, decisionTable_3, setCashInWallet, 10]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_21</instructionId>
+          <col>0</col>
+          <row>5</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[10]]></expected>
+                              <evaluationMessage><![CDATA[10]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_22, call, decisionTable_3, setCreditCard, yes]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_22</instructionId>
+          <col>1</col>
+          <row>5</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[yes]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_23, call, decisionTable_3, setPintsOfMilkRemaining, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_23</instructionId>
+          <col>2</col>
+          <row>5</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_24, call, decisionTable_3, execute]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_25, call, decisionTable_3, goToStore]]]></instruction>
+        <slimResult><![CDATA[yes]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_3_25</instructionId>
+          <col>3</col>
+          <row>5</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[yes]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[pass(yes)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_26, call, decisionTable_3, reset]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_27, call, decisionTable_3, setCashInWallet, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_27</instructionId>
+          <col>0</col>
+          <row>6</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_28, call, decisionTable_3, setCreditCard, no]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_28</instructionId>
+          <col>1</col>
+          <row>6</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[no]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_29, call, decisionTable_3, setPintsOfMilkRemaining, 1]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_29</instructionId>
+          <col>2</col>
+          <row>6</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[1]]></expected>
+                              <evaluationMessage><![CDATA[1]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_30, call, decisionTable_3, execute]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_31, call, decisionTable_3, goToStore]]]></instruction>
+        <slimResult><![CDATA[no]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_3_31</instructionId>
+          <col>3</col>
+          <row>6</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[no]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[pass(no)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_32, call, decisionTable_3, reset]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_33, call, decisionTable_3, setCashInWallet, 10]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_33</instructionId>
+          <col>0</col>
+          <row>7</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[10]]></expected>
+                              <evaluationMessage><![CDATA[10]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_34, call, decisionTable_3, setCreditCard, no]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_34</instructionId>
+          <col>1</col>
+          <row>7</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[no]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_35, call, decisionTable_3, setPintsOfMilkRemaining, 1]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_35</instructionId>
+          <col>2</col>
+          <row>7</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[1]]></expected>
+                              <evaluationMessage><![CDATA[1]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_36, call, decisionTable_3, execute]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_37, call, decisionTable_3, goToStore]]]></instruction>
+        <slimResult><![CDATA[no]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_3_37</instructionId>
+          <col>3</col>
+          <row>7</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[no]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[pass(no)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_38, call, decisionTable_3, reset]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_39, call, decisionTable_3, setCashInWallet, 0]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_39</instructionId>
+          <col>0</col>
+          <row>8</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[0]]></expected>
+                              <evaluationMessage><![CDATA[0]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_40, call, decisionTable_3, setCreditCard, yes]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_40</instructionId>
+          <col>1</col>
+          <row>8</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[yes]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_41, call, decisionTable_3, setPintsOfMilkRemaining, 1]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_41</instructionId>
+          <col>2</col>
+          <row>8</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[1]]></expected>
+                              <evaluationMessage><![CDATA[1]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_42, call, decisionTable_3, execute]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_43, call, decisionTable_3, goToStore]]]></instruction>
+        <slimResult><![CDATA[no]]></slimResult>
+                <expectation>
+          <status>right</status>
+          <instructionId>decisionTable_3_43</instructionId>
+          <col>3</col>
+          <row>8</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[no]]></actual>
+                              <expected><![CDATA[no]]></expected>
+                              <evaluationMessage><![CDATA[pass(no)]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_44, call, decisionTable_3, reset]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_45, call, decisionTable_3, setCashInWallet, 10]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_45</instructionId>
+          <col>0</col>
+          <row>9</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[10]]></expected>
+                              <evaluationMessage><![CDATA[10]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_46, call, decisionTable_3, setCreditCard, yes]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_46</instructionId>
+          <col>1</col>
+          <row>9</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[yes]]></expected>
+                              <evaluationMessage><![CDATA[yes]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_47, call, decisionTable_3, setPintsOfMilkRemaining, 1]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+                <expectation>
+          <status>ignored</status>
+          <instructionId>decisionTable_3_47</instructionId>
+          <col>2</col>
+          <row>9</row>
+          <type>VoidReturnExpectation</type>
+                    <actual><![CDATA[/__VOID__/]]></actual>
+                              <expected><![CDATA[1]]></expected>
+                              <evaluationMessage><![CDATA[1]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_48, call, decisionTable_3, execute]]]></instruction>
+        <slimResult><![CDATA[/__VOID__/]]></slimResult>
+        
+      </instructionResult>
+            <instructionResult>
+        <instruction><![CDATA[[decisionTable_3_49, call, decisionTable_3, goToStore]]]></instruction>
+        <slimResult><![CDATA[no]]></slimResult>
+                <expectation>
+          <status>wrong</status>
+          <instructionId>decisionTable_3_49</instructionId>
+          <col>3</col>
+          <row>9</row>
+          <type>ReturnedValueExpectation</type>
+                    <actual><![CDATA[no]]></actual>
+                              <expected><![CDATA[nope]]></expected>
+                              <evaluationMessage><![CDATA[[no] fail(expected [nope])]]></evaluationMessage>
+                  </expectation>
+        
+      </instructionResult>
+      
+    </instructions>
+    
+  </result>
+  
+  
+  <finalCounts>
+    <right>0</right>
+    <wrong>0</wrong>
+    <ignores>0</ignores>
+    <exceptions>0</exceptions>
+  </finalCounts>
+  
+</testResults>
+
