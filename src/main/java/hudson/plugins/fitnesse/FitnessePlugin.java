@@ -2,6 +2,7 @@ package hudson.plugins.fitnesse;
 
 import hudson.Plugin;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.transform.Templates;
@@ -20,8 +21,8 @@ public class FitnessePlugin extends Plugin {
 		templates = transformerFactory.newTemplates(xslSource);
 	}
 	
-	public InputStream getXslAsInputStream() {
-		return getClass().getResourceAsStream("fitnesse-results.xsl");
+	public InputStream getXslAsInputStream() throws IOException {
+		return InputStreamDeBOMer.deBOM(getClass().getResourceAsStream("fitnesse-results.xsl"));
 	}
 
 	public static Transformer newRawResultsTransformer() throws TransformerException {

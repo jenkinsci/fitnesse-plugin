@@ -42,6 +42,18 @@ public class NativePageCountsParserTest {
 		Assert.assertEquals("hudson-fitnesse-plugin-report", 
 				domResult.getNode().getFirstChild().getNodeName());
 	}
+
+	@Test
+	public void transformRawResultsShouldIgnoreBOM() throws Exception {
+		DOMResult domResult = new DOMResult();		
+		fitnesseParser.transformRawResults(
+				toInputStream(InputStreamDeBOMer.UTF32BE_BOM, RESULTS.getBytes()), 
+				domResult);
+		Assert.assertNotNull(domResult.getNode());
+		Assert.assertNotNull(domResult.getNode().getFirstChild());
+		Assert.assertEquals("hudson-fitnesse-plugin-report", 
+				domResult.getNode().getFirstChild().getNodeName());
+	}
 	
 	@Test
 	public void parserShouldCollectFinalCounts() throws Exception {
@@ -79,6 +91,21 @@ public class NativePageCountsParserTest {
 	}
 
 	private ByteArrayInputStream toInputStream(String aString) {
-		return new ByteArrayInputStream(aString.getBytes());
+		return toInputStream(aString.getBytes());
+	}
+	
+	private ByteArrayInputStream toInputStream(byte[] bytes) {
+		return toInputStream(new byte[0], bytes);
+	}
+	
+	private ByteArrayInputStream toInputStream(byte[] prefix, byte[] bytes) {
+		byte[] all = new byte[prefix.length + bytes.length];
+		for (int i=0; i < prefix.length; ++i) {
+			all[i] = prefix[i];
+		}
+		for (int i=0; i < bytes.length; ++i) {
+			all[prefix.length + i] = bytes[i];
+		}
+		return new ByteArrayInputStream(all);
 	}
 }
