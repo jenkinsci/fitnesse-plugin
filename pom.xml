@@ -9,7 +9,7 @@
 
   <groupId>org.jvnet.hudson.plugins</groupId>
   <artifactId>fitnesse</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1</version>
   <packaging>hpi</packaging>
   <name>Hudson Fitnesse plugin</name>
   <url>http://wiki.hudson-ci.org/display/HUDSON/Fitnesse+Plugin</url>
@@ -30,9 +30,9 @@
  </licenses>
 
  <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/trunk/hudson/plugins/fitnesse</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/fitnesse</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/trunk/hudson/plugins/fitnesse</url>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/fitnesse-1.1</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/fitnesse-1.1</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/fitnesse-1.1</url>
   </scm>
 
 </project>
