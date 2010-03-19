@@ -49,4 +49,14 @@ final class StdConsole {
 	public boolean outputOnStdErr() {
 		return stderr.size() > 0;
 	}
+
+	public boolean stdErrStartsWith(String prefix) {
+		byte[] pBytes = prefix.getBytes();
+		byte[] eBytes = stderr.toByteArray();
+		if (pBytes.length > eBytes.length) return false;
+		for (int i=0; i < pBytes.length; ++i) {
+			if (pBytes[i] != eBytes[i]) return false;	
+		}
+		return true;
+	}
 }

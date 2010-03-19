@@ -51,8 +51,10 @@ public class FitnesseExecutorTest {
 	public void javaCmdShouldIncludeJarAndDirAndRootAndPort() throws IOException {
 		File fitnesseRoot = File.createTempFile("FitNesseRoot", "");
 		executor = getExecutorForBuilder(
-				new String[] {FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT},
-				new String[] {fitnesseRoot.getAbsolutePath(), "fitnesseJar", "9999"});
+				new String[] {FitnesseBuilder.JAVA_OPTS, FitnesseBuilder.PATH_TO_ROOT, 
+						FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT},
+				new String[] {"", fitnesseRoot.getAbsolutePath(), 
+						"fitnesseJar", "9999"});
 		ArrayList<String> cmd = executor.getJavaCmd(new EnvVars());
 		
 		Assert.assertEquals("java", cmd.get(0));
@@ -166,7 +168,7 @@ public class FitnesseExecutorTest {
 		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
 		stdout.write("Started".getBytes());
 		Assert.assertTrue(executor.procStarted(new PrintStream(stdout), 
-				new StdConsole(stdout, null), 500));
+				new StdConsole(stdout, new ByteArrayOutputStream()), 500));
 		Assert.assertEquals(stdout.toString(), "Started"); 
 	}
 
@@ -175,7 +177,7 @@ public class FitnesseExecutorTest {
 		executor = getExecutorForBuilder(new String[] {}, new String[] {});
 		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
 		Assert.assertFalse(executor.procStarted(new PrintStream(stdout), 
-				new StdConsole(stdout, null), 500));
+				new StdConsole(stdout, new ByteArrayOutputStream()), 500));
 		Assert.assertTrue(stdout.toString().startsWith("Waited 500ms for fitnesse to start.")); // log entry 
 	}
 	
@@ -190,5 +192,4 @@ public class FitnesseExecutorTest {
 		Assert.assertTrue(logBucket.toString().startsWith("Connnecting to http://hudson-ci.org/"));
 		Assert.assertTrue(logBucket.toString().contains("Connected: 200/OK"));
 	}
-	
 }

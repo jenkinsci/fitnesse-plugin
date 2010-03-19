@@ -71,4 +71,19 @@ public class StdConsoleTest {
 		simulateWriteToStdErr(stderr, "ping");
 		Assert.assertTrue(console.outputOnStdErr());
 	}
+	
+	@Test
+	public void stdConsoleShouldKnowIfStdErrOutputStartsWith() throws Exception {
+		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+		ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+		
+		StdConsole console = new StdConsole(stdout, stderr);
+		Assert.assertFalse(console.stdErrStartsWith("cheese"));
+
+		stdout.write("cheese".getBytes());
+		Assert.assertFalse(console.stdErrStartsWith("cheese"));
+
+		stderr.write("cheese".getBytes());
+		Assert.assertTrue(console.stdErrStartsWith("cheese"));
+	}
 }

@@ -20,6 +20,7 @@ import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,7 +29,7 @@ import java.util.Arrays;
  * @author Tim Bacon
  */
 public class FitnesseExecutor {
-	private static final int SLEEP_MILLIS = 750;
+	private static final int SLEEP_MILLIS = 500;
 
 	private static final int TIMEOUT_MILLIS = 9000;
 	
@@ -43,10 +44,10 @@ public class FitnesseExecutor {
 		Proc fitnesseProc = null;
 		StdConsole console = new StdConsole();
 		try {
-	    	if (builder.getFitnesseStart()) { 
+	    	if (builder.getFitnesseStart()) {
+	    		listener.getLogger().println("Starting new Fitnesse instance...");
 	    		fitnesseProc = startFitnesse(launcher, build.getEnvironment(listener), console);
-	    		if (!fitnesseProc.isAlive() 
-	    		|| !procStarted(listener.getLogger(), console, TIMEOUT_MILLIS)) {
+	    		if (!procStarted(fitnesseProc, listener.getLogger(), console)) {
     				return false;
 	    		}
 	    		console.logOutput(listener.getLogger());
@@ -77,7 +78,8 @@ public class FitnesseExecutor {
 		String java = "java"; 
 		if (envVars.containsKey("JAVA_HOME"))
 			java = new File(new File(envVars.get("JAVA_HOME"), "bin"), java).getAbsolutePath();
-		String[] java_opts = (builder.getFitnesseJavaOpts() == "" ? new String[0] : builder.getFitnesseJavaOpts().split(" "));
+		String fitnesseJavaOpts = builder.getFitnesseJavaOpts();
+		String[] java_opts = ("".equals(fitnesseJavaOpts) ? new String[0] : fitnesseJavaOpts.split(" "));
 		String[] jar_opts = {"-jar", builder.getFitnessePathToJar()};
 		String[] fitnesse_opts = {"-d", getFitnesseDir(), 
 				"-r", getFitnesseRoot(), 
@@ -98,17 +100,29 @@ public class FitnesseExecutor {
 	public String getFitnesseRoot() {
 		return new File(builder.getFitnessePathToRoot()).getName();
 	}
+
+	private boolean procStarted(Proc fitnesseProc, PrintStream log, StdConsole console) throws IOException, InterruptedException {
+		if (fitnesseProc.isAlive()) {
+			return procStarted(log, console, TIMEOUT_MILLIS);
+		}
+		return false;
+	}
 	
 	public boolean procStarted(PrintStream log, StdConsole console, long timeout) throws InterruptedException {
 		long waitedAlready = 0;
 		do {
+			if (waitedAlready > 0) log.print('.');
 			Thread.sleep(SLEEP_MILLIS);
 			waitedAlready += SLEEP_MILLIS;
 		} while (console.noOutputOnStdOut() && waitedAlready < timeout) ;
-		if (console.noOutputOnStdOut()) {
-			log.println("Waited " + timeout + "ms for fitnesse to start.");
-			return false;
-		}
+
+		if (console.stdErrStartsWith("Unpacking")) {
+			// fitnesse is unpacking itself -- could take a long time
+			//TODO
+		} else if (console.noOutputOnStdOut()) {
+				log.println("Waited " + waitedAlready + "ms for fitnesse to start.");
+				return false;
+			}
 		return true;
 	}
 
@@ -176,7 +190,8 @@ public class FitnesseExecutor {
 		try {
 			resultsStream = new BufferedOutputStream(new FileOutputStream(resultsFileName));
 			resultsStream.write(results);
-			log.println("Xml results saved to " + resultsFileName);
+			log.println("Xml results saved as " + Charset.defaultCharset().displayName()
+					+ " to " + resultsFileName);
 		} finally {
 			try {
 				if (resultsStream != null)
