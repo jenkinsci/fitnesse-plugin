@@ -44,7 +44,7 @@ public class FitnesseBuilder extends Builder {
 	public static final String TARGET_IS_SUITE = "fitnesseTargetIsSuite";
 	public static final String PATH_TO_RESULTS = "fitnessePathToXmlResultsOut";
 	
-	private final Map<String, String> options;
+	private Map<String, String> options;
 
     @DataBoundConstructor
 	public FitnesseBuilder(Map<String, String> options) {
@@ -132,6 +132,7 @@ public class FitnesseBuilder extends Builder {
     @Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) 
     throws InterruptedException {
+    	listener.getLogger().println("Building with options: " + options);
 		return new FitnesseExecutor(this).execute(build, launcher, listener);
 	}
 
@@ -207,9 +208,11 @@ public class FitnesseBuilder extends Builder {
         public FormValidation doCheckFitnessePathToXmlResultsOut(@QueryParameter String value) throws IOException, ServletException {
         	if (value.length()==0)
         		return FormValidation.error("Please specify where to write fitnesse results to.");
-        	if (! new File(value).exists()
-    		|| ! new File(value).getParentFile().exists())
-        		return FormValidation.warning("Path does not exist.");
+        	File file = new File(value);
+			if (! file.exists()) {
+        		if (!(file.getParent() != null && file.getParentFile().exists()))
+        			return FormValidation.warning("Path does not exist.");
+        	}
         	if (!value.endsWith("xml"))
         		return FormValidation.warning("Location does not end with 'xml': is that correct?");
         	return FormValidation.ok();
@@ -238,32 +241,39 @@ public class FitnesseBuilder extends Builder {
 		@Override
 		public FitnesseBuilder newInstance(StaplerRequest req, JSONObject formData)
 				throws FormException {
-			return new FitnesseBuilder(collectFormData(req, new String[] {
-				START_FITNESSE, FITNESSE_HOST, 
-				FITNESSE_PORT, FITNESSE_PORT_REMOTE, FITNESSE_PORT_LOCAL,
-				JAVA_OPTS, PATH_TO_JAR, PATH_TO_ROOT, 
-				TARGET_PAGE, TARGET_IS_SUITE, PATH_TO_RESULTS
-				})
+			String startFitnesseValue = formData.getJSONObject(START_FITNESSE).getString("value");
+			if (Boolean.parseBoolean(startFitnesseValue)) {
+				return newFitnesseBuilder(startFitnesseValue, 
+						collectFormData(formData, new String[] {
+							JAVA_OPTS, PATH_TO_JAR, PATH_TO_ROOT, FITNESSE_PORT_LOCAL, 
+							TARGET_PAGE, TARGET_IS_SUITE, PATH_TO_RESULTS
+						})
+				);
+			}
+			return newFitnesseBuilder(startFitnesseValue, 
+					collectFormData(formData, new String[] {
+						FITNESSE_HOST, FITNESSE_PORT_REMOTE,  
+						TARGET_PAGE, TARGET_IS_SUITE, PATH_TO_RESULTS
+					})
 			);
 		}
 
-		private Map<String, String> collectFormData(StaplerRequest req, String[] keys) {
-			Map<String, String> formData = new HashMap<String, String>();
-			for (int i=0; i < keys.length; ++i) {
-				if (keys[i] == TARGET_IS_SUITE) {
-					// WTF? checkbox parm comes through as "on" or null
-					formData.put(keys[i], decodeCheckboxParm(req.getParameter(keys[i])));
-				} else {
-					formData.put(keys[i], req.getParameter(keys[i]));
-				}
-			}
-			return formData;
+		private FitnesseBuilder newFitnesseBuilder(String startFitnesseValue, Map<String, String> collectedFormData) {
+			collectedFormData.put(START_FITNESSE, startFitnesseValue);
+			return new FitnesseBuilder(collectedFormData);
 		}
 
-		private String decodeCheckboxParm(String value) {
-			if (value == null || value == "") return Boolean.FALSE.toString();
-			if (value.equalsIgnoreCase(Boolean.FALSE.toString())) return value;  
-			return Boolean.TRUE.toString();
+		private Map<String, String> collectFormData(JSONObject formData, String[] keys) {
+			Map<String, String> targetElements = new HashMap<String, String>();
+			for (String key: keys) {
+				if (formData.has(key)) {
+					targetElements.put(key, formData.getString(key));
+				} else {
+					targetElements.put(key, 
+						formData.getJSONObject(START_FITNESSE).getString(key));
+				}
+			}
+			return targetElements;
 		}
     }    
 }

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import javax.servlet.ServletException;
 import javax.xml.transform.TransformerException;
@@ -74,7 +75,8 @@ public class FitnesseResultsRecorder extends Recorder {
 	private FitnesseResults getResults(BuildListener listener, File resultsFile) throws IOException, TransformerException {
 		InputStream resultsInputStream = null;
 		try {
-			listener.getLogger().println("Reading results from " + resultsFile.getAbsolutePath());
+			listener.getLogger().println("Reading results as " + Charset.defaultCharset().displayName() 
+					+ " from " + resultsFile.getAbsolutePath());
 			resultsInputStream = new BufferedInputStream(new FileInputStream(resultsFile));
 			
 			listener.getLogger().println("Parsing results... ");
@@ -111,9 +113,11 @@ public class FitnesseResultsRecorder extends Recorder {
 		public FormValidation doCheckFitnessePathToXmlResultsIn(@QueryParameter String value) throws IOException, ServletException {
         	if (value.length()==0)
         		return FormValidation.error("Please specify where to read fitnesse results from.");
-        	if (! new File(value).exists()
-        	|| ! new File(value).getParentFile().exists())
-        		return FormValidation.warning("Path does not exist.");
+        	File file = new File(value);
+			if (! file.exists()) {
+        		if (!(file.getParent() != null && file.getParentFile().exists()))
+        			return FormValidation.warning("Path does not exist.");
+			}
         	if (!value.endsWith("xml"))
         		return FormValidation.warning("Location does not end with 'xml': is that correct?");
         	return FormValidation.ok();
