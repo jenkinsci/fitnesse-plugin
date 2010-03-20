@@ -194,7 +194,11 @@ public class FitnesseExecutorTest {
 	public void getHttpBytesShouldReturnContentFromUrlAndWriteToLog() throws Exception {
 		executor = getExecutorForBuilder(new String[] {}, new String[] {});
 		ByteArrayOutputStream logBucket = new ByteArrayOutputStream();
-		byte[] bytes = executor.getHttpBytes(new PrintStream(logBucket), new URL("http://hudson-ci.org/"));
+		Resettable resettable = new Resettable() {
+			public void reset() { // no-op
+			}
+		};
+		byte[] bytes = executor.getHttpBytes(new PrintStream(logBucket), new URL("http://hudson-ci.org/"), resettable);
 		Assert.assertTrue(bytes.length > 0);
 		Assert.assertTrue(new String(bytes).contains("<html"));
 		Assert.assertTrue(new String(bytes).contains("</html>"));

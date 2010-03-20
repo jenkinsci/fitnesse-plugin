@@ -26,8 +26,9 @@ import java.util.Arrays;
  */
 public class FitnesseExecutor {
 	private static final int SLEEP_MILLIS = 1000;
-	private static final int STARTUP_TIMEOUT_MILLIS = 10000;
-	private static final int ADDITIONAL_TIMEOUT_MILLIS = 20000;
+	private static final int STARTUP_TIMEOUT_MILLIS = 10*1000;
+	private static final int ADDITIONAL_TIMEOUT_MILLIS = 20*1000;
+	private static final int URL_READ_TIMEOUT_MILLIS = 60*1000;
 	
 	private final FitnesseBuilder builder;
 	
@@ -41,18 +42,16 @@ public class FitnesseExecutor {
 		StdConsole console = new StdConsole();
 		try {
 	    	if (builder.getFitnesseStart()) {
-	    		logger.println("Starting new Fitnesse instance...");
-	    		fitnesseProc = startFitnesse(launcher, environment, console);
+	    		fitnesseProc = startFitnesse(launcher, environment, logger, console);
 	    		if (!procStarted(fitnesseProc, logger, console)) {
     				return false;
 	    		}
 	    		console.logIncrementalOutput(logger);
 	    	}
 	    	
-			writeFitnesseResults(logger, 
-								getWorkingDirectory(build),
-								builder.getFitnessePathToXmlResultsOut(), 
-				    			getHttpBytes(logger, getFitnessePageCmdURL()));
+	    	readAndWriteFitnesseResults(logger, 
+	    			getFitnessePageCmdURL(),
+	    			getResultsFilePath(getWorkingDirectory(build), builder.getFitnessePathToXmlResultsOut()));
 	    	
 			return true;
 		} catch (Throwable t) {
@@ -65,8 +64,9 @@ public class FitnesseExecutor {
 		}
 	}
 
-	private Proc startFitnesse(Launcher launcher, EnvVars envVars, StdConsole console) throws IOException {
-    	ProcStarter procStarter = launcher.launch().cmds(getJavaCmd(envVars));
+	private Proc startFitnesse(Launcher launcher, EnvVars envVars, PrintStream logger, StdConsole console) throws IOException {
+		logger.println("Starting new Fitnesse instance...");
+		ProcStarter procStarter = launcher.launch().cmds(getJavaCmd(envVars));
     	console.provideStdOutAndStdErrFor(procStarter);
 		return procStarter.start();
     }
@@ -146,26 +146,45 @@ public class FitnesseExecutor {
 		}
 	}
 	
-	public byte[] getHttpBytes(PrintStream log, URL pageCmdTarget) throws MalformedURLException, IOException {
-		log.println("Connnecting to " + pageCmdTarget);
-		HttpURLConnection connection = (HttpURLConnection) pageCmdTarget.openConnection();
-		log.println("Connected: " + connection.getResponseCode() + "/" + connection.getResponseMessage());
+	private void readAndWriteFitnesseResults(final PrintStream logger, 
+											final URL readFromURL, 
+											final FilePath writeToFilePath) 
+	throws InterruptedException {
+		final RunnerWithTimeOut runnerWithTimeOut = new RunnerWithTimeOut(URL_READ_TIMEOUT_MILLIS);
+		Runnable readAndWriteResults = new Runnable() {
+			public void run() {
+				final byte[] bytes = getHttpBytes(logger, readFromURL, runnerWithTimeOut);
+				writeFitnesseResults(logger, writeToFilePath, bytes); 
+			}
+		};
+		runnerWithTimeOut.run(readAndWriteResults);
+	}
+	
+	public byte[] getHttpBytes(PrintStream log, URL pageCmdTarget, Resettable timeout) {
 		InputStream inputStream = null;
 		ByteArrayOutputStream bucket = new ByteArrayOutputStream();
+
 		try {
+			log.println("Connnecting to " + pageCmdTarget);
+			HttpURLConnection connection = (HttpURLConnection) pageCmdTarget.openConnection();
+			log.println("Connected: " + connection.getResponseCode() + "/" + connection.getResponseMessage());
+
 			inputStream = connection.getInputStream();
-			int reads = 0, lastLogged = 0;
-			byte[] buf = new byte[1024];
+			long recvd = 0, lastLogged = 0;
+			byte[] buf = new byte[4096];
 			int lastRead;
 			while ((lastRead = inputStream.read(buf)) > 0) {
 				bucket.write(buf, 0, lastRead);
-				reads += lastRead;
-				if (reads - lastLogged > 1024) {
-					log.println(reads + " bytes...");
-					lastLogged = reads;
+				timeout.reset();
+				recvd += lastRead;
+				if (recvd - lastLogged > 1024) {
+					log.println(recvd/1024 + "k...");
+					lastLogged = recvd;
 				}
 			}
 		} catch (IOException e) {
+			// this may be a "premature EOF" caused by incorrect HTTP content-length header
+			// in which case it will be non-fatal
 			e.printStackTrace(log);
 		} finally {
 			if (inputStream != null) {
@@ -200,14 +219,17 @@ public class FitnesseExecutor {
 				targetPageExpression.substring(pos)+"&format=xml");
 	}
 
-	private void writeFitnesseResults(PrintStream log, FilePath workingDirectory, String resultsFileName, byte[] results) throws IOException, InterruptedException {
+	private void writeFitnesseResults(PrintStream log, FilePath resultsFilePath, byte[] results) {
 		OutputStream resultsStream = null;
 		try {
-			FilePath resultsFilePath = getResultsFilePath(workingDirectory, resultsFileName);
 			resultsStream = resultsFilePath.write();
 			resultsStream.write(results);
 			log.println("Xml results saved as " + Charset.defaultCharset().displayName()
 					+ " to " + resultsFilePath.getRemote());
+		} catch (IOException e) {
+			e.printStackTrace(log);
+		} catch (InterruptedException e2) {
+			e2.printStackTrace(log);
 		} finally {
 			try {
 				if (resultsStream != null)
