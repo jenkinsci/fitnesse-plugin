@@ -17,19 +17,19 @@ public class StdConsoleTest {
 		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
 		ByteArrayOutputStream stderr = new ByteArrayOutputStream();
 		StdConsole console = new StdConsole(stdout, stderr);
-		simulateWriteToStdOut(stdout, "hello std out");
-		simulateWriteToStdErr(stderr, "hello std err");
+		simulateWriteTo(stdout, "hello std out");
+		simulateWriteTo(stderr, "hello std err");
 		
 		ByteArrayOutputStream log = new ByteArrayOutputStream();
 		PrintStream logger = new PrintStream(log);
-		console.logOutput(logger);
+		console.logIncrementalOutput(logger);
 		Assert.assertEquals(joinWithLineSeparators("hello std out", "hello std err"),
 				new String(log.toByteArray()));
 
 		log.reset();
-		simulateWriteToStdOut(stdout, "yo std out"); 
-		simulateWriteToStdErr(stderr, "yo std err");
-		console.logOutput(logger);
+		simulateWriteTo(stdout, "yo std out"); 
+		simulateWriteTo(stderr, "yo std err");
+		console.logIncrementalOutput(logger);
 		Assert.assertEquals(joinWithLineSeparators("yo std out","yo std err"), 
 				new String(log.toByteArray()));
 	}
@@ -38,14 +38,10 @@ public class StdConsoleTest {
 		return first + LINE_SEPARATOR + second + LINE_SEPARATOR;
 	}
 
-	private void simulateWriteToStdOut(OutputStream stdout, String msgToStdOut) throws IOException {
-		stdout.write(msgToStdOut.getBytes());
+	private void simulateWriteTo(OutputStream stream, String msg) throws IOException {
+		stream.write(msg.getBytes());
 	}
 
-	private void simulateWriteToStdErr(OutputStream stderr, String msgToStdErr) throws IOException {
-		stderr.write(msgToStdErr.getBytes());
-	}
-	
 	@Test
 	public void stdConsoleShouldKnowIfThereHasBeenOutputOnStdOut() throws Exception {
 		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
@@ -53,9 +49,9 @@ public class StdConsoleTest {
 		
 		StdConsole console = new StdConsole(stdout, stderr);
 		Assert.assertTrue(console.noOutputOnStdOut());
-		simulateWriteToStdErr(stderr, "ping");
+		simulateWriteTo(stderr, "ping");
 		Assert.assertTrue(console.noOutputOnStdOut());
-		simulateWriteToStdOut(stdout, "ping");
+		simulateWriteTo(stdout, "ping");
 		Assert.assertFalse(console.noOutputOnStdOut());
 	}
 	
@@ -66,24 +62,39 @@ public class StdConsoleTest {
 		
 		StdConsole console = new StdConsole(stdout, stderr);
 		Assert.assertFalse(console.outputOnStdErr());
-		simulateWriteToStdOut(stdout, "ping");
+		simulateWriteTo(stdout, "ping");
 		Assert.assertFalse(console.outputOnStdErr());
-		simulateWriteToStdErr(stderr, "ping");
+		simulateWriteTo(stderr, "ping");
 		Assert.assertTrue(console.outputOnStdErr());
 	}
 	
 	@Test
-	public void stdConsoleShouldKnowIfStdErrOutputStartsWith() throws Exception {
+	public void stdConsoleShouldRecogniseStdOutBytesAsIncrementalOutput() throws Exception {
 		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
 		ByteArrayOutputStream stderr = new ByteArrayOutputStream();
 		
 		StdConsole console = new StdConsole(stdout, stderr);
-		Assert.assertFalse(console.stdErrStartsWith("cheese"));
+		Assert.assertFalse(console.incrementalOutputOnStdOut());
+		Assert.assertFalse(console.incrementalOutputOnStdErr());
+		Assert.assertTrue(console.noIncrementalOutput());
+		simulateWriteTo(stdout, "cheese");
+		Assert.assertTrue(console.incrementalOutputOnStdOut());
+		Assert.assertFalse(console.noIncrementalOutput());
+		Assert.assertFalse(console.incrementalOutputOnStdErr());
+	}
 
-		stdout.write("cheese".getBytes());
-		Assert.assertFalse(console.stdErrStartsWith("cheese"));
-
-		stderr.write("cheese".getBytes());
-		Assert.assertTrue(console.stdErrStartsWith("cheese"));
+	@Test
+	public void stdConsoleShouldRecogniseStdErrBytesAsIncrementalOutput() throws Exception {
+		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+		ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+		
+		StdConsole console = new StdConsole(stdout, stderr);
+		Assert.assertFalse(console.incrementalOutputOnStdOut());
+		Assert.assertFalse(console.incrementalOutputOnStdErr());
+		Assert.assertTrue(console.noIncrementalOutput());
+		simulateWriteTo(stderr, "wensleydale");
+		Assert.assertTrue(console.incrementalOutputOnStdErr());
+		Assert.assertFalse(console.noIncrementalOutput());
+		Assert.assertFalse(console.incrementalOutputOnStdOut());
 	}
 }

@@ -132,7 +132,7 @@ public class FitnesseBuilder extends Builder {
     @Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) 
     throws InterruptedException {
-    	listener.getLogger().println("Building with options: " + options);
+    	listener.getLogger().println(getClass().getName() + ": " + options);
 		return new FitnesseExecutor(this).execute(build, launcher, listener);
 	}
 

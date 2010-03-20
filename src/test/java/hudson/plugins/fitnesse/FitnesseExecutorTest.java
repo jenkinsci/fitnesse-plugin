@@ -17,6 +17,8 @@ import org.junit.Test;
 
 public class FitnesseExecutorTest {
 
+	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+	
 	private FitnesseExecutor executor;
 
 	private FitnesseExecutor getExecutorForBuilder(String[] keys, String[] values) {
@@ -163,22 +165,28 @@ public class FitnesseExecutorTest {
 	}
 	
 	@Test
-	public void procStartedShouldBeTrueIfStdOutHasBeenWrittenTo() throws Exception {
+	public void fitnesseStartedShouldBeTrueIfStdOutHasBeenWrittenTo() throws Exception {
 		executor = getExecutorForBuilder(new String[] {}, new String[] {});
 		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+		ByteArrayOutputStream log = new ByteArrayOutputStream();
 		stdout.write("Started".getBytes());
-		Assert.assertTrue(executor.procStarted(new PrintStream(stdout), 
-				new StdConsole(stdout, new ByteArrayOutputStream()), 500));
-		Assert.assertEquals(stdout.toString(), "Started"); 
+		
+		PrintStream logger = new PrintStream(log);
+		StdConsole console = new StdConsole(stdout, new ByteArrayOutputStream());
+		console.logIncrementalOutput(logger);
+		
+		Assert.assertTrue(executor.fitnesseStarted(logger, console, 500));
+		Assert.assertEquals(stdout.size() 
+				+ LINE_SEPARATOR.getBytes().length, log.size()); 
 	}
 
 	@Test
-	public void procStartedShouldBeFalseAfterTimeoutIfStdOutHasNotBeenWrittenTo() throws Exception {
+	public void fitnesseStartedShouldBeFalseAfterTimeoutIfStdOutHasNotBeenWrittenTo() throws Exception {
 		executor = getExecutorForBuilder(new String[] {}, new String[] {});
 		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-		Assert.assertFalse(executor.procStarted(new PrintStream(stdout), 
+		Assert.assertFalse(executor.fitnesseStarted(new PrintStream(stdout), 
 				new StdConsole(stdout, new ByteArrayOutputStream()), 500));
-		Assert.assertTrue(stdout.toString().startsWith("Waited 500ms for fitnesse to start.")); // log entry 
+		Assert.assertTrue(stdout.toString().startsWith("Waited ")); // log entry 
 	}
 	
 	@Test

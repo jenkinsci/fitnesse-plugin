@@ -29,9 +29,9 @@ import java.util.Arrays;
  * @author Tim Bacon
  */
 public class FitnesseExecutor {
-	private static final int SLEEP_MILLIS = 500;
-
-	private static final int TIMEOUT_MILLIS = 9000;
+	private static final int SLEEP_MILLIS = 1000;
+	private static final int STARTUP_TIMEOUT_MILLIS = 10000;
+	private static final int ADDITIONAL_TIMEOUT_MILLIS = 20000;
 	
 	private final FitnesseBuilder builder;
 	
@@ -50,7 +50,7 @@ public class FitnesseExecutor {
 	    		if (!procStarted(fitnesseProc, listener.getLogger(), console)) {
     				return false;
 	    		}
-	    		console.logOutput(listener.getLogger());
+	    		console.logIncrementalOutput(listener.getLogger());
 	    	}
 	    	
 			writeFitnesseResults(listener.getLogger(), builder.getFitnessePathToXmlResultsOut(), 
@@ -64,7 +64,7 @@ public class FitnesseExecutor {
 			return false;
 		} finally {
 			killProc(listener.getLogger(), fitnesseProc);
-			console.logOutput(listener.getLogger());
+			console.logIncrementalOutput(listener.getLogger());
 		}
 	}
 
@@ -103,26 +103,36 @@ public class FitnesseExecutor {
 
 	private boolean procStarted(Proc fitnesseProc, PrintStream log, StdConsole console) throws IOException, InterruptedException {
 		if (fitnesseProc.isAlive()) {
-			return procStarted(log, console, TIMEOUT_MILLIS);
+			return fitnesseStarted(log, console, STARTUP_TIMEOUT_MILLIS);
 		}
 		return false;
 	}
 	
-	public boolean procStarted(PrintStream log, StdConsole console, long timeout) throws InterruptedException {
+	/**
+	 * Detect if fitnesse has started by monitoring the console.
+	 * If fitnesse.jar is unpacking itself there will be an initial write
+	 * to stderr followed by multiple writes to stdout, otherwise there 
+	 * should only be an initial short write to stdout (and any writes to stderr
+	 * are probably exception messages.) 
+	 * @return true if fitnesse has started, false otherwise
+	 */
+	public boolean fitnesseStarted(PrintStream log, StdConsole console, long timeout) throws InterruptedException {
 		long waitedAlready = 0;
 		do {
-			if (waitedAlready > 0) log.print('.');
 			Thread.sleep(SLEEP_MILLIS);
-			waitedAlready += SLEEP_MILLIS;
-		} while (console.noOutputOnStdOut() && waitedAlready < timeout) ;
-
-		if (console.stdErrStartsWith("Unpacking")) {
-			// fitnesse is unpacking itself -- could take a long time
-			//TODO
-		} else if (console.noOutputOnStdOut()) {
-				log.println("Waited " + waitedAlready + "ms for fitnesse to start.");
-				return false;
+			if (console.noIncrementalOutput()) {
+				waitedAlready += SLEEP_MILLIS;
+			} else {
+				if (console.incrementalOutputOnStdErr()) 
+					timeout += ADDITIONAL_TIMEOUT_MILLIS;
+				console.logIncrementalOutput(log);
 			}
+		} while (waitedAlready < timeout) ;
+
+		if (console.noOutputOnStdOut()) {
+			log.println("Waited " + waitedAlready + "ms for fitnesse to start.");
+			return false;
+		}
 		return true;
 	}
 
@@ -145,12 +155,18 @@ public class FitnesseExecutor {
 		log.println("Connected: " + connection.getResponseCode() + "/" + connection.getResponseMessage());
 		InputStream inputStream = null;
 		try {
-			inputStream = new BufferedInputStream(connection.getInputStream());
+			inputStream = connection.getInputStream();
 			ByteArrayOutputStream bucket = new ByteArrayOutputStream();
+			int reads = 0, lastLogged = 0;
 			byte[] buf = new byte[1024];
 			int lastRead;
 			while ((lastRead = inputStream.read(buf)) > 0) {
 				bucket.write(buf, 0, lastRead);
+				reads += lastRead;
+				if (reads - lastLogged > 1024) {
+					log.println(reads + " bytes...");
+					lastLogged = reads;
+				}
 			}
 			return bucket.toByteArray();
 		} finally {

@@ -31,9 +31,11 @@ final class StdConsole {
 		this.stdErrMark = 0;
 	}
 
-	public void logOutput(PrintStream logger) {
-		stdOutMark = logAndMark(logger, stdout, stdOutMark);
-		stdErrMark = logAndMark(logger, stderr, stdErrMark);
+	public void logIncrementalOutput(PrintStream logger) {
+		if (incrementalOutputOnStdOut())
+			stdOutMark = logAndMark(logger, stdout, stdOutMark);
+		if (incrementalOutputOnStdErr())
+			stdErrMark = logAndMark(logger, stderr, stdErrMark);
 	}
 
 	private int logAndMark(PrintStream logger, ByteArrayOutputStream bytes, int mark) {
@@ -50,13 +52,15 @@ final class StdConsole {
 		return stderr.size() > 0;
 	}
 
-	public boolean stdErrStartsWith(String prefix) {
-		byte[] pBytes = prefix.getBytes();
-		byte[] eBytes = stderr.toByteArray();
-		if (pBytes.length > eBytes.length) return false;
-		for (int i=0; i < pBytes.length; ++i) {
-			if (pBytes[i] != eBytes[i]) return false;	
-		}
-		return true;
+	public boolean noIncrementalOutput() {
+		return !incrementalOutputOnStdOut() && !incrementalOutputOnStdErr();
+	}
+
+	public boolean incrementalOutputOnStdErr() {
+		return stderr.size() != stdErrMark;
+	}
+
+	public boolean incrementalOutputOnStdOut() {
+		return stdout.size() != stdOutMark;
 	}
 }
