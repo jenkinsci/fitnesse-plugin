@@ -1,18 +1,14 @@
 package hudson.plugins.fitnesse;
 
 import hudson.EnvVars;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Proc;
 import hudson.Launcher.ProcStarter;
 import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
-import hudson.model.Result;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,32 +35,33 @@ public class FitnesseExecutor {
 		this.builder = builder;
 	}
 
-    public boolean execute(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) 
+    public boolean execute(AbstractBuild<?, ?> build, Launcher launcher, PrintStream logger, EnvVars environment) 
     throws InterruptedException {
 		Proc fitnesseProc = null;
 		StdConsole console = new StdConsole();
 		try {
 	    	if (builder.getFitnesseStart()) {
-	    		listener.getLogger().println("Starting new Fitnesse instance...");
-	    		fitnesseProc = startFitnesse(launcher, build.getEnvironment(listener), console);
-	    		if (!procStarted(fitnesseProc, listener.getLogger(), console)) {
+	    		logger.println("Starting new Fitnesse instance...");
+	    		fitnesseProc = startFitnesse(launcher, environment, console);
+	    		if (!procStarted(fitnesseProc, logger, console)) {
     				return false;
 	    		}
-	    		console.logIncrementalOutput(listener.getLogger());
+	    		console.logIncrementalOutput(logger);
 	    	}
 	    	
-			writeFitnesseResults(listener.getLogger(), builder.getFitnessePathToXmlResultsOut(), 
-	    			getHttpBytes(listener.getLogger(), getFitnessePageCmdURL()));
+			writeFitnesseResults(logger, 
+								getWorkingDirectory(build),
+								builder.getFitnessePathToXmlResultsOut(), 
+				    			getHttpBytes(logger, getFitnessePageCmdURL()));
 	    	
-	    	if (console.outputOnStdErr()) build.setResult(Result.UNSTABLE);
 			return true;
 		} catch (Throwable t) {
-			t.printStackTrace(listener.getLogger());
+			t.printStackTrace(logger);
 			if (t instanceof InterruptedException) throw (InterruptedException) t;
 			return false;
 		} finally {
-			killProc(listener.getLogger(), fitnesseProc);
-			console.logIncrementalOutput(listener.getLogger());
+			killProc(logger, fitnesseProc);
+			console.logIncrementalOutput(logger);
 		}
 	}
 
@@ -154,9 +151,9 @@ public class FitnesseExecutor {
 		HttpURLConnection connection = (HttpURLConnection) pageCmdTarget.openConnection();
 		log.println("Connected: " + connection.getResponseCode() + "/" + connection.getResponseMessage());
 		InputStream inputStream = null;
+		ByteArrayOutputStream bucket = new ByteArrayOutputStream();
 		try {
 			inputStream = connection.getInputStream();
-			ByteArrayOutputStream bucket = new ByteArrayOutputStream();
 			int reads = 0, lastLogged = 0;
 			byte[] buf = new byte[1024];
 			int lastRead;
@@ -168,7 +165,8 @@ public class FitnesseExecutor {
 					lastLogged = reads;
 				}
 			}
-			return bucket.toByteArray();
+		} catch (IOException e) {
+			e.printStackTrace(log);
 		} finally {
 			if (inputStream != null) {
 				try {
@@ -178,6 +176,7 @@ public class FitnesseExecutor {
 				}
 			}
 		}
+		return bucket.toByteArray();
 	}
 
 	public URL getFitnessePageCmdURL() throws MalformedURLException {
@@ -201,13 +200,14 @@ public class FitnesseExecutor {
 				targetPageExpression.substring(pos)+"&format=xml");
 	}
 
-	private void writeFitnesseResults(PrintStream log, String resultsFileName, byte[] results) throws IOException, InterruptedException {
+	private void writeFitnesseResults(PrintStream log, FilePath workingDirectory, String resultsFileName, byte[] results) throws IOException, InterruptedException {
 		OutputStream resultsStream = null;
 		try {
-			resultsStream = new BufferedOutputStream(new FileOutputStream(resultsFileName));
+			FilePath resultsFilePath = getResultsFilePath(workingDirectory, resultsFileName);
+			resultsStream = resultsFilePath.write();
 			resultsStream.write(results);
 			log.println("Xml results saved as " + Charset.defaultCharset().displayName()
-					+ " to " + resultsFileName);
+					+ " to " + resultsFilePath.getRemote());
 		} finally {
 			try {
 				if (resultsStream != null)
@@ -216,6 +216,18 @@ public class FitnesseExecutor {
 				// swallow
 			}
 		}
+	}
+
+	static FilePath getWorkingDirectory(AbstractBuild<?, ?> build) {
+		FilePath workspace = build.getWorkspace();
+		if (workspace != null) return workspace;
+		return new FilePath(build.getRootDir());
+	}
+
+	static FilePath getResultsFilePath(FilePath workingDirectory, String fileName) {
+		File fileNameFile = new File(fileName);
+		if (fileNameFile.exists()) return new FilePath(fileNameFile);
+		return workingDirectory.child(fileName);
 	}
 }
 

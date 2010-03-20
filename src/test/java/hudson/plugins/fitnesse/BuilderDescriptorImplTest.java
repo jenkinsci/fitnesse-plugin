@@ -69,12 +69,6 @@ public class BuilderDescriptorImplTest {
 	}
 	
 	@Test
-	public void nonExistentFitnesseRootShouldBeWarning() throws Exception {
-		Assert.assertEquals(Kind.WARNING, 
-				descriptor.doCheckFitnessePathToRoot("aldhfashf").kind);
-	}
-	
-	@Test
 	public void incorrectlyEndedFitnesseRootShouldBeWarning() throws Exception {
 		File tmpFile = File.createTempFile("fitnesse-root", "");
 		File root = new File(tmpFile.getParentFile(), "FitNesseRoot");
@@ -97,10 +91,9 @@ public class BuilderDescriptorImplTest {
 			descriptor.doCheckFitnessePathToXmlResultsOut("").kind);
 	}
 	
-	@Test
-	public void nonExistentFitnesseResultsShouldBeWarning() throws Exception {
-		Assert.assertEquals(Kind.WARNING, 
-			descriptor.doCheckFitnessePathToXmlResultsOut("aldhfashf").kind);
+	public void nonExistentFitnesseResultsShouldBeOK() throws Exception {
+		Assert.assertEquals(Kind.OK, 
+			descriptor.doCheckFitnessePathToXmlResultsOut("aldhfashf.xml").kind);
 	}
 	
 	@Test

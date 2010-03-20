@@ -1,6 +1,7 @@
 package hudson.plugins.fitnesse;
 
 import hudson.EnvVars;
+import hudson.FilePath;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -199,5 +200,24 @@ public class FitnesseExecutorTest {
 		Assert.assertTrue(new String(bytes).contains("</html>"));
 		Assert.assertTrue(logBucket.toString().startsWith("Connnecting to http://hudson-ci.org/"));
 		Assert.assertTrue(logBucket.toString().contains("Connected: 200/OK"));
+	}
+	
+	@Test
+	public void resultsFilePathShouldBeFileNameIfFileExists() throws Exception {
+		File tmpFile = File.createTempFile("results", ".out");
+		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
+		
+		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, tmpFile.getAbsolutePath());
+		Assert.assertEquals(tmpFile.getAbsolutePath(), resultsFilePath.getRemote());
+	}
+	
+	@Test
+	public void resultsFilePathShouldBeInWorkingDirIfFileNotExists() throws Exception {
+		File tmpFile = File.createTempFile("results", ".out");
+		FilePath workingDirectory = new FilePath(tmpFile.getParentFile());
+		
+		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, "results.xml");
+		Assert.assertEquals(workingDirectory.child("results.xml").getRemote(), 
+							resultsFilePath.getRemote());
 	}
 }

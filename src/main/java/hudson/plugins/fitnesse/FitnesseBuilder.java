@@ -13,6 +13,7 @@ import hudson.util.FormValidation;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -131,9 +132,11 @@ public class FitnesseBuilder extends Builder {
      */
     @Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) 
-    throws InterruptedException {
-    	listener.getLogger().println(getClass().getName() + ": " + options);
-		return new FitnesseExecutor(this).execute(build, launcher, listener);
+    throws IOException, InterruptedException {
+    	PrintStream logger = listener.getLogger();
+		logger.println(getClass().getName() + ": " + options);
+		FitnesseExecutor fitnesseExecutor = new FitnesseExecutor(this);
+		return fitnesseExecutor.execute(build, launcher, logger, build.getEnvironment(listener));
 	}
 
     /**
@@ -187,8 +190,6 @@ public class FitnesseBuilder extends Builder {
         public FormValidation doCheckFitnessePathToRoot(@QueryParameter String value) throws IOException, ServletException {
             if (value.length()==0)
                 return FormValidation.error("Please specify the location of 'FitNesseRoot'.");
-            if (! new File(value).exists())
-            	return FormValidation.warning("Path does not exist.");
             if (!value.endsWith("FitNesseRoot")
             && new File(value, "FitNesseRoot").exists())
             	return FormValidation.warning("Path does not end with 'FitNesseRoot': is that correct?");
@@ -208,13 +209,8 @@ public class FitnesseBuilder extends Builder {
         public FormValidation doCheckFitnessePathToXmlResultsOut(@QueryParameter String value) throws IOException, ServletException {
         	if (value.length()==0)
         		return FormValidation.error("Please specify where to write fitnesse results to.");
-        	File file = new File(value);
-			if (! file.exists()) {
-        		if (!(file.getParent() != null && file.getParentFile().exists()))
-        			return FormValidation.warning("Path does not exist.");
-        	}
         	if (!value.endsWith("xml"))
-        		return FormValidation.warning("Location does not end with 'xml': is that correct?");
+        		return FormValidation.warning("File does not end with 'xml': is that correct?");
         	return FormValidation.ok();
         }
 

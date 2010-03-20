@@ -22,10 +22,9 @@ public class RecorderDescriptorImplTest {
 			descriptor.doCheckFitnessePathToXmlResultsIn("").kind);
 	}
 	
-	@Test
-	public void nonExistentFitnesseResultsShouldBeWarning() throws Exception {
-		Assert.assertEquals(Kind.WARNING, 
-			descriptor.doCheckFitnessePathToXmlResultsIn("aldhfashf").kind);
+	public void nonExistentFitnesseResultsShouldBeOK() throws Exception {
+		Assert.assertEquals(Kind.OK, 
+			descriptor.doCheckFitnessePathToXmlResultsIn("aldhfashf.xml").kind);
 	}
 	
 	@Test

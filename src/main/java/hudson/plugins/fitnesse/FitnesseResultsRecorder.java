@@ -1,6 +1,7 @@
 package hudson.plugins.fitnesse;
 
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -14,11 +15,9 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.charset.Charset;
 
 import javax.servlet.ServletException;
@@ -32,7 +31,7 @@ public class FitnesseResultsRecorder extends Recorder {
 	private final String fitnessePathToXmlResultsIn;
 
 	@DataBoundConstructor
-	public FitnesseResultsRecorder(String fitnessePathToXmlResultsIn) throws TransformerException {
+	public FitnesseResultsRecorder(String fitnessePathToXmlResultsIn) {
 		this.fitnessePathToXmlResultsIn = fitnessePathToXmlResultsIn;
 	}
 
@@ -57,8 +56,9 @@ public class FitnesseResultsRecorder extends Recorder {
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException, IOException {
 		try {
-			File resultsFile = new File(fitnessePathToXmlResultsIn);
-			FitnesseResults results = getResults(listener, resultsFile);
+			FilePath workingDirectory = FitnesseExecutor.getWorkingDirectory(build);
+			FilePath resultsFile = FitnesseExecutor.getResultsFilePath(workingDirectory, fitnessePathToXmlResultsIn);
+			FitnesseResults results = getResults(listener.getLogger(), resultsFile);
 			FitnesseResultsAction action = new FitnesseResultsAction(build, results);
 			
 			if (results.getBuildResult() != null) build.setResult(results.getBuildResult());
@@ -72,18 +72,18 @@ public class FitnesseResultsRecorder extends Recorder {
 		}
 	}
 
-	private FitnesseResults getResults(BuildListener listener, File resultsFile) throws IOException, TransformerException {
+	public FitnesseResults getResults(PrintStream logger, FilePath resultsFile) throws IOException, TransformerException {
 		InputStream resultsInputStream = null;
 		try {
-			listener.getLogger().println("Reading results as " + Charset.defaultCharset().displayName() 
-					+ " from " + resultsFile.getAbsolutePath());
-			resultsInputStream = new BufferedInputStream(new FileInputStream(resultsFile));
+			logger.println("Reading results as " + Charset.defaultCharset().displayName() 
+					+ " from " + resultsFile.getRemote());
+			resultsInputStream = resultsFile.read();
 			
-			listener.getLogger().println("Parsing results... ");
+			logger.println("Parsing results... ");
 			NativePageCountsParser pageCountsParser = new NativePageCountsParser();
 			NativePageCounts pageCounts = pageCountsParser.parse(resultsInputStream);
 			
-			listener.getLogger().println("Got results: " + pageCounts.getSummary());
+			logger.println("Got results: " + pageCounts.getSummary());
 			return new FitnesseResults(pageCounts);
 		} finally {
 			if (resultsInputStream != null) {
@@ -113,13 +113,8 @@ public class FitnesseResultsRecorder extends Recorder {
 		public FormValidation doCheckFitnessePathToXmlResultsIn(@QueryParameter String value) throws IOException, ServletException {
         	if (value.length()==0)
         		return FormValidation.error("Please specify where to read fitnesse results from.");
-        	File file = new File(value);
-			if (! file.exists()) {
-        		if (!(file.getParent() != null && file.getParentFile().exists()))
-        			return FormValidation.warning("Path does not exist.");
-			}
         	if (!value.endsWith("xml"))
-        		return FormValidation.warning("Location does not end with 'xml': is that correct?");
+        		return FormValidation.warning("File does not end with 'xml': is that correct?");
         	return FormValidation.ok();
 		}
         
@@ -139,7 +134,5 @@ public class FitnesseResultsRecorder extends Recorder {
 		public String getDisplayName() {
 			return "Publish Fitnesse results report";
 		}
-		
 	}
-
 }
