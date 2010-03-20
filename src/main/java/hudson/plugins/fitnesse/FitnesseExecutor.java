@@ -226,7 +226,15 @@ public class FitnesseExecutor {
 
 	static FilePath getResultsFilePath(FilePath workingDirectory, String fileName) {
 		File fileNameFile = new File(fileName);
-		if (fileNameFile.exists()) return new FilePath(fileNameFile);
+		
+		if (fileNameFile.getParent() != null) {
+			if (fileNameFile.exists()) {
+				return new FilePath(fileNameFile);
+			} else if (fileNameFile.getParent() != null && fileNameFile.getParentFile().exists()) {
+				return new FilePath(fileNameFile);
+			}
+		}
+		
 		return workingDirectory.child(fileName);
 	}
 }

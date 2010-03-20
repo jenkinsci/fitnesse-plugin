@@ -214,8 +214,8 @@ public class FitnesseExecutorTest {
 	@Test
 	public void resultsFilePathShouldBeFileNameIfParentFileExists() throws Exception {
 		File tmpFile = File.createTempFile("results", ".out");
+		File xmlFile = new File(tmpFile.getParentFile(), System.currentTimeMillis() + "results.xml");
 		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
-		File xmlFile = new File(tmpFile.getParentFile(), "results.xml");
 
 		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, xmlFile.getAbsolutePath());
 		Assert.assertEquals(xmlFile.getAbsolutePath(), resultsFilePath.getRemote());
@@ -223,19 +223,18 @@ public class FitnesseExecutorTest {
 	
 	@Test
 	public void resultsFilePathShouldBeInWorkingDirIfFileNotExists() throws Exception {
-		File tmpFile = File.createTempFile("results", ".out");
-		FilePath workingDirectory = new FilePath(tmpFile.getParentFile());
+		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
+		String noSuchFileName = "noSuchFile" + System.currentTimeMillis();
 		
-		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, "results.xml");
-		Assert.assertEquals(workingDirectory.child("results.xml").getRemote(), 
+		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, noSuchFileName);
+		Assert.assertEquals(workingDirectory.child(noSuchFileName).getRemote(), 
 							resultsFilePath.getRemote());
 	}
 
 	@Test
 	public void resultsFilePathShouldBeInWorkingDirIfParentFileNotExists() throws Exception {
-		File tmpFile = File.createTempFile("results", ".out");
-		FilePath workingDirectory = new FilePath(tmpFile.getParentFile());
-		File xmlFile = new File("noSuchDirectory"+System.currentTimeMillis(), "results.xml");
+		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
+		File xmlFile = new File("noSuchDirectory" + System.currentTimeMillis(), "results.xml");
 		
 		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, xmlFile.getPath());
 		Assert.assertEquals(workingDirectory.child(xmlFile.getPath()).getRemote(), 
