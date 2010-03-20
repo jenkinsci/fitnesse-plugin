@@ -2,22 +2,32 @@ package hudson.plugins.fitnesse;
 
 public class RunnerWithTimeOut implements Resettable {
 	static final int POLL_EVERY_MILLIS = 500;
-	private final int explodeInMillis;
+	private final int timeOutMillis;
+	
+	private ResetEvent resetEvent;
 	private long waitedAlready;
 
-	public RunnerWithTimeOut(int explodeInMillis) {
-		this.explodeInMillis = explodeInMillis;
+	public RunnerWithTimeOut(int timeoutMillis) {
+		this.timeOutMillis = timeoutMillis;
 	}
 
 	public void run(Runnable runnable) throws InterruptedException {
+		run(runnable, null);
+	}
+	
+	public void run(Runnable runnable, ResetEvent resetEvent) throws InterruptedException {
+		int sleepMillis = timeOutMillis < POLL_EVERY_MILLIS ? timeOutMillis : POLL_EVERY_MILLIS;
+		this.resetEvent = null;
+		reset();
+		this.resetEvent = resetEvent;
+
 		Thread thread = new Thread(runnable);
 		thread.start();
-		reset();
-		int sleepMillis = explodeInMillis < POLL_EVERY_MILLIS ? explodeInMillis : POLL_EVERY_MILLIS;
+		
 		do {
-			Thread.sleep(sleepMillis);
 			waitedAlready += sleepMillis;
-		} while (thread.isAlive() && waitedAlready < explodeInMillis);
+			Thread.sleep(sleepMillis);
+		} while (thread.isAlive() && waitedAlready < timeOutMillis);
 		
 		if (thread.isAlive()) {
 			thread.interrupt();
@@ -27,9 +37,16 @@ public class RunnerWithTimeOut implements Resettable {
 
 	public void reset() {
 		waitedAlready = 0;
+		if (resetEvent != null) {
+			resetEvent.onReset();
+		}
 	}
 }
 
 interface Resettable {
 	void reset();
+}
+
+interface ResetEvent {
+	void onReset();
 }

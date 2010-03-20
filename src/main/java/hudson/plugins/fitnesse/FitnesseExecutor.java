@@ -49,10 +49,9 @@ public class FitnesseExecutor {
 	    		console.logIncrementalOutput(logger);
 	    	}
 	    	
-	    	readAndWriteFitnesseResults(logger, 
-	    			getFitnessePageCmdURL(),
-	    			getResultsFilePath(getWorkingDirectory(build), builder.getFitnessePathToXmlResultsOut()));
-	    	
+	    	FilePath resultsFilePath = getResultsFilePath(getWorkingDirectory(build), 
+	    												builder.getFitnessePathToXmlResultsOut());
+			readAndWriteFitnesseResults(logger, console, getFitnessePageCmdURL(), resultsFilePath);
 			return true;
 		} catch (Throwable t) {
 			t.printStackTrace(logger);
@@ -67,6 +66,7 @@ public class FitnesseExecutor {
 	private Proc startFitnesse(Launcher launcher, EnvVars envVars, PrintStream logger, StdConsole console) throws IOException {
 		logger.println("Starting new Fitnesse instance...");
 		ProcStarter procStarter = launcher.launch().cmds(getJavaCmd(envVars));
+		procStarter.pwd(new File(builder.getFitnessePathToJar()).getParentFile());
     	console.provideStdOutAndStdErrFor(procStarter);
 		return procStarter.start();
     }
@@ -146,18 +146,25 @@ public class FitnesseExecutor {
 		}
 	}
 	
-	private void readAndWriteFitnesseResults(final PrintStream logger, 
-											final URL readFromURL, 
-											final FilePath writeToFilePath) 
+	private void readAndWriteFitnesseResults(final PrintStream logger, final StdConsole console,
+											final URL readFromURL, final FilePath writeToFilePath)	
 	throws InterruptedException {
 		final RunnerWithTimeOut runnerWithTimeOut = new RunnerWithTimeOut(URL_READ_TIMEOUT_MILLIS);
+	
 		Runnable readAndWriteResults = new Runnable() {
 			public void run() {
 				final byte[] bytes = getHttpBytes(logger, readFromURL, runnerWithTimeOut);
 				writeFitnesseResults(logger, writeToFilePath, bytes); 
 			}
 		};
-		runnerWithTimeOut.run(readAndWriteResults);
+		
+		ResetEvent logToConsole = new ResetEvent() {
+			public void onReset() {
+				console.logIncrementalOutput(logger);
+			}
+		};
+		
+		runnerWithTimeOut.run(readAndWriteResults, logToConsole);
 	}
 	
 	public byte[] getHttpBytes(PrintStream log, URL pageCmdTarget, Resettable timeout) {
@@ -183,8 +190,8 @@ public class FitnesseExecutor {
 				}
 			}
 		} catch (IOException e) {
-			// this may be a "premature EOF" caused by incorrect HTTP content-length header
-			// in which case it will be non-fatal
+			// this may be a "premature EOF" caused by e.g. incorrect content-length HTTP header
+			// so it may be non-fatal -- try to recover
 			e.printStackTrace(log);
 		} finally {
 			if (inputStream != null) {
@@ -232,8 +239,7 @@ public class FitnesseExecutor {
 			e2.printStackTrace(log);
 		} finally {
 			try {
-				if (resultsStream != null)
-					resultsStream.close();
+				if (resultsStream != null) resultsStream.close();
 			} catch (Exception e) {
 				// swallow
 			}
