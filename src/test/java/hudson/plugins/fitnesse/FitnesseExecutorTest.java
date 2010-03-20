@@ -210,6 +210,16 @@ public class FitnesseExecutorTest {
 		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, tmpFile.getAbsolutePath());
 		Assert.assertEquals(tmpFile.getAbsolutePath(), resultsFilePath.getRemote());
 	}
+
+	@Test
+	public void resultsFilePathShouldBeFileNameIfParentFileExists() throws Exception {
+		File tmpFile = File.createTempFile("results", ".out");
+		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
+		File xmlFile = new File(tmpFile.getParentFile(), "results.xml");
+
+		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, xmlFile.getAbsolutePath());
+		Assert.assertEquals(xmlFile.getAbsolutePath(), resultsFilePath.getRemote());
+	}
 	
 	@Test
 	public void resultsFilePathShouldBeInWorkingDirIfFileNotExists() throws Exception {
@@ -219,5 +229,16 @@ public class FitnesseExecutorTest {
 		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, "results.xml");
 		Assert.assertEquals(workingDirectory.child("results.xml").getRemote(), 
 							resultsFilePath.getRemote());
+	}
+
+	@Test
+	public void resultsFilePathShouldBeInWorkingDirIfParentFileNotExists() throws Exception {
+		File tmpFile = File.createTempFile("results", ".out");
+		FilePath workingDirectory = new FilePath(tmpFile.getParentFile());
+		File xmlFile = new File("noSuchDirectory"+System.currentTimeMillis(), "results.xml");
+		
+		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, xmlFile.getPath());
+		Assert.assertEquals(workingDirectory.child(xmlFile.getPath()).getRemote(), 
+				resultsFilePath.getRemote());
 	}
 }
