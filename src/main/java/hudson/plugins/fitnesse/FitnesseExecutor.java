@@ -153,6 +153,11 @@ public class FitnesseExecutor {
 	
 		Runnable readAndWriteResults = new Runnable() {
 			public void run() {
+				try {
+					writeToFilePath.delete();
+				} catch (Exception e) {
+					// swallow - file may not exist
+				}
 				final byte[] bytes = getHttpBytes(logger, readFromURL, runnerWithTimeOut);
 				writeFitnesseResults(logger, writeToFilePath, bytes); 
 			}
@@ -266,4 +271,3 @@ public class FitnesseExecutor {
 		return workingDirectory.child(fileName);
 	}
 }
-
