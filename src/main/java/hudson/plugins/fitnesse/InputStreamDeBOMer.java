@@ -32,9 +32,12 @@ public class InputStreamDeBOMer {
 	}
 
 	private static int skip_bom(byte[] bom, byte[] bytes) {
+		if (bytes.length < bom.length) return 0;
+		
 		for (int i=0; i < bom.length; ++i) {
 			if (bytes[i] != bom[i]) return 0;
 		}
+		
 		return bom.length;
 	}
 }
