@@ -1,6 +1,7 @@
 package hudson.plugins.fitnesse;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import javax.xml.transform.dom.DOMResult;
@@ -107,5 +108,12 @@ public class NativePageCountsParserTest {
 			all[prefix.length + i] = bytes[i];
 		}
 		return new ByteArrayInputStream(all);
+	}
+	
+	@Test
+	public void temp() throws Exception {
+		FileInputStream inputStream = new FileInputStream("/home/tim/projects/hudson/plugins/fitnesse/work/jobs/fitnesseAcceptance/workspace/all-fitnesse-results.xml");
+		NativePageCounts testResults = fitnesseParser.parse(inputStream);
+		Assert.assertNotNull(testResults.getSummary());
 	}
 }
