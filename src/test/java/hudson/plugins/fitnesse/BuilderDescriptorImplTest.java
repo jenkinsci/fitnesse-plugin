@@ -110,5 +110,47 @@ public class BuilderDescriptorImplTest {
 				descriptor.doCheckFitnessePathToXmlResultsOut(tmpFile.getAbsolutePath()).kind);
 	}
 
+	@Test
+	public void emptyJavaWorkingDirectoryShouldBeOk() throws Exception {
+		Assert.assertEquals(Kind.OK, 
+				descriptor.doCheckFitnesseJavaWorkingDirectory("").kind);
+	}
+
+	@Test
+	public void nonExistentJavaWorkingDirectoryShouldBeError() throws Exception {
+		String noSuchDirectory = "noSuchDirectory" + System.currentTimeMillis();
+		Assert.assertEquals(Kind.ERROR, 
+				descriptor.doCheckFitnesseJavaWorkingDirectory(noSuchDirectory).kind);
+	}
+
+	@Test
+	public void existentJavaWorkingDirectoryShouldBeOk() throws Exception {
+		File tmpFile = File.createTempFile("fitnesse-results", "xml");
+		Assert.assertEquals(Kind.OK, 
+				descriptor.doCheckFitnesseJavaWorkingDirectory(tmpFile.getParentFile().getAbsolutePath()).kind);
+	}
 	
+	@Test
+	public void emptyHttpTimeoutShouldBeOk() throws Exception {
+		Assert.assertEquals(Kind.OK,
+				descriptor.doCheckFitnesseHttpTimeout("").kind);
+	}
+
+	@Test
+	public void nonNumericHttpTimeoutShouldBeError() throws Exception {
+		Assert.assertEquals(Kind.ERROR,
+				descriptor.doCheckFitnesseHttpTimeout("a").kind);
+	}
+
+	@Test
+	public void negativeHttpTimeoutShouldBeError() throws Exception {
+		Assert.assertEquals(Kind.ERROR,
+				descriptor.doCheckFitnesseHttpTimeout("-1").kind);
+	}
+
+	@Test
+	public void positiveHttpTimeoutShouldBeOk() throws Exception {
+		Assert.assertEquals(Kind.OK,
+				descriptor.doCheckFitnesseHttpTimeout("1").kind);
+	}
 }

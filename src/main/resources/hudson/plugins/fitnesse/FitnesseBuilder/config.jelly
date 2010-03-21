@@ -36,6 +36,13 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 	    value="${instance.fitnesseJavaOpts}" />
 	  </f:entry>
 	
+	  <f:entry title="Java working directory" 
+	  help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/javaWorkingDir">
+	    <f:textbox name="fitnesseJavaWorkingDirectory" 
+        checkUrl="'descriptorByName/hudson.plugins.fitnesse.FitnesseBuilder/checkFitnesseJavaWorkingDirectory?value='+toValue(this)" 
+	    value="${instance.fitnesseJavaWorkingDirectory}" />
+	  </f:entry>
+	
 	  <f:entry title="Path to fitnesse.jar" 
 	  help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/pathToFitnesseJar">
 	    <f:textbox name="fitnessePathToJar" 
@@ -72,6 +79,11 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   </f:entry>
 
 <f:block><em>Output</em></f:block>
+
+  <f:entry title="HTTP Timeout (ms)" field="fitnesseHttpTimeout"
+  help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/httpTimeout"> 
+    <f:textbox name="fitnesseHttpTimeout" />
+  </f:entry>
 
   <f:entry title="Path to fitnesse xml results file" field="fitnessePathToXmlResultsOut"
   help="/descriptor/hudson.plugins.fitnesse.FitnesseResultsRecorder/help/pathToXmlResults">

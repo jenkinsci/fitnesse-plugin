@@ -91,6 +91,14 @@ public class FitnesseBuilder extends Builder {
     /**
      * referenced in config.jelly
      */
+    public String getFitnesseJavaWorkingDirectory() {
+    	return getOption(JAVA_WORKING_DIRECTORY, 
+    		"".equals(getFitnessePathToJar()) ? "" : new File(getFitnessePathToJar()).getParentFile().getAbsolutePath());
+    }
+
+    /**
+     * referenced in config.jelly
+     */
     public int getFitnessePort() {
     	return Integer.parseInt(
 			getOption(FITNESSE_PORT_REMOTE, 
@@ -142,14 +150,6 @@ public class FitnesseBuilder extends Builder {
 	}
 
     /**
-     * referenced in config.jelly
-     */
-    public String getFitnesseJavaWorkingDirectory() {
-    	return getOption(JAVA_WORKING_DIRECTORY, 
-    		"".equals(getFitnessePathToJar()) ? "" : new File(getFitnessePathToJar()).getParentFile().getAbsolutePath());
-    }
-
-    /**
      * {@link Builder}
      */
     @Override
@@ -198,7 +198,15 @@ public class FitnesseBuilder extends Builder {
         	return FormValidation.ok();
         }
 
-    	public FormValidation doCheckFitnessePathToJar(@QueryParameter String value) throws IOException, ServletException {
+        public FormValidation doCheckFitnesseJavaWorkingDirectory(@QueryParameter String value) throws IOException, ServletException {
+        	if (value.length()==0)
+        		return FormValidation.ok("Location of fitnesse.jar will be used as java working directory.");
+        	if (!new File(value).exists())
+        		return FormValidation.error("Path does not exist.");
+        	return FormValidation.ok();
+        }
+
+        public FormValidation doCheckFitnessePathToJar(@QueryParameter String value) throws IOException, ServletException {
     		if (value.length()==0)
     			return FormValidation.error("Please specify the path to 'fitnesse.jar'.");
     		if (! new File(value).exists())
@@ -226,6 +234,17 @@ public class FitnesseBuilder extends Builder {
 
         public FormValidation doCheckFitnesseTargetIsSuite(@QueryParameter String value) throws IOException, ServletException {
             return FormValidation.ok();
+        }
+        
+        public FormValidation doCheckFitnesseHttpTimeout(@QueryParameter String value) throws IOException, ServletException {
+        	if (value.length()==0)
+        		return FormValidation.ok("Default timeout " + _URL_READ_TIMEOUT_MILLIS + "ms will be used.");
+        	try {
+        		if (Integer.parseInt(value) < 0) return FormValidation.error("Timeout must be a positive integer.");
+        	} catch (NumberFormatException e) {
+        		return FormValidation.error("Timeout must be a number.");
+        	}
+        	return FormValidation.ok();
         }
 
         public FormValidation doCheckFitnessePathToXmlResultsOut(@QueryParameter String value) throws IOException, ServletException {
@@ -263,15 +282,16 @@ public class FitnesseBuilder extends Builder {
 			if (Boolean.parseBoolean(startFitnesseValue)) {
 				return newFitnesseBuilder(startFitnesseValue, 
 						collectFormData(formData, new String[] {
-							JAVA_OPTS, PATH_TO_JAR, PATH_TO_ROOT, FITNESSE_PORT_LOCAL, 
-							TARGET_PAGE, TARGET_IS_SUITE, PATH_TO_RESULTS
+							JAVA_OPTS, JAVA_WORKING_DIRECTORY, 
+							PATH_TO_JAR, PATH_TO_ROOT, FITNESSE_PORT_LOCAL, 
+							TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, PATH_TO_RESULTS
 						})
 				);
 			}
 			return newFitnesseBuilder(startFitnesseValue, 
 					collectFormData(formData, new String[] {
 						FITNESSE_HOST, FITNESSE_PORT_REMOTE,  
-						TARGET_PAGE, TARGET_IS_SUITE, PATH_TO_RESULTS
+						TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, PATH_TO_RESULTS
 					})
 			);
 		}
