@@ -101,7 +101,15 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 
 	@Override
 	public int getSkipCount() {
-		return pageCounts.ignored + pageCounts.exceptions;
+		return getIgnoredCount() + getExceptionCount();
+	}
+	
+	public int getIgnoredCount() {
+		return pageCounts.ignored;
+	}
+
+	public int getExceptionCount() {
+		return pageCounts.exceptions;
 	}
 	
 	@Override
