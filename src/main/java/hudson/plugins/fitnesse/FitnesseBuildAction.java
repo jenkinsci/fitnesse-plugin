@@ -18,9 +18,18 @@ public class FitnesseBuildAction extends InvisibleAction implements Action {
 	}
 
 	public String getLinkFor(String fitnessePage) {
+		return getLinkFor(fitnessePage, null);
+	}
+	
+	public String getLinkFor(String fitnessePage, String hudsonHost) {
 		if (fitnesseStarted) return fitnessePage;
+		
+		String host = fitnesseHost;
+		if (hudsonHost != null && FitnesseBuilder._LOCALHOST.equals(fitnesseHost)) {
+			host = hudsonHost;
+		}
 		return String.format("<a href=\"http://%s:%s/%s\">%s</a>", 
-				fitnesseHost, fitnessePort, fitnessePage, fitnessePage);
+				host, fitnessePort, fitnessePage, fitnessePage);
 	}
 
 }

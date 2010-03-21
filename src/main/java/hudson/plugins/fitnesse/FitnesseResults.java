@@ -1,6 +1,7 @@
 package hudson.plugins.fitnesse;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Hudson;
 import hudson.model.ModelObject;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.test.AbstractTestResultAction;
@@ -252,7 +253,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 		if (buildAction == null) {
 			buildAction = FitnesseBuildAction.NULL_ACTION;
 		}
-		return buildAction.getLinkFor(results.getName());
+		return buildAction.getLinkFor(results.getName(), Hudson.getInstance().getRootUrl());
 	}
 
 }
