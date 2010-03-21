@@ -28,7 +28,6 @@ public class FitnesseExecutor {
 	private static final int SLEEP_MILLIS = 1000;
 	private static final int STARTUP_TIMEOUT_MILLIS = 10*1000;
 	private static final int ADDITIONAL_TIMEOUT_MILLIS = 20*1000;
-	private static final int URL_READ_TIMEOUT_MILLIS = 60*1000;
 	
 	private final FitnesseBuilder builder;
 	
@@ -74,7 +73,7 @@ public class FitnesseExecutor {
 	private Proc startFitnesse(Launcher launcher, EnvVars envVars, PrintStream logger, StdConsole console) throws IOException {
 		logger.println("Starting new Fitnesse instance...");
 		ProcStarter procStarter = launcher.launch().cmds(getJavaCmd(envVars));
-		procStarter.pwd(new File(builder.getFitnessePathToJar()).getParentFile());
+		procStarter.pwd(new File(builder.getFitnesseJavaWorkingDirectory()));
     	console.provideStdOutAndStdErrFor(procStarter);
 		return procStarter.start();
     }
@@ -157,7 +156,7 @@ public class FitnesseExecutor {
 	private void readAndWriteFitnesseResults(final PrintStream logger, final StdConsole console,
 											final URL readFromURL, final FilePath writeToFilePath)	
 	throws InterruptedException {
-		final RunnerWithTimeOut runnerWithTimeOut = new RunnerWithTimeOut(URL_READ_TIMEOUT_MILLIS);
+		final RunnerWithTimeOut runnerWithTimeOut = new RunnerWithTimeOut(builder.getFitnesseHttpTimeout());
 	
 		Runnable readAndWriteResults = new Runnable() {
 			public void run() {

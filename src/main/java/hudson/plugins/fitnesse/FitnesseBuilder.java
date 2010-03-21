@@ -44,7 +44,10 @@ public class FitnesseBuilder extends Builder {
 	public static final String TARGET_PAGE = "fitnesseTargetPage";
 	public static final String TARGET_IS_SUITE = "fitnesseTargetIsSuite";
 	public static final String PATH_TO_RESULTS = "fitnessePathToXmlResultsOut";
+	public static final String HTTP_TIMEOUT = "fitnesseHttpTimeout";
+	public static final String JAVA_WORKING_DIRECTORY = "fitnesseJavaWorkingDirectory";
 
+	static final int _URL_READ_TIMEOUT_MILLIS = 60*1000;
 	static final String _LOCALHOST = "localhost";
 	
 	private Map<String, String> options;
@@ -128,6 +131,22 @@ public class FitnesseBuilder extends Builder {
      */
     public String getFitnessePathToXmlResultsOut() {
     	return getOption(PATH_TO_RESULTS, "");
+    }
+
+    /**
+     * referenced in config.jelly
+     */
+    public int getFitnesseHttpTimeout() {
+    	return Integer.parseInt(getOption(HTTP_TIMEOUT, 
+			String.valueOf(_URL_READ_TIMEOUT_MILLIS)));
+	}
+
+    /**
+     * referenced in config.jelly
+     */
+    public String getFitnesseJavaWorkingDirectory() {
+    	return getOption(JAVA_WORKING_DIRECTORY, 
+    		"".equals(getFitnessePathToJar()) ? "" : new File(getFitnessePathToJar()).getParentFile().getAbsolutePath());
     }
 
     /**
