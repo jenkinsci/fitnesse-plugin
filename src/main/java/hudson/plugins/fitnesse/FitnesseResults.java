@@ -104,10 +104,16 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 		return getIgnoredCount() + getExceptionCount();
 	}
 	
+	/**
+	 * referenced in summary.jelly
+	 */
 	public int getIgnoredCount() {
 		return pageCounts.ignored;
 	}
 
+	/**
+	 * referenced in summary.jelly
+	 */
 	public int getExceptionCount() {
 		return pageCounts.exceptions;
 	}
@@ -236,6 +242,17 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	
 	interface ResultsFilter {
 		public boolean include(FitnesseResults fitnesseResults);
+	}
+	
+	/**
+	 * referenced in summary.jelly
+	 */
+	public String toHtml(FitnesseResults results) {
+		FitnesseBuildAction buildAction = getOwner().getAction(FitnesseBuildAction.class);
+		if (buildAction == null) {
+			buildAction = FitnesseBuildAction.NULL_ACTION;
+		}
+		return buildAction.getLinkFor(results.getName());
 	}
 
 }

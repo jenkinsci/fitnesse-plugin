@@ -44,6 +44,8 @@ public class FitnesseBuilder extends Builder {
 	public static final String TARGET_PAGE = "fitnesseTargetPage";
 	public static final String TARGET_IS_SUITE = "fitnesseTargetIsSuite";
 	public static final String PATH_TO_RESULTS = "fitnessePathToXmlResultsOut";
+
+	static final String _LOCALHOST = "localhost";
 	
 	private Map<String, String> options;
 
@@ -72,6 +74,7 @@ public class FitnesseBuilder extends Builder {
 	 * referenced in config.jelly
 	 */
     public String getFitnesseHost() {
+    	if (getFitnesseStart()) return _LOCALHOST;
     	return getOption(FITNESSE_HOST, "unknown_host");
     }
     

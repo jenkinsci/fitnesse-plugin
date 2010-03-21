@@ -19,6 +19,7 @@ public class FitnesseBuilderTest {
 		options.put(FitnesseBuilder.FITNESSE_PORT_REMOTE, "");
 		Assert.assertEquals(99, builder.getFitnessePort());
 	}
+	
 	@Test
 	public void getPortShouldReturnRemotePortIfSpecified() {
 		HashMap<String, String> options = new HashMap<String, String>();
@@ -31,5 +32,32 @@ public class FitnesseBuilderTest {
 		
 		options.put(FitnesseBuilder.FITNESSE_PORT_LOCAL, "");
 		Assert.assertEquals(999, builder.getFitnessePort());
+	}
+	
+	@Test
+	public void getHostShouldReturnLocalHostIfStartBuildIsTrue() {
+		HashMap<String, String> options = new HashMap<String, String>();
+		options.put(FitnesseBuilder.START_FITNESSE, "True");
+		FitnesseBuilder builder = new FitnesseBuilder(options);
+		
+		Assert.assertTrue(builder.getFitnesseStart());
+		Assert.assertEquals("localhost", builder.getFitnesseHost());
+		
+		options.put(FitnesseBuilder.FITNESSE_HOST, "abracadabra");
+		Assert.assertEquals("localhost", builder.getFitnesseHost());
+	}
+	
+	@Test
+	public void getHostShouldReturnSpecifiedHostIfStartBuildIsFalse() {
+		HashMap<String, String> options = new HashMap<String, String>();
+		options.put(FitnesseBuilder.START_FITNESSE, "False");
+		options.put(FitnesseBuilder.FITNESSE_HOST, "hudson.local");
+		FitnesseBuilder builder = new FitnesseBuilder(options);
+		
+		Assert.assertFalse(builder.getFitnesseStart());
+		Assert.assertEquals("hudson.local", builder.getFitnesseHost());
+		
+		options.put(FitnesseBuilder.FITNESSE_HOST, "abracadabra");
+		Assert.assertEquals("abracadabra", builder.getFitnesseHost());
 	}
 }

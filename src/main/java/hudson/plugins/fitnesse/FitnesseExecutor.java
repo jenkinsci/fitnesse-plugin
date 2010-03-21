@@ -40,6 +40,7 @@ public class FitnesseExecutor {
     throws InterruptedException {
 		Proc fitnesseProc = null;
 		StdConsole console = new StdConsole();
+		build.addAction(getFitnesseBuildAction());
 		try {
 	    	if (builder.getFitnesseStart()) {
 	    		fitnesseProc = startFitnesse(launcher, environment, logger, console);
@@ -61,6 +62,13 @@ public class FitnesseExecutor {
 			killProc(logger, fitnesseProc);
 			console.logIncrementalOutput(logger);
 		}
+	}
+
+	private FitnesseBuildAction getFitnesseBuildAction() {
+		return new FitnesseBuildAction(
+				builder.getFitnesseStart(),
+				builder.getFitnesseHost(), 
+				builder.getFitnessePort());
 	}
 
 	private Proc startFitnesse(Launcher launcher, EnvVars envVars, PrintStream logger, StdConsole console) throws IOException {
@@ -212,7 +220,7 @@ public class FitnesseExecutor {
 
 	public URL getFitnessePageCmdURL() throws MalformedURLException {
 		return new URL("http", 
-				builder.getFitnesseStart() ? "localhost" : builder.getFitnesseHost(), 
+				builder.getFitnesseHost(), 
 				builder.getFitnessePort(), 
 				getFitnessePageCmd());
 	}
