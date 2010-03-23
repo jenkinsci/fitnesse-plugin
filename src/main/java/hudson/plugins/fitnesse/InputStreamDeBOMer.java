@@ -9,10 +9,13 @@ import java.io.InputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 /**
- * {@link http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4508058}
+ * The "need" for a DeBOMer is explained at 
+ * {@linkplain http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4508058}
  */
 public class InputStreamDeBOMer {
-	// http://www.unicode.org/faq/utf_bom.html#BOM
+	/**
+	 * BOM definitions at {@linkplain http://www.unicode.org/faq/utf_bom.html#BOM}
+	 */
 	public static final byte[] UTF8_BOM = new byte[] {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
 	public static final byte[] UTF32LE_BOM = new byte[] {(byte) 0xFF, (byte) 0xFE, (byte) 0x00, (byte) 0x00};
 	public static final byte[] UTF16LE_BOM = new byte[] {(byte) 0xFF, (byte) 0xFE};
