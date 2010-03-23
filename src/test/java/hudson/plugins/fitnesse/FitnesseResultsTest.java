@@ -7,23 +7,140 @@ import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * {@linkplain http://github.com/unclebob/fitnesse/blob/master/src/fit/Counts.java}
+ * The "official" spec for tallying Counts (the results of assertion elements within a single page) 
+ * into an overall Count (for the page as a whole) is hidden away in the fitnesse code base :-( 
+ * Here is the pseduo code from tallyCounts() in the URL above.
+ * - if any wrong assertions within page: page is wrong
+ * - else if any exceptions thrown by assertions within page: page is exception
+ * - else if any ignores within page and no right within page: page is ignore
+ * - else: page is right
+ */
 public class FitnesseResultsTest {
-	private static final Counts FIRST = new Counts("", "20100313174438", 1, 2, 3, 4);
-	private static final Counts SECOND = new Counts("", "20100313174439", 1, 2, 3, 4);
+	private static final FitnesseResults[] WRONG = new FitnesseResults[] { 
+		resultsForCounts(0, 1, 0, 0),
+		resultsForCounts(1, 1, 0, 0),
+		resultsForCounts(0, 1, 1, 0),
+		resultsForCounts(0, 1, 0, 1),
+		resultsForCounts(1, 1, 1, 0),
+		resultsForCounts(1, 1, 0, 1),
+		resultsForCounts(0, 1, 1, 1),
+		resultsForCounts(1, 1, 1, 1)
+	};
 	
-	private static final FitnesseResults RIGHT = new FitnesseResults(new Counts("", "20100320184439", 1, 0, 0, 0));
-	private static final FitnesseResults WRONG = new FitnesseResults(new Counts("", "20100320184439", 0, 1, 0, 0));
-	private static final FitnesseResults ALSO_WRONG = new FitnesseResults(new Counts("", "20100320184439", 1, 1, 0, 0));
-	private static final FitnesseResults IGNORED = new FitnesseResults(new Counts("", "20100320184439", 0, 0, 1, 0));
-	private static final FitnesseResults ALSO_IGNORED = new FitnesseResults(new Counts("", "20100320184439", 1, 0, 1, 0));
-	private static final FitnesseResults EXCEPTION = new FitnesseResults(new Counts("", "20100320184439", 0, 0, 0, 1));
-	private static final FitnesseResults ALSO_EXCEPTION = new FitnesseResults(new Counts("", "20100320184439", 1, 0, 0, 1));
-	private static final FitnesseResults NO_OP = new FitnesseResults(new Counts("", "20100320184439", 0, 0, 0, 0));
+	private static final FitnesseResults[] EXCEPTION = new FitnesseResults[] {
+		resultsForCounts(0, 0, 0, 1),
+		resultsForCounts(0, 0, 1, 1),
+		resultsForCounts(1, 0, 0, 1),
+		resultsForCounts(1, 0, 1, 1),
+	};
+	private static final FitnesseResults[] IGNORED = new FitnesseResults[] {
+		resultsForCounts(0, 0, 1, 0),
+		resultsForCounts(0, 0, 0, 0)
+	};
+	private static final FitnesseResults[] RIGHT = new FitnesseResults[] {
+		resultsForCounts(1, 0, 0, 0),
+		resultsForCounts(1, 0, 1, 0)
+	};
+
+	private static FitnesseResults resultsForCounts(int right, int wrong, int ignored, int exceptions) {
+		return new FitnesseResults(new Counts("", "20100320184439", right, wrong, ignored, exceptions)); 
+	}
+	
+	@Test
+	public void wrongCountsShouldBeFailedOverall() {
+		for (FitnesseResults results : WRONG) {
+			Assert.assertTrue(results.getDisplayName(), results.isFailedOverall());
+			Assert.assertFalse(results.getDisplayName(), results.isPassedOverall());
+			Assert.assertFalse(results.getDisplayName(), results.isSkippedOverall());
+		}
+	}
 
 	@Test
+	public void exceptionCountsShouldBeSkipped() {
+		for (FitnesseResults results : EXCEPTION) {
+			Assert.assertFalse(results.getDisplayName(), results.isFailedOverall());
+			Assert.assertTrue(results.getDisplayName(), results.isSkippedOverall());
+			Assert.assertFalse(results.getDisplayName(), results.isPassedOverall());
+		}
+	}
+	
+	@Test
+	public void ignoredCountsShouldBeSkipped() {
+		for (FitnesseResults results : IGNORED) {
+			Assert.assertFalse(results.getDisplayName(), results.isFailedOverall());
+			Assert.assertTrue(results.getDisplayName(), results.isSkippedOverall());
+			Assert.assertFalse(results.getDisplayName(), results.isPassedOverall());
+		}
+	}
+	
+	@Test
+	public void rightCountsShouldBePassed() {
+		for (FitnesseResults results : RIGHT) {
+			Assert.assertFalse(results.getDisplayName(), results.isFailedOverall());
+			Assert.assertFalse(results.getDisplayName(), results.isSkippedOverall());
+			Assert.assertTrue(results.getDisplayName(), results.isPassedOverall());
+		}
+	}
+	
+	@Test
+	public void failedTestsShouldIncludeCountsWrong() {
+		FitnesseResults summary = setUpSummaryResults();
+		Collection<FitnesseResults> failedTests = summary.getFailedTests();
+		Assert.assertEquals(WRONG.length, failedTests.size());
+		for (FitnesseResults results : WRONG) {
+			Assert.assertTrue(results.getDisplayName(), failedTests.contains(results));
+		}
+	}
+
+	@Test
+	public void skippedTestsShouldIncludeCountsIgnoredOrExceptions() {
+		FitnesseResults summary = setUpSummaryResults();
+		Collection<FitnesseResults> skippedTests = summary.getSkippedTests();
+		Assert.assertEquals(EXCEPTION.length + IGNORED.length, skippedTests.size());
+		for (FitnesseResults results : EXCEPTION) {
+			Assert.assertTrue(results.getDisplayName(), skippedTests.contains(results));
+		}
+		for (FitnesseResults results : IGNORED) {
+			Assert.assertTrue(results.getDisplayName(), skippedTests.contains(results));
+		}
+	}
+
+	@Test
+	public void passedTestsShouldIncludeCountsRight() {
+		FitnesseResults summary = setUpSummaryResults();
+		Collection<FitnesseResults> passedTests = summary.getPassedTests();
+		Assert.assertEquals(RIGHT.length, passedTests.size());
+		for (FitnesseResults results : RIGHT) {
+			Assert.assertTrue(results.getDisplayName(), passedTests.contains(results));
+		}
+	}
+
+	private FitnesseResults setUpSummaryResults() {
+		FitnesseResults summary = new FitnesseResults((Counts)null);
+		for (FitnesseResults results : RIGHT) {
+			summary.addDetail(results);
+		}
+		for (FitnesseResults results : WRONG) {
+			summary.addDetail(results);
+		}
+		for (FitnesseResults results : IGNORED) {
+			summary.addDetail(results);
+		}
+		for (FitnesseResults results : EXCEPTION) {
+			summary.addDetail(results);
+		}
+		return summary;
+	}
+
+	private static final Counts BEFORE = new Counts("", "20100313174438", 1, 2, 3, 4);
+	private static final Counts AFTER = new Counts("", "20100313174439", 1, 2, 3, 4);
+	
+	@Test
 	public void isEarlierThanShouldDependOnCounts() {
-		FitnesseResults first = new FitnesseResults(FIRST);
-		FitnesseResults second = new FitnesseResults(SECOND);
+		FitnesseResults first = new FitnesseResults(BEFORE);
+		FitnesseResults second = new FitnesseResults(AFTER);
 		Assert.assertTrue(first.isEarlierThan(second));
 		Assert.assertFalse(second.isEarlierThan(first));
 		Assert.assertFalse(second.isEarlierThan(second));
@@ -31,8 +148,8 @@ public class FitnesseResultsTest {
 	
 	@Test
 	public void isLaterThanShouldDependOnCounts() {
-		FitnesseResults first = new FitnesseResults(FIRST);
-		FitnesseResults second = new FitnesseResults(SECOND);
+		FitnesseResults first = new FitnesseResults(BEFORE);
+		FitnesseResults second = new FitnesseResults(AFTER);
 		Assert.assertTrue(second.isLaterThan(first));
 		Assert.assertFalse(first.isLaterThan(second));
 		Assert.assertFalse(first.isLaterThan(first));
@@ -40,8 +157,8 @@ public class FitnesseResultsTest {
 
 	@Test
 	public void secondsAfterThanShouldDependOnCounts() {
-		FitnesseResults first = new FitnesseResults(FIRST);
-		FitnesseResults second = new FitnesseResults(SECOND);
+		FitnesseResults first = new FitnesseResults(BEFORE);
+		FitnesseResults second = new FitnesseResults(AFTER);
 		Assert.assertEquals(1000, second.millisAfter(first));
 		Assert.assertEquals(-1000, first.millisAfter(second));
 		Assert.assertEquals(0, second.millisAfter(second));
@@ -49,53 +166,11 @@ public class FitnesseResultsTest {
 	
 	@Test
 	public void durationShouldBeDifferenceBetweenEarliestAndLatestResults() {
-		FitnesseResults first = new FitnesseResults(FIRST);
-		FitnesseResults second = new FitnesseResults(SECOND);
+		FitnesseResults first = new FitnesseResults(BEFORE);
+		FitnesseResults second = new FitnesseResults(AFTER);
 		FitnesseResults summary = new FitnesseResults((Counts)null);
 		summary.addDetail(first);
 		summary.addDetail(second);
 		Assert.assertEquals(1.0f, summary.getDuration());
-	}
-	
-	@Test
-	public void failedTestsShouldIncludeResultsWithFailures() {
-		FitnesseResults summary = setUpSummaryResults();
-		Collection<FitnesseResults> failedTests = summary.getFailedTests();
-		Assert.assertEquals(2, failedTests.size());
-		Assert.assertTrue(failedTests.contains(WRONG));
-		Assert.assertTrue(failedTests.contains(ALSO_WRONG));
-	}
-
-	@Test
-	public void skippedTestsShouldIncludeResultsIgnoredWithExceptionsOrWithNoTotal() {
-		FitnesseResults summary = setUpSummaryResults();
-		Collection<FitnesseResults> skippedTests = summary.getSkippedTests();
-		Assert.assertEquals(5, skippedTests.size());
-		Assert.assertTrue(skippedTests.contains(IGNORED));
-		Assert.assertTrue(skippedTests.contains(ALSO_IGNORED));
-		Assert.assertTrue(skippedTests.contains(EXCEPTION));
-		Assert.assertTrue(skippedTests.contains(ALSO_EXCEPTION));
-		Assert.assertTrue(skippedTests.contains(NO_OP));
-	}
-
-	@Test
-	public void passedTestsShouldIncludeResultsWithAllRight() {
-		FitnesseResults summary = setUpSummaryResults();
-		Collection<FitnesseResults> passedTests = summary.getPassedTests();
-		Assert.assertEquals(1, passedTests.size());
-		Assert.assertTrue(passedTests.contains(RIGHT));
-	}
-
-	private FitnesseResults setUpSummaryResults() {
-		FitnesseResults summary = new FitnesseResults((Counts)null);
-		summary.addDetail(RIGHT);
-		summary.addDetail(WRONG);
-		summary.addDetail(ALSO_WRONG);
-		summary.addDetail(IGNORED);
-		summary.addDetail(ALSO_IGNORED);
-		summary.addDetail(EXCEPTION);
-		summary.addDetail(ALSO_EXCEPTION);
-		summary.addDetail(NO_OP);
-		return summary;
 	}
 }

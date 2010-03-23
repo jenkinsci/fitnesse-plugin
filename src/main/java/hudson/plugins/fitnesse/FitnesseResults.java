@@ -118,7 +118,26 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	public int getExceptionCount() {
 		return pageCounts.exceptions;
 	}
+
+	public boolean isFailedOverall() {
+		return getFailCount() > 0;
+	}
+
+	public boolean isPassedOverall() {
+		return isPassed();
+	}
 	
+	@Override
+	public boolean isPassed() {
+		return !isFailedOverall() && !isSkippedOverall();
+	}
+
+	public boolean isSkippedOverall() {
+		if (isFailedOverall()) return false;
+		if (getExceptionCount() > 0) return true;
+		return getPassCount() == 0;
+	}
+
 	@Override
 	public float getDuration() {
 		if (durationInMillis == -1) calculateDurationInMillis();
@@ -198,7 +217,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 		if (failed == null) {
 			failed = filteredCopyOfDetails(new ResultsFilter() {
 				public boolean include(FitnesseResults results) {
-					return results.getFailCount() > 0;
+					return results.isFailedOverall();
 				}
 			});
 		}
@@ -209,8 +228,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 		if (passed == null) {
 			passed = filteredCopyOfDetails(new ResultsFilter() {
 				public boolean include(FitnesseResults results) {
-					return results.getPassCount() > 0 &&
-					results.getPassCount() == results.getTotalCount();
+					return results.isPassedOverall();
 				}
 			});
 		}
@@ -222,8 +240,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 		if (skipped == null) {
 			skipped = filteredCopyOfDetails(new ResultsFilter() {
 				public boolean include(FitnesseResults results) {
-					return results.getTotalCount() == 0
-					|| (results.getFailCount() == 0 && results.getSkipCount() > 0);
+					return results.isSkippedOverall();
 				}
 			});
 		}
