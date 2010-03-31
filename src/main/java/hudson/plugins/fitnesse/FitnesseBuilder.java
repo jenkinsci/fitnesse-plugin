@@ -61,7 +61,7 @@ public class FitnesseBuilder extends Builder {
     private String getOption(String key, String valueIfKeyNotFound) {
     	if (options.containsKey(key)) {
     		String value = options.get(key);
-    		if (value!=null && value != "") return value; 
+    		if (value!=null && !"".equals(value)) return value; 
     	}
     	return valueIfKeyNotFound;
     }
