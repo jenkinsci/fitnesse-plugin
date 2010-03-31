@@ -16,7 +16,8 @@ import java.util.List;
 
 public class FitnesseResults extends TestResult implements Comparable<FitnesseResults>{
 	private static final long serialVersionUID = 1L;
-	private transient long durationInMillis = -1;
+	private transient boolean durationCalculated;
+	private transient long durationInMillis;
 	private transient List<FitnesseResults> failed = null;
 	private transient List<FitnesseResults> skipped = null;
 	private transient List<FitnesseResults> passed = null;
@@ -62,7 +63,9 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	
 	@Override
 	public AbstractBuild<?, ?> getOwner() {
-		return owner;
+		if (owner != null) return owner;
+		if (parent != null) return parent.getOwner();
+		return null;
 	}
 
 	@Override
@@ -140,7 +143,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 
 	@Override
 	public float getDuration() {
-		if (durationInMillis == -1) calculateDurationInMillis();
+		if (!durationCalculated) calculateDurationInMillis();
 		return durationInMillis / 1000.0f;
 	}
 
@@ -159,6 +162,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 			}
 		}
 		durationInMillis = latest.millisAfter(earliest);
+		durationCalculated = true;
 	}
 
 	public boolean isEarlierThan(FitnesseResults other) {

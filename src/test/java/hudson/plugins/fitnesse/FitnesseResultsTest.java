@@ -1,8 +1,8 @@
 package hudson.plugins.fitnesse;
 
-import java.util.Collection;
-
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
+
+import java.util.Collection;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -51,36 +51,36 @@ public class FitnesseResultsTest {
 	@Test
 	public void wrongCountsShouldBeFailedOverall() {
 		for (FitnesseResults results : WRONG) {
-			Assert.assertTrue(results.getDisplayName(), results.isFailedOverall());
-			Assert.assertFalse(results.getDisplayName(), results.isPassedOverall());
-			Assert.assertFalse(results.getDisplayName(), results.isSkippedOverall());
+			Assert.assertTrue(results.getHeadlineText(), results.isFailedOverall());
+			Assert.assertFalse(results.getHeadlineText(), results.isPassedOverall());
+			Assert.assertFalse(results.getHeadlineText(), results.isSkippedOverall());
 		}
 	}
 
 	@Test
 	public void exceptionCountsShouldBeSkipped() {
 		for (FitnesseResults results : EXCEPTION) {
-			Assert.assertFalse(results.getDisplayName(), results.isFailedOverall());
-			Assert.assertTrue(results.getDisplayName(), results.isSkippedOverall());
-			Assert.assertFalse(results.getDisplayName(), results.isPassedOverall());
+			Assert.assertFalse(results.getHeadlineText(), results.isFailedOverall());
+			Assert.assertTrue(results.getHeadlineText(), results.isSkippedOverall());
+			Assert.assertFalse(results.getHeadlineText(), results.isPassedOverall());
 		}
 	}
 	
 	@Test
 	public void ignoredCountsShouldBeSkipped() {
 		for (FitnesseResults results : IGNORED) {
-			Assert.assertFalse(results.getDisplayName(), results.isFailedOverall());
-			Assert.assertTrue(results.getDisplayName(), results.isSkippedOverall());
-			Assert.assertFalse(results.getDisplayName(), results.isPassedOverall());
+			Assert.assertFalse(results.getHeadlineText(), results.isFailedOverall());
+			Assert.assertTrue(results.getHeadlineText(), results.isSkippedOverall());
+			Assert.assertFalse(results.getHeadlineText(), results.isPassedOverall());
 		}
 	}
 	
 	@Test
 	public void rightCountsShouldBePassed() {
 		for (FitnesseResults results : RIGHT) {
-			Assert.assertFalse(results.getDisplayName(), results.isFailedOverall());
-			Assert.assertFalse(results.getDisplayName(), results.isSkippedOverall());
-			Assert.assertTrue(results.getDisplayName(), results.isPassedOverall());
+			Assert.assertFalse(results.getHeadlineText(), results.isFailedOverall());
+			Assert.assertFalse(results.getHeadlineText(), results.isSkippedOverall());
+			Assert.assertTrue(results.getHeadlineText(), results.isPassedOverall());
 		}
 	}
 	
@@ -90,7 +90,7 @@ public class FitnesseResultsTest {
 		Collection<FitnesseResults> failedTests = summary.getFailedTests();
 		Assert.assertEquals(WRONG.length, failedTests.size());
 		for (FitnesseResults results : WRONG) {
-			Assert.assertTrue(results.getDisplayName(), failedTests.contains(results));
+			Assert.assertTrue(results.getHeadlineText(), failedTests.contains(results));
 		}
 	}
 
@@ -100,10 +100,10 @@ public class FitnesseResultsTest {
 		Collection<FitnesseResults> skippedTests = summary.getSkippedTests();
 		Assert.assertEquals(EXCEPTION.length + IGNORED.length, skippedTests.size());
 		for (FitnesseResults results : EXCEPTION) {
-			Assert.assertTrue(results.getDisplayName(), skippedTests.contains(results));
+			Assert.assertTrue(results.getHeadlineText(), skippedTests.contains(results));
 		}
 		for (FitnesseResults results : IGNORED) {
-			Assert.assertTrue(results.getDisplayName(), skippedTests.contains(results));
+			Assert.assertTrue(results.getHeadlineText(), skippedTests.contains(results));
 		}
 	}
 
@@ -113,7 +113,7 @@ public class FitnesseResultsTest {
 		Collection<FitnesseResults> passedTests = summary.getPassedTests();
 		Assert.assertEquals(RIGHT.length, passedTests.size());
 		for (FitnesseResults results : RIGHT) {
-			Assert.assertTrue(results.getDisplayName(), passedTests.contains(results));
+			Assert.assertTrue(results.getHeadlineText(), passedTests.contains(results));
 		}
 	}
 
