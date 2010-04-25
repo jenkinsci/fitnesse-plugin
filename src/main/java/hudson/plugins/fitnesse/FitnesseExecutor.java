@@ -42,7 +42,7 @@ public class FitnesseExecutor {
 		build.addAction(getFitnesseBuildAction());
 		try {
 	    	if (builder.getFitnesseStart()) {
-	    		fitnesseProc = startFitnesse(launcher, environment, logger, console);
+	    		fitnesseProc = startFitnesse(build, launcher, environment, logger, console);
 	    		if (!procStarted(fitnesseProc, logger, console)) {
     				return false;
 	    		}
@@ -70,24 +70,29 @@ public class FitnesseExecutor {
 				builder.getFitnessePort());
 	}
 
-	private Proc startFitnesse(Launcher launcher, EnvVars envVars, PrintStream logger, StdConsole console) throws IOException {
+	private Proc startFitnesse(AbstractBuild<?,?> build, Launcher launcher, EnvVars envVars, PrintStream logger, StdConsole console) throws IOException {
 		logger.println("Starting new Fitnesse instance...");
-		ProcStarter procStarter = launcher.launch().cmds(getJavaCmd(envVars));
-		procStarter.pwd(new File(builder.getFitnesseJavaWorkingDirectory()));
+		ProcStarter procStarter = launcher.launch().cmds(getJavaCmd(getWorkingDirectory(build), envVars));
+		procStarter.pwd(new File(getAbsolutePathToFileThatMayBeRelativeToWorkspace(getWorkingDirectory(build), builder.getFitnesseJavaWorkingDirectory())));
     	console.provideStdOutAndStdErrFor(procStarter);
 		return procStarter.start();
     }
 
-	public ArrayList<String> getJavaCmd(EnvVars envVars) {
+	public ArrayList<String> getJavaCmd(FilePath workingDirectory, EnvVars envVars) {
 		String java = "java"; 
 		if (envVars.containsKey("JAVA_HOME"))
 			java = new File(new File(envVars.get("JAVA_HOME"), "bin"), java).getAbsolutePath();
 		String fitnesseJavaOpts = builder.getFitnesseJavaOpts();
 		String[] java_opts = ("".equals(fitnesseJavaOpts) ? new String[0] : fitnesseJavaOpts.split(" "));
-		String[] jar_opts = {"-jar", builder.getFitnessePathToJar()};
-		String[] fitnesse_opts = {"-d", getFitnesseDir(), 
-				"-r", getFitnesseRoot(), 
+
+		String absolutePathToFitnesseJar = getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, builder.getFitnessePathToJar());
+		String[] jar_opts = {"-jar", absolutePathToFitnesseJar};
+		
+		File fitNesseRoot = new File(getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, builder.getFitnessePathToRoot()));
+		String[] fitnesse_opts = {"-d", fitNesseRoot.getParent(), 
+				"-r", fitNesseRoot.getName(), 
 				"-p", Integer.toString(builder.getFitnessePort())};
+	
 		ArrayList<String> cmd = new ArrayList<String>();
 		cmd.add(java);
 		if (java_opts.length > 0) cmd.addAll(Arrays.asList(java_opts));
@@ -97,14 +102,6 @@ public class FitnesseExecutor {
 		return cmd;
 	}
     
-	public String getFitnesseDir() {
-		return new File(builder.getFitnessePathToRoot()).getParentFile().getAbsolutePath();
-	}
-	
-	public String getFitnesseRoot() {
-		return new File(builder.getFitnessePathToRoot()).getName();
-	}
-
 	private boolean procStarted(Proc fitnesseProc, PrintStream log, StdConsole console) throws IOException, InterruptedException {
 		if (fitnesseProc.isAlive()) {
 			return fitnesseStarted(log, console, STARTUP_TIMEOUT_MILLIS);
@@ -263,18 +260,21 @@ public class FitnesseExecutor {
 		if (workspace != null) return workspace;
 		return new FilePath(build.getRootDir());
 	}
-
+	
 	static FilePath getResultsFilePath(FilePath workingDirectory, String fileName) {
 		File fileNameFile = new File(fileName);
 		
 		if (fileNameFile.getParent() != null) {
-			if (fileNameFile.exists()) {
-				return new FilePath(fileNameFile);
-			} else if (fileNameFile.getParent() != null && fileNameFile.getParentFile().exists()) {
+			if (fileNameFile.exists() || fileNameFile.getParentFile().exists()) {
 				return new FilePath(fileNameFile);
 			}
 		}
 		
 		return workingDirectory.child(fileName);
+	}
+	
+	static String getAbsolutePathToFileThatMayBeRelativeToWorkspace(FilePath workingDirectory, String fileName) {
+		if (new File(fileName).exists()) return fileName;
+		return new File(workingDirectory.getRemote(), fileName).getAbsolutePath();
 	}
 }

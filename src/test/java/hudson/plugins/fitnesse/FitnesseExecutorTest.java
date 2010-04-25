@@ -19,6 +19,7 @@ import org.junit.Test;
 public class FitnesseExecutorTest {
 
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+	private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
 	
 	private FitnesseExecutor executor;
 
@@ -29,90 +30,104 @@ public class FitnesseExecutorTest {
 		}
 		return new FitnesseExecutor(new FitnesseBuilder(options));
 	}
-	
-	@Test
-	public void fitnesseDirShouldBeParentOfFitNesseRoot() throws IOException {
-		File fitnesseRoot = File.createTempFile("child", "");
-		executor = getExecutorForBuilder(
-				new String[] {FitnesseBuilder.PATH_TO_ROOT},
-				new String[] {fitnesseRoot.getAbsolutePath()});
-		Assert.assertEquals(fitnesseRoot.getParentFile().getAbsolutePath(), 
-				executor.getFitnesseDir());
-	}
-
-	@Test
-	public void fitnesseRootShouldNotBePath() throws IOException {
-		File fitnesseRoot = File.createTempFile("FitNesseRoot", "");
-		executor = getExecutorForBuilder(
-				new String[] {FitnesseBuilder.PATH_TO_ROOT},
-				new String[] {fitnesseRoot.getAbsolutePath()});
-		Assert.assertEquals(fitnesseRoot.getName(), 
-				executor.getFitnesseRoot());
-	}
 
 	@Test
 	public void javaCmdShouldIncludeJarAndDirAndRootAndPort() throws IOException {
-		File fitnesseRoot = File.createTempFile("FitNesseRoot", "");
 		executor = getExecutorForBuilder(
 				new String[] {FitnesseBuilder.JAVA_OPTS, FitnesseBuilder.PATH_TO_ROOT, 
 						FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT},
-				new String[] {"", fitnesseRoot.getAbsolutePath(), 
-						"fitnesseJar", "9999"});
-		ArrayList<String> cmd = executor.getJavaCmd(new EnvVars());
+				new String[] {"", getTestResourceFitNesseRoot(), 
+						getTestResourceFitnesseJar(), "9999"});
+		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
+		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory, new EnvVars());
 		
 		Assert.assertEquals("java", cmd.get(0));
 		Assert.assertEquals("-jar", cmd.get(1));
-		Assert.assertEquals("fitnesseJar", cmd.get(2));
+		Assert.assertEquals(getTestResourceFitnesseJar(), cmd.get(2));
 		Assert.assertEquals("-d", cmd.get(3));
-		Assert.assertEquals(executor.getFitnesseDir(), cmd.get(4));
+		Assert.assertEquals(new File(getTestResourceFitNesseRoot()).getParent(), cmd.get(4));
 		Assert.assertEquals("-r", cmd.get(5));
-		Assert.assertEquals(executor.getFitnesseRoot(), cmd.get(6));
+		Assert.assertEquals("FitNesseRoot", cmd.get(6));
 		Assert.assertEquals("-p", cmd.get(7));
 		Assert.assertEquals("9999", cmd.get(8));
 	}
 
+	private static String getTestResourceFitnesseJar() {
+		return new File(new File(System.getProperty("user.dir")), 
+				"target/test-classes/fitnesse.jar").getAbsolutePath();
+	}
+	
+	private static String getTestResourceFitNesseRoot() {
+		return new File(new File(System.getProperty("user.dir")), 
+		"target/test-classes/FitNesseRoot").getAbsolutePath();
+	}
+
 	@Test
 	public void javaCmdShouldIncludeJavaOpts() throws IOException {
-		File fitnesseRoot = File.createTempFile("FitNesseRoot", "");
 		executor = getExecutorForBuilder(
-				new String[] {FitnesseBuilder.JAVA_OPTS, FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT},
-				new String[] {"-Da=b", fitnesseRoot.getAbsolutePath(), "fitnesseJar", "9999"});
-		ArrayList<String> cmd = executor.getJavaCmd(new EnvVars());
+				new String[] {FitnesseBuilder.JAVA_OPTS, FitnesseBuilder.PATH_TO_ROOT, 
+							FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT},
+				new String[] {"-Da=b", getTestResourceFitNesseRoot(), 
+							getTestResourceFitnesseJar(), "9999"});
+
+		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
+		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory, new EnvVars());
 		
 		Assert.assertEquals("java", cmd.get(0));
 		Assert.assertEquals("-Da=b", cmd.get(1));
 		Assert.assertEquals("-jar", cmd.get(2));
-		Assert.assertEquals("fitnesseJar", cmd.get(3));
+		Assert.assertEquals(getTestResourceFitnesseJar(), cmd.get(3));
 		Assert.assertEquals("-d", cmd.get(4));
-		Assert.assertEquals(executor.getFitnesseDir(), cmd.get(5));
+		Assert.assertEquals(new File(getTestResourceFitNesseRoot()).getParent(), cmd.get(5));
 		Assert.assertEquals("-r", cmd.get(6));
-		Assert.assertEquals(executor.getFitnesseRoot(), cmd.get(7));
+		Assert.assertEquals("FitNesseRoot", cmd.get(7));
 		Assert.assertEquals("-p", cmd.get(8));
 		Assert.assertEquals("9999", cmd.get(9));
 	}
 
 	@Test
 	public void javaCmdShouldReferenceJAVAHOME() throws IOException {
-		File fitnesseRoot = File.createTempFile("FitNesseRoot", "");
 		File javaHome = File.createTempFile("JavaHome", "");
 		executor = getExecutorForBuilder(
 				new String[] {FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT},
-				new String[] {fitnesseRoot.getAbsolutePath(), "fitnesseJar", "9876"});
+				new String[] {getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9876"});
 		
 		EnvVars envVars = new EnvVars();
 		envVars.put("JAVA_HOME", javaHome.getAbsolutePath());
-		ArrayList<String> cmd = executor.getJavaCmd(envVars);
+		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
+		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory, envVars);
 		
 		Assert.assertEquals(new File(new File(javaHome, "bin"), "java").getAbsolutePath(), 
 				cmd.get(0));
 		Assert.assertEquals("-jar", cmd.get(1));
-		Assert.assertEquals("fitnesseJar", cmd.get(2));
+		Assert.assertEquals(getTestResourceFitnesseJar(), cmd.get(2));
 		Assert.assertEquals("-d", cmd.get(3));
-		Assert.assertEquals(executor.getFitnesseDir(), cmd.get(4));
+		Assert.assertEquals(new File(getTestResourceFitNesseRoot()).getParent(), cmd.get(4));
 		Assert.assertEquals("-r", cmd.get(5));
-		Assert.assertEquals(executor.getFitnesseRoot(), cmd.get(6));
+		Assert.assertEquals("FitNesseRoot", cmd.get(6));
 		Assert.assertEquals("-p", cmd.get(7));
 		Assert.assertEquals("9876", cmd.get(8));
+	}
+
+	@Test
+	public void javaCmdShouldHandleRelativePaths() throws IOException {
+		FitnesseExecutor executor = getExecutorForBuilder(
+				new String[] {FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT},
+				new String[] {"FitNesseRoot", "fitnesse.jar", "9000"});
+		
+		EnvVars envVars = new EnvVars();
+		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
+		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory, envVars);
+
+		Assert.assertEquals("java", cmd.get(0));
+		Assert.assertEquals("-jar", cmd.get(1));
+		Assert.assertEquals(new File(TMP_DIR, "fitnesse.jar").getAbsolutePath(), cmd.get(2));
+		Assert.assertEquals("-d", cmd.get(3));
+		Assert.assertEquals(TMP_DIR, cmd.get(4));
+		Assert.assertEquals("-r", cmd.get(5));
+		Assert.assertEquals("FitNesseRoot", cmd.get(6));
+		Assert.assertEquals("-p", cmd.get(7));
+		Assert.assertEquals("9000", cmd.get(8));
 	}
 
 	@Test
@@ -246,5 +261,28 @@ public class FitnesseExecutorTest {
 		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, xmlFile.getPath());
 		Assert.assertEquals(workingDirectory.child(xmlFile.getPath()).getRemote(), 
 				resultsFilePath.getRemote());
+	}
+	
+	@Test
+	public void absolutePathForFileThatExistsShouldBeFilePath() throws Exception {
+		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
+		File tmpFile = File.createTempFile("fitnesse", ".jar");
+		Assert.assertEquals(tmpFile.getAbsolutePath(), 
+				FitnesseExecutor.getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, tmpFile.getAbsolutePath()));
+	}
+	
+	@Test
+	public void absolutePathForFileThatDoesntExistShouldBeRelative() throws Exception {
+		File localPath = new File(System.getProperty("user.home"));
+		FilePath workingDirectory = new FilePath(localPath);
+		String relativePath = "fitnesse.jar";
+		Assert.assertEquals(new File(localPath, relativePath).getAbsolutePath(), 
+				FitnesseExecutor.getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, relativePath));
+		relativePath = "jars/fitnesse.jar";
+		Assert.assertEquals(new File(localPath, relativePath).getAbsolutePath(), 
+				FitnesseExecutor.getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, relativePath));
+		relativePath = "/jars/fitnesse.jar";
+		Assert.assertEquals(new File(localPath, relativePath).getAbsolutePath(), 
+				FitnesseExecutor.getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, relativePath));
 	}
 }
