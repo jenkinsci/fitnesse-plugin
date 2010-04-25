@@ -81,9 +81,18 @@ public class FitnesseBuilderTest {
 		Assert.assertEquals(tmpFile.getParentFile().getAbsolutePath(), 
 				builder.getFitnesseJavaWorkingDirectory());
 		
-		options.put(FitnesseBuilder.JAVA_WORKING_DIRECTORY, tmpFile.getAbsolutePath());
-		Assert.assertEquals(tmpFile.getAbsolutePath(), 
-				builder.getFitnesseJavaWorkingDirectory());
+		options.put(FitnesseBuilder.JAVA_WORKING_DIRECTORY, "/some/explicit/path");
+		Assert.assertEquals("/some/explicit/path", builder.getFitnesseJavaWorkingDirectory());
+	}	
+	
+	@Test
+	public void getJavaWorkingDirShouldReturnParentOfFitnessseJarEvenIfRelativeToBuildDir() throws Exception {
+		HashMap<String, String> options = new HashMap<String, String>();
+		File tmpFile = new File("relativePath", "fitnesse.jar");
+		options.put(FitnesseBuilder.PATH_TO_JAR, tmpFile.getPath());
+		
+		FitnesseBuilder builder = new FitnesseBuilder(options);
+		Assert.assertEquals("relativePath", builder.getFitnesseJavaWorkingDirectory());
 	}
 	
 	@Test
