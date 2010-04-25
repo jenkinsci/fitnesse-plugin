@@ -1,0 +1,3 @@
+|comment|
+|$id=|echo|20|
+|check|echo|id=$id|id=20|
