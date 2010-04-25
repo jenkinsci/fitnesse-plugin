@@ -46,12 +46,6 @@ public class BuilderDescriptorImplTest {
 	}
 	
 	@Test
-	public void nonExistentFitnesseJarShouldBeWarning() throws Exception {
-		Assert.assertEquals(Kind.WARNING, 
-			descriptor.doCheckFitnessePathToJar("aldhfashf").kind);
-	}
-
-	@Test
 	public void incorrectlyEndedFitnesseJarShouldBeWarning() throws Exception {
 		File tmpFile = File.createTempFile("fitnesse", "notDotJar");
 		File fitnessedotJar = new File(tmpFile.getParentFile(), "fitnesse.jar");
