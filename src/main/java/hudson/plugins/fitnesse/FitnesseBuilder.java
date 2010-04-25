@@ -92,8 +92,17 @@ public class FitnesseBuilder extends Builder {
      * referenced in config.jelly
      */
     public String getFitnesseJavaWorkingDirectory() {
-    	return getOption(JAVA_WORKING_DIRECTORY, 
-    		"".equals(getFitnessePathToJar()) ? "" : new File(getFitnessePathToJar()).getParentFile().getAbsolutePath());
+    	String fitnessePathToJar = getFitnessePathToJar(), fitnesseJarDir = "";
+    	if (!"".equals(fitnessePathToJar)) {
+    		File jarFile = new File(fitnessePathToJar);
+			if (jarFile.exists()) {
+    			fitnesseJarDir = jarFile.getParentFile().getAbsolutePath();
+			} else { 
+				fitnesseJarDir = jarFile.getParent();
+				if (fitnesseJarDir == null) fitnesseJarDir = "";
+    		}
+    	}
+    	return getOption(JAVA_WORKING_DIRECTORY, fitnesseJarDir);
     }
 
     /**
@@ -110,14 +119,14 @@ public class FitnesseBuilder extends Builder {
      * referenced in config.jelly
      */
     public String getFitnessePathToJar() {
-		return getOption(PATH_TO_JAR, "");
+		return getOption(PATH_TO_JAR, "fitnesse.jar");
 	}
 
     /**
      * referenced in config.jelly
      */
     public String getFitnessePathToRoot() {
-    	return getOption(PATH_TO_ROOT, "");
+    	return getOption(PATH_TO_ROOT, "FitNesseRoot");
     }
 
     /**
@@ -138,7 +147,7 @@ public class FitnesseBuilder extends Builder {
      * referenced in config.jelly
      */
     public String getFitnessePathToXmlResultsOut() {
-    	return getOption(PATH_TO_RESULTS, "");
+    	return getOption(PATH_TO_RESULTS, "fitnesse-results.xml");
     }
 
     /**
@@ -209,8 +218,6 @@ public class FitnesseBuilder extends Builder {
         public FormValidation doCheckFitnessePathToJar(@QueryParameter String value) throws IOException, ServletException {
     		if (value.length()==0)
     			return FormValidation.error("Please specify the path to 'fitnesse.jar'.");
-    		if (! new File(value).exists())
-    			return FormValidation.warning("Path does not exist.");
     		if (!value.endsWith("fitnesse.jar")
     				&& new File(value, "fitnesse.jar").exists())
     			return FormValidation.warning("Path does not end with 'fitnesse.jar': is that correct?");
