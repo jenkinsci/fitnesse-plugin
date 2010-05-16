@@ -1,8 +1,16 @@
 package hudson.plugins.fitnesse;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import hudson.model.Action;
 import hudson.model.InvisibleAction;
 
+/**
+ * Used to store part of the project config with the build to which it relates
+ * so that a-links can be constructed to fitnesse hosts that are already running 
+ * (when fitnesse was not started by the build). 
+ */
 public class FitnesseBuildAction extends InvisibleAction implements Action {
 
 	public static final FitnesseBuildAction NULL_ACTION = new FitnesseBuildAction(true, null, 0);
@@ -26,7 +34,10 @@ public class FitnesseBuildAction extends InvisibleAction implements Action {
 		
 		String host = fitnesseHost;
 		if (hudsonHost != null && FitnesseBuilder._LOCALHOST.equals(fitnesseHost)) {
-			host = hudsonHost;
+			try {
+				host = new URL(hudsonHost).getHost();
+			} catch (MalformedURLException e) {
+			}
 		}
 		return String.format("<a href=\"http://%s:%s/%s\">%s</a>", 
 				host, fitnessePort, fitnessePage, fitnessePage);
