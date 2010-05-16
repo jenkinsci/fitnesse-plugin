@@ -35,16 +35,25 @@ public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResu
 		return results;
 	}
 
+	/**
+	 * {@link Action}
+	 */
 	@Override
 	public String getUrlName() {
 		return "fitnesseReport";
 	}
 
+	/**
+	 * {@link Action}
+	 */
 	@Override
 	public String getDisplayName() {
 		return "FitNesse Results";
 	}
 
+	/**
+	 * {@link Action}
+	 */
 	@Override
 	public String getIconFileName() {
 		return "/plugin/fitnesse/icons/fitnesselogo-32x32.gif";
@@ -57,4 +66,11 @@ public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResu
 		return results;
 	}
 
+	/**
+	 * Referenced in summary.jelly and FitnesseProjectAction/jobMain.jelly
+	 */
+	public String getSummary() {
+		return String.format("(%s, %d pages: %d wrong, %d ignored or with exceptions)", 
+				getResult().getName(), getTotalCount(), getFailCount(), getSkipCount());
+	}
 }
