@@ -4,7 +4,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.Hudson;
 import hudson.model.ModelObject;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
-import hudson.tasks.test.AbstractTestResultAction;
 import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResult;
 
@@ -13,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
 public class FitnesseResults extends TestResult implements Comparable<FitnesseResults>{
 	private static final long serialVersionUID = 1L;
@@ -198,17 +200,26 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	}
 
 	/**
-	 * {@link TestObject}
-	 * Required to prevent TestResult.getParentAction looking for any old AbstractTestResultAction
+	 * {@see TestObject#getTestResultAction()}
+	 * Required to prevent looking for any old AbstractTestResultAction
 	 * when e.g. looking for history across multiple builds 
 	 */
 	@Override
-	public AbstractTestResultAction<?> getTestResultAction() {
-		if (super.getTestResultAction() == null) return null;
+	public FitnesseResultsAction getTestResultAction() {
+		return getParentAction();
+	}
+
+	/**
+	 * {@see TestResult#getParentAction()}
+	 * Required to prevent looking for any old AbstractTestResultAction
+	 * when e.g. looking for history across multiple builds 
+	 */
+	@Override
+	public FitnesseResultsAction getParentAction() {
 		FitnesseResultsAction action = getOwner().getAction(FitnesseResultsAction.class);
 		return action;
 	}
-
+		
 	/**
 	 * {@link Comparable}
 	 */
@@ -275,6 +286,15 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 			buildAction = FitnesseBuildAction.NULL_ACTION;
 		}
 		return buildAction.getLinkFor(results.getName(), Hudson.getInstance().getRootUrl());
+	}
+	
+	/**
+	 * called from links embedded in history/trend graphs 
+	 * TODO: Expose sub-suites as separate elements of the fitnesse report.
+	 */
+	@Override
+	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
+		return findCorrespondingResult(token);
 	}
 
 }
