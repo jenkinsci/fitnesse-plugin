@@ -9,7 +9,7 @@ public class FitnesseBuildActionTest {
 		Assert.assertEquals("pagename", 
 				FitnesseBuildAction.NULL_ACTION.getLinkFor("pagename"));
 		Assert.assertEquals("pagename", 
-				FitnesseBuildAction.NULL_ACTION.getLinkFor("pagename", "host"));
+				FitnesseBuildAction.NULL_ACTION.getLinkFor("pagename", "http://host:8080"));
 	}
 
 	@Test
@@ -18,11 +18,11 @@ public class FitnesseBuildActionTest {
 		Assert.assertEquals("pagename", 
 				action.getLinkFor("pagename"));
 		Assert.assertEquals("pagename", 
-				action.getLinkFor("pagename", "host"));
+				action.getLinkFor("pagename", "http://host:8080"));
 	}
 
 	@Test
-	public void getLinkForPageWhenBuildStartedFitnesseShouldBeHtmlALink() {
+	public void getLinkForPageWhenBuildNotStartedFitnesseShouldBeHtmlALink() {
 		FitnesseBuildAction action = new FitnesseBuildAction(false, "host", 8900);
 		Assert.assertEquals("<a href=\"http://host:8900/pagename\">pagename</a>", 
 				action.getLinkFor("pagename"));
@@ -32,14 +32,14 @@ public class FitnesseBuildActionTest {
 	public void getLinkForPageShouldSubsitituteHostNameForLocalHost() {
 		FitnesseBuildAction action = new FitnesseBuildAction(false, "localhost", 8900);
 		Assert.assertEquals("<a href=\"http://host:8900/pagename\">pagename</a>", 
-				action.getLinkFor("pagename", "host"));
+				action.getLinkFor("pagename", "http://host:8080"));
 	}
 	
 	@Test
 	public void getLinkForPageShouldNotSubsitituteHostNameForNonLocalHost() {
 			FitnesseBuildAction action = new FitnesseBuildAction(false, "host1", 8900);
 			Assert.assertEquals("<a href=\"http://host1:8900/pagename\">pagename</a>", 
-					action.getLinkFor("pagename", "host2"));
+					action.getLinkFor("pagename", "http://host2:8080"));
 	}
 	
 	@Test
