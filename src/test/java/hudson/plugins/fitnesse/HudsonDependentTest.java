@@ -42,12 +42,17 @@ public class HudsonDependentTest extends HudsonTestCase {
 		FitnesseBuilder builder = new FitnesseBuilder(options);
 		
 		project.getBuildersList().add(builder);
-		project.getPublishersList().add(new FitnesseResultsRecorder(resultsFile));
+		FitnesseResultsRecorder fitnesseResultsRecorder = new FitnesseResultsRecorder(resultsFile);
+		project.getPublishersList().add(fitnesseResultsRecorder);
 		//AbsolutePath build 
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		Assert.assertTrue(build.getLogFile().getAbsolutePath(), !Result.FAILURE.equals(build.getResult()));
 		FitnesseResultsAction resultsAction = build.getAction(FitnesseResultsAction.class);
 		assertExpectedResults(resultsAction);
+		
+		FitnesseProjectAction projectAction = (FitnesseProjectAction) fitnesseResultsRecorder.getProjectActions(project).toArray()[0];
+		Assert.assertSame(resultsAction, projectAction.getLatestResults());
+		Assert.assertFalse(projectAction.getTrend().historyAvailable());
 
 		project.getBuildersList().clear();
 		project.getPublishersList().clear();
@@ -60,12 +65,17 @@ public class HudsonDependentTest extends HudsonTestCase {
 		options.put(FitnesseBuilder.PATH_TO_RESULTS, resultsFile);
 
 		project.getBuildersList().add(builder);
-		project.getPublishersList().add(new FitnesseResultsRecorder(resultsFile));
+		fitnesseResultsRecorder = new FitnesseResultsRecorder(resultsFile);
+		project.getPublishersList().add(fitnesseResultsRecorder);
 		//RelativePath build 
 		build = project.scheduleBuild2(0).get();
 		Assert.assertTrue(build.getLogFile().getAbsolutePath(), !Result.FAILURE.equals(build.getResult()));
 		resultsAction = build.getAction(FitnesseResultsAction.class);
 		assertExpectedResults(resultsAction);
+
+		projectAction = (FitnesseProjectAction) fitnesseResultsRecorder.getProjectActions(project).toArray()[0];
+		Assert.assertSame(resultsAction, projectAction.getLatestResults());
+		Assert.assertTrue(projectAction.getTrend().historyAvailable());
 	}
 
 	private String getTestResourceFitnesseJar() {

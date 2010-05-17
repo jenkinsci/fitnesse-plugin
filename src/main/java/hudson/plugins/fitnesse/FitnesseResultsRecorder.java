@@ -5,6 +5,7 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.ModelObject;
 import hudson.model.Result;
@@ -19,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.servlet.ServletException;
 import javax.xml.transform.TransformerException;
@@ -40,6 +43,14 @@ public class FitnesseResultsRecorder extends Recorder {
 	 */
 	public String getFitnessePathToXmlResultsIn() {
 		return fitnessePathToXmlResultsIn;
+	}
+
+	/**
+	 * {@link Recorder}
+	 */
+	@Override
+	public Collection<Action> getProjectActions(AbstractProject<?, ?> project) {
+		return Collections.<Action>singleton(new FitnesseProjectAction(project));
 	}
 
 	/**

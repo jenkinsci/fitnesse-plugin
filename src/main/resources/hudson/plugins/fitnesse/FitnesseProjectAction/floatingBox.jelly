@@ -1,0 +1,10 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+      <div class="test-trend-caption">
+        ${%FitNesse Results Trend}
+      </div>
+	  <div>
+        <img src="fitnesse/trend/countGraph/png" lazymap="fitnesse/trend/countGraph/map" alt="[FitNesse results trend chart]"/>
+      </div>
+</j:jelly>
