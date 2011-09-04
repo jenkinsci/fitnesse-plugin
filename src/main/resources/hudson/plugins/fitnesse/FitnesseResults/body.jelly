@@ -6,7 +6,7 @@
 		<tr class="result-failed"><td><strong>Wrong: ${it.failCount}</strong></td></tr>
 		<tr><th>Name</th><th>Right</th><th>Wrong</th><th>Ignored</th><th>Exceptions</th></tr>
 	    <j:forEach var="r" items="${it.failedTests}">
-	    	<tr><td>${it.toHtml(r)}</td><td>${r.passCount}</td><td>${r.failCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td></tr>
+		<tr><td>${it.toHtml(r)}</td><td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td></tr>
 	    </j:forEach>
 	</j:if>
 	<j:if test="${it.skipCount > 0}">

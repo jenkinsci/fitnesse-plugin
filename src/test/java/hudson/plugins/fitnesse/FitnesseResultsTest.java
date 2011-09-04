@@ -58,10 +58,10 @@ public class FitnesseResultsTest {
 	}
 
 	@Test
-	public void exceptionCountsShouldBeSkipped() {
+	public void exceptionCountsShouldBeFailedOverall() {
 		for (FitnesseResults results : EXCEPTION) {
-			Assert.assertFalse(results.getHeadlineText(), results.isFailedOverall());
-			Assert.assertTrue(results.getHeadlineText(), results.isSkippedOverall());
+			Assert.assertTrue(results.getHeadlineText(), results.isFailedOverall());
+			Assert.assertFalse(results.getHeadlineText(), results.isSkippedOverall());
 			Assert.assertFalse(results.getHeadlineText(), results.isPassedOverall());
 		}
 	}
@@ -85,23 +85,20 @@ public class FitnesseResultsTest {
 	}
 	
 	@Test
-	public void failedTestsShouldIncludeCountsWrong() {
+	public void failedTestsShouldIncludeCountsWrongAndExceptions() {
 		FitnesseResults summary = setUpSummaryResults();
 		Collection<FitnesseResults> failedTests = summary.getFailedTests();
-		Assert.assertEquals(WRONG.length, failedTests.size());
+		Assert.assertEquals(WRONG.length + EXCEPTION.length, failedTests.size());
 		for (FitnesseResults results : WRONG) {
 			Assert.assertTrue(results.getHeadlineText(), failedTests.contains(results));
 		}
 	}
 
 	@Test
-	public void skippedTestsShouldIncludeCountsIgnoredOrExceptions() {
+	public void skippedTestsShouldIncludeCountsIgnored() {
 		FitnesseResults summary = setUpSummaryResults();
 		Collection<FitnesseResults> skippedTests = summary.getSkippedTests();
-		Assert.assertEquals(EXCEPTION.length + IGNORED.length, skippedTests.size());
-		for (FitnesseResults results : EXCEPTION) {
-			Assert.assertTrue(results.getHeadlineText(), skippedTests.contains(results));
-		}
+		Assert.assertEquals(IGNORED.length, skippedTests.size());
 		for (FitnesseResults results : IGNORED) {
 			Assert.assertTrue(results.getHeadlineText(), skippedTests.contains(results));
 		}

@@ -3,6 +3,7 @@ package hudson.plugins.fitnesse;
 import hudson.model.AbstractBuild;
 import hudson.model.Hudson;
 import hudson.model.ModelObject;
+import hudson.model.Result;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResult;
@@ -94,11 +95,15 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	public String getDisplayName() {
 		return getName();
 	}
-	
+
 	@Override
 	public int getFailCount() {
-		return pageCounts.wrong;
+		return pageCounts.wrong + getExceptionCount();
 	}
+
+        public int getFailOnlyCount() {
+            return pageCounts.wrong;
+        }
 
 	@Override
 	public int getPassCount() {
@@ -107,7 +112,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 
 	@Override
 	public int getSkipCount() {
-		return getIgnoredCount() + getExceptionCount();
+		return getIgnoredCount();
 	}
 	
 	/**
@@ -125,7 +130,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	}
 
 	public boolean isFailedOverall() {
-		return getFailCount() > 0;
+		return (getFailCount() > 0 || getExceptionCount() > 0);
 	}
 
 	public boolean isPassedOverall() {
@@ -141,6 +146,12 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 		if (isFailedOverall()) return false;
 		if (getExceptionCount() > 0) return true;
 		return getPassCount() == 0;
+	}
+
+	@Override
+	public Result getBuildResult() {
+		if (getFailCount() > 0) return Result.FAILURE;
+		return null;
 	}
 
 	@Override
