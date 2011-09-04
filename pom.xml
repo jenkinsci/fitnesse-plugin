@@ -1,38 +1,55 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.jvnet.hudson.plugins</groupId>
-    <artifactId>plugin</artifactId>
-    <version>1.355</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jvnet.hudson.plugins</groupId>
+        <artifactId>plugin</artifactId>
+        <version>1.355</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-  <groupId>org.jvnet.hudson.plugins</groupId>
-  <artifactId>fitnesse</artifactId>
-  <version>1.5-SNAPSHOT</version>
-  <packaging>hpi</packaging>
-  <name>Hudson Fitnesse plugin</name>
-  <url>http://wiki.hudson-ci.org/display/HUDSON/Fitnesse+Plugin</url>
+    <artifactId>fitnesse</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <packaging>hpi</packaging>
+    <name>Hudson Fitnesse plugin</name>
+    <url>http://wiki.jenkins-ci.org/display/HUDSON/Fitnesse+Plugin</url>
 
-  <developers>
-    <developer>
-      <id>prime8</id>
-      <name>timbacon</name>
-      <email>tim bacon @at@ gmail dotcom</email>
-    </developer>
-  </developers>
+    <developers>
+        <developer>
+            <id>prime8</id>
+            <name>timbacon</name>
+            <email>tim bacon @at@ gmail dotcom</email>
+        </developer>
+    </developers>
 
- <licenses>
-    <license>
-      <name>MIT license</name>
-      <comments>All source code is under the MIT license.</comments>
-    </license>
- </licenses>
+    <licenses>
+        <license>
+            <name>MIT license</name>
+            <comments>All source code is under the MIT license.</comments>
+        </license>
+    </licenses>
 
- <scm>
-    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/trunk/hudson/plugins/fitnesse</connection>
-    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/trunk/hudson/plugins/fitnesse</developerConnection>
-    <url>https://hudson.dev.java.net/source/browse/hudson/trunk/hudson/plugins/fitnesse</url>
-  </scm>
+    <scm>
+        <connection>scm:git:git://github.com/jenkinsci/fitnesse-plugin.git</connection>
+        <developerConnection>scm:git:git://github.com/jenkinsci/fitnesse-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/fitnesse-plugin</url>
+    </scm>
 
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>maven.jenkins-ci.org</id>
+            <url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
+        </repository>
+    </distributionManagement>
 </project>
