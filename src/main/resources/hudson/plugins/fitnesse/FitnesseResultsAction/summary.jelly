@@ -1,7 +1,0 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
-	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
-	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-	<t:summary icon="/plugin/fitnesse/icons/fitnesselogo-48x48.gif">
-		<a href="./${it.urlName}">FitNesse Results</a><st:nbsp/>${it.summary}
-	</t:summary>
-</j:jelly>

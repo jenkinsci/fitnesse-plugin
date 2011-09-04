@@ -1,7 +1,0 @@
-|HudsonPlugin.SuiteAll.TestException||12:50:31 Sun, Apr 25, 2010|
-|HudsonPlugin.SuiteAll.TestIgnored||12:50:04 Sun, Apr 25, 2010|
-|HudsonPlugin.SuiteAll.TestFails||12:49:40 Sun, Apr 25, 2010|
-|HudsonPlugin.SuiteAll.TestPasses||12:49:16 Sun, Apr 25, 2010|
-|HudsonPlugin.SuiteAll.SetUp||12:47:09 Sun, Apr 25, 2010|
-|HudsonPlugin.SuiteAll||12:35:14 Sun, Apr 25, 2010|
-|HudsonPlugin||12:34:54 Sun, Apr 25, 2010|

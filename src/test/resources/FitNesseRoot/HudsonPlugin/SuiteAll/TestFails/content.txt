@@ -1,3 +1,0 @@
-|script|echo fixture|
-|$id=|echo|20|
-|check|echo|id=$id|id=19|
