@@ -123,7 +123,7 @@ public class FitnesseExecutorTest {
 		Assert.assertEquals("-jar", cmd.get(1));
 		Assert.assertEquals(new File(TMP_DIR, "fitnesse.jar").getAbsolutePath(), cmd.get(2));
 		Assert.assertEquals("-d", cmd.get(3));
-		Assert.assertEquals(TMP_DIR, cmd.get(4));
+                Assert.assertTrue(TMP_DIR.contains(cmd.get(4)));
 		Assert.assertEquals("-r", cmd.get(5));
 		Assert.assertEquals("FitNesseRoot", cmd.get(6));
 		Assert.assertEquals("-p", cmd.get(7));
