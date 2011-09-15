@@ -26,8 +26,7 @@ public class HudsonDependentTest extends HudsonTestCase {
 		Assert.assertSame(parent.getOwner(), child.getOwner());
 	}
 	
-	@Ignore("Test didn't work prior to version 1.5")
-	public void iTestBuildStartingFitnesseWithAbsoluteAndRelativePaths() throws Exception {
+	public void testBuildStartingFitnesseWithAbsoluteAndRelativePaths() throws Exception {
 		FreeStyleProject project = createFreeStyleProject(getName());
 		project.getBuildersList().clear();
 		project.getPublishersList().clear();
