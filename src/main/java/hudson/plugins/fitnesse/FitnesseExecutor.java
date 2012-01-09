@@ -91,7 +91,7 @@ public class FitnesseExecutor {
 		File fitNesseRoot = new File(getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, builder.getFitnessePathToRoot()));
 		String[] fitnesse_opts = {"-d", fitNesseRoot.getParent(), 
 				"-r", fitNesseRoot.getName(), 
-				"-p", Integer.toString(builder.getFitnessePort())};
+				"-p", Integer.toString(builder.getFitnessePort()),builder.getAdditionalFitnesseOptions()};
 	
 		ArrayList<String> cmd = new ArrayList<String>();
 		cmd.add(java);
