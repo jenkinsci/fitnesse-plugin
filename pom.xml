@@ -5,7 +5,6 @@
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
         <version>1.401</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>fitnesse</artifactId>
