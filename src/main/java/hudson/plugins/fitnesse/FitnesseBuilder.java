@@ -38,6 +38,7 @@ public class FitnesseBuilder extends Builder {
 	public static final String FITNESSE_PORT = "fitnessePort";
 	public static final String FITNESSE_PORT_REMOTE = "fitnessePortRemote";
 	public static final String FITNESSE_PORT_LOCAL = "fitnessePortLocal";
+	public static final String FITNESSE_ADDITIONAL_OPTIONS = "additionalFitnesseOptions";
 	public static final String JAVA_OPTS = "fitnesseJavaOpts";
 	public static final String PATH_TO_JAR = "fitnessePathToJar";
 	public static final String PATH_TO_ROOT = "fitnessePathToRoot";
@@ -121,6 +122,21 @@ public class FitnesseBuilder extends Builder {
     public String getFitnessePathToJar() {
 		return getOption(PATH_TO_JAR, "fitnesse.jar");
 	}
+    
+    /**
+     * referenced in config.jelly
+     * Defaults to empty string
+     */
+    public String getAdditionalFitnesseOptions() {
+    	String sanitizedOptions = getOption(FITNESSE_ADDITIONAL_OPTIONS, "");
+    	// remove quotes that Jenkins config wraps around anything with a space in it
+    	if(sanitizedOptions.length()>2 
+    			&& sanitizedOptions.startsWith("\"") 
+    			&& sanitizedOptions.endsWith("\"")){
+    		sanitizedOptions = sanitizedOptions.substring(1,sanitizedOptions.length()-1);
+    	}
+		return sanitizedOptions;
+	}
 
     /**
      * referenced in config.jelly
@@ -187,6 +203,15 @@ public class FitnesseBuilder extends Builder {
     	public FormValidation doCheckFitnesseHost(@QueryParameter String value) throws IOException, ServletException {
     		if (value.length()==0)
     			return FormValidation.error("Please specify the host of the fitnesse instance.");
+    		return FormValidation.ok();
+    	}
+    	
+    	public FormValidation doCheckAdditionalFitnesseOptions(@QueryParameter String value) throws IOException, ServletException {
+    		if (value.length()>0){
+    			if(value.contains("-r") || value.contains("-p") || value.contains("-d"))
+    				return FormValidation.error("Please use the appropriate config fields to specify options for -r, -d, and -p.");
+    		}
+    			
     		return FormValidation.ok();
     	}
     	
@@ -291,7 +316,8 @@ public class FitnesseBuilder extends Builder {
 						collectFormData(formData, new String[] {
 							JAVA_OPTS, JAVA_WORKING_DIRECTORY, 
 							PATH_TO_JAR, PATH_TO_ROOT, FITNESSE_PORT_LOCAL, 
-							TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, PATH_TO_RESULTS
+							TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, PATH_TO_RESULTS, 
+							FITNESSE_ADDITIONAL_OPTIONS
 						})
 				);
 			}
