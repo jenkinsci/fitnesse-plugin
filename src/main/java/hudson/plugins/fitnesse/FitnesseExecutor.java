@@ -19,6 +19,9 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *  
@@ -91,15 +94,44 @@ public class FitnesseExecutor {
 		File fitNesseRoot = new File(getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, builder.getFitnessePathToRoot()));
 		String[] fitnesse_opts = {"-d", fitNesseRoot.getParent(), 
 				"-r", fitNesseRoot.getName(), 
-				"-p", Integer.toString(builder.getFitnessePort()),builder.getAdditionalFitnesseOptions()};
+				"-p", Integer.toString(builder.getFitnessePort())};
+		
+		// split additional fitness options and add them to those explicitly configured ones
+		String[] addOps = splitOptions(builder.getAdditionalFitnesseOptions());
+		
+		String[] fitnesse_opts2 = new String[fitnesse_opts.length
+				+ addOps.length];
+		System.arraycopy(fitnesse_opts, 0, fitnesse_opts2, 0,
+				fitnesse_opts.length);
+		System.arraycopy(addOps, 0, fitnesse_opts2, fitnesse_opts.length,
+				addOps.length);
 	
 		ArrayList<String> cmd = new ArrayList<String>();
 		cmd.add(java);
 		if (java_opts.length > 0) cmd.addAll(Arrays.asList(java_opts));
 		cmd.addAll(Arrays.asList(jar_opts));
-		cmd.addAll(Arrays.asList(fitnesse_opts));
+		cmd.addAll(Arrays.asList(fitnesse_opts2));
 		
 		return cmd;
+	}
+	
+	/**
+	 * Breaks the given string down by any options of the form "-x" or "-x some argument not containing a - character"
+	 */
+	private static String[] splitOptions(String string) {
+		List<String> addOps = new ArrayList<String>(); 
+		
+		// match pattern to identify additional cmd arguments
+		Pattern pattern = Pattern.compile("-{1}[a-z]{1}\\s?[^-]*");
+		Matcher m = pattern.matcher(string);
+		
+		while (m.find()) {
+		    String s = m.group();
+		    addOps.add(s.substring(0,2).trim());
+		    addOps.add(s.substring(2,s.length()).trim());
+		}
+		String[] ret = new String[addOps.size()];
+		return addOps.toArray(ret);
 	}
     
 	private boolean procStarted(Proc fitnesseProc, PrintStream log, StdConsole console) throws IOException, InterruptedException {

@@ -128,7 +128,14 @@ public class FitnesseBuilder extends Builder {
      * Defaults to empty string
      */
     public String getAdditionalFitnesseOptions() {
-		return getOption(FITNESSE_ADDITIONAL_OPTIONS, "");
+    	String sanitizedOptions = getOption(FITNESSE_ADDITIONAL_OPTIONS, "");
+    	// remove quotes that Jenkins config wraps around anything with a space in it
+    	if(sanitizedOptions.length()>2 
+    			&& sanitizedOptions.startsWith("\"") 
+    			&& sanitizedOptions.endsWith("\"")){
+    		sanitizedOptions = sanitizedOptions.substring(1,sanitizedOptions.length()-1);
+    	}
+		return sanitizedOptions;
 	}
 
     /**
