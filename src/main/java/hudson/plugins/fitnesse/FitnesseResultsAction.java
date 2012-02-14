@@ -8,10 +8,12 @@ import org.kohsuke.stapler.StaplerProxy;
 public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResultsAction> implements StaplerProxy {
 	private static final long serialVersionUID = 1L;
 	private FitnesseResults results;
+	private int resultId;
 
-	protected FitnesseResultsAction(AbstractBuild<?, ?> owner, FitnesseResults results) {
+	protected FitnesseResultsAction(AbstractBuild<?, ?> owner, FitnesseResults results, int resultId) {
 		super(owner);
 		this.results = results;
+		this.resultId = resultId;
 		results.setOwner(owner);
 	}
 
@@ -40,7 +42,7 @@ public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResu
 	 */
 	@Override
 	public String getUrlName() {
-		return "fitnesseReport";
+		return "fitnesseReport." + resultId;
 	}
 
 	/**

@@ -3,15 +3,17 @@ package hudson.plugins.fitnesse;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
+import hudson.model.Hudson;
 import hudson.model.ModelObject;
 import hudson.model.Result;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.tasks.BuildStep;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Mailer;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
@@ -67,19 +69,34 @@ public class FitnesseResultsRecorder extends Recorder {
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException, IOException {
 		try {
-			FilePath workingDirectory = FitnesseExecutor.getWorkingDirectory(build);
-			FilePath resultsFile = FitnesseExecutor.getResultsFilePath(workingDirectory, fitnessePathToXmlResultsIn);
-			FitnesseResults results = getResults(listener.getLogger(), resultsFile);
-			FitnesseResultsAction action = new FitnesseResultsAction(build, results);
-			
-			if (results.getBuildResult() != null) build.setResult(results.getBuildResult());
-			build.addAction(action);
+			FilePath[] resultFiles = getResultFiles(build);
+			int i = 0;
+			for (FilePath resultsFile : resultFiles) {
+				FitnesseResults results = getResults(listener.getLogger(), resultsFile);
+				FitnesseResultsAction action = new FitnesseResultsAction(build, results, i++);
+				
+				if (results.getBuildResult() != null) build.setResult(results.getBuildResult());
+				build.addAction(action);
+			}
 			return true;
 		} catch (Throwable t) {
 			t.printStackTrace(listener.getLogger());
 			if (t instanceof InterruptedException) throw (InterruptedException) t;
 			build.setResult(Result.FAILURE);
 			return false;
+		}
+	}
+
+	private FilePath[] getResultFiles(AbstractBuild<?, ?> build) throws IOException, InterruptedException {
+		FilePath workingDirectory = FitnesseExecutor.getWorkingDirectory(build);
+		FilePath resultsFile = FitnesseExecutor.getResultsFilePath(workingDirectory, fitnessePathToXmlResultsIn);
+		
+		if (resultsFile.exists()) {
+			// directly configured single file
+			return new FilePath[] { resultsFile };
+		} else {
+			// glob
+			return workingDirectory.list(fitnessePathToXmlResultsIn);
 		}
 	}
 
@@ -112,7 +129,8 @@ public class FitnesseResultsRecorder extends Recorder {
 	 */
 	@Override
 	public DescriptorImpl getDescriptor() {
-		return (DescriptorImpl) super.getDescriptor();
+        return Hudson.getInstance().getDescriptorByType(DescriptorImpl.class);
+//		return (DescriptorImpl) super.getDescriptor();
 	}
 
 	/**
