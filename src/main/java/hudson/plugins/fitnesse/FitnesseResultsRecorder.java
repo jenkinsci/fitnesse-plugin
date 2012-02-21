@@ -5,7 +5,6 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Hudson;
 import hudson.model.ModelObject;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
@@ -13,7 +12,6 @@ import hudson.model.AbstractProject;
 import hudson.tasks.BuildStep;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Mailer;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
@@ -22,8 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.xml.transform.TransformerException;
@@ -70,14 +70,10 @@ public class FitnesseResultsRecorder extends Recorder {
 			BuildListener listener) throws InterruptedException, IOException {
 		try {
 			FilePath[] resultFiles = getResultFiles(build);
-			int i = 0;
-			for (FilePath resultsFile : resultFiles) {
-				FitnesseResults results = getResults(listener.getLogger(), resultsFile);
-				FitnesseResultsAction action = new FitnesseResultsAction(build, results, i++);
-				
-				if (results.getBuildResult() != null) build.setResult(results.getBuildResult());
-				build.addAction(action);
-			}
+			FitnesseResults results = getResults(listener.getLogger(), resultFiles);
+			FitnesseResultsAction action = new FitnesseResultsAction(build, results);
+			if (results.getBuildResult() != null) build.setResult(results.getBuildResult());
+			build.addAction(action);
 			return true;
 		} catch (Throwable t) {
 			t.printStackTrace(listener.getLogger());
@@ -89,6 +85,10 @@ public class FitnesseResultsRecorder extends Recorder {
 
 	private FilePath[] getResultFiles(AbstractBuild<?, ?> build) throws IOException, InterruptedException {
 		FilePath workingDirectory = FitnesseExecutor.getWorkingDirectory(build);
+		return getResultFiles(workingDirectory);
+	}
+	
+	public FilePath[] getResultFiles(FilePath workingDirectory) throws IOException, InterruptedException {
 		FilePath resultsFile = FitnesseExecutor.getResultsFilePath(workingDirectory, fitnessePathToXmlResultsIn);
 		
 		if (resultsFile.exists()) {
@@ -100,6 +100,23 @@ public class FitnesseResultsRecorder extends Recorder {
 		}
 	}
 
+	public FitnesseResults getResults(PrintStream logger, FilePath[] resultsFiles) throws IOException, TransformerException {
+		List<FitnesseResults> resultsList = new ArrayList<FitnesseResults>();
+		
+		for (FilePath filePath : resultsFiles) {
+			FitnesseResults singleResults = getResults(logger, filePath);
+			resultsList.add(singleResults);
+		}
+		
+		if (resultsList.isEmpty()) {
+			return null;
+		}
+		if (resultsList.size() == 1) {
+			return resultsList.get(0);
+		}
+		return CompoundFitnesseResults.createFor(resultsList);
+	}
+	
 	public FitnesseResults getResults(PrintStream logger, FilePath resultsFile) throws IOException, TransformerException {
 		InputStream resultsInputStream = null;
 		try {
@@ -129,8 +146,7 @@ public class FitnesseResultsRecorder extends Recorder {
 	 */
 	@Override
 	public DescriptorImpl getDescriptor() {
-        return Hudson.getInstance().getDescriptorByType(DescriptorImpl.class);
-//		return (DescriptorImpl) super.getDescriptor();
+		return (DescriptorImpl) super.getDescriptor();
 	}
 
 	/**

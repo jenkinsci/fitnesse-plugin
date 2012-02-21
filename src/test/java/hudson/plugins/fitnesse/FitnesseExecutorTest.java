@@ -135,7 +135,7 @@ public class FitnesseExecutorTest {
 		executor = getExecutorForBuilder(
 				new String[] {FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE},
 				new String[] {"WikiPage", "false"});
-		Assert.assertEquals("/WikiPage?test&format=xml", 
+		Assert.assertEquals("/WikiPage?test&format=xml&includehtml", 
 				executor.getFitnessePageCmd());
 	}
 
@@ -144,7 +144,7 @@ public class FitnesseExecutorTest {
 		executor = getExecutorForBuilder(
 			new String[] {FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE},
 			new String[] {"WikiPage", "true"});
-		Assert.assertEquals("/WikiPage?suite&format=xml", 
+		Assert.assertEquals("/WikiPage?suite&format=xml&includehtml", 
 				executor.getFitnessePageCmd());
 	}
 	
@@ -153,12 +153,12 @@ public class FitnesseExecutorTest {
 		executor = getExecutorForBuilder(
 				new String[] {FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE},
 				new String[] {"WikiPage?suite&suiteFilter=tag1,tag2", "true"});
-		Assert.assertEquals("/WikiPage?suite&suiteFilter=tag1,tag2&format=xml", 
+		Assert.assertEquals("/WikiPage?suite&suiteFilter=tag1,tag2&format=xml&includehtml", 
 				executor.getFitnessePageCmd());
 		executor = getExecutorForBuilder(
 				new String[] {FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE},
 				new String[] {"WikiPage&suiteFilter=tag1,tag2", "true"});
-		Assert.assertEquals("/WikiPage?suite&suiteFilter=tag1,tag2&format=xml", 
+		Assert.assertEquals("/WikiPage?suite&suiteFilter=tag1,tag2&format=xml&includehtml", 
 				executor.getFitnessePageCmd());
 	}
 	

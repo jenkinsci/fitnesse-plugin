@@ -256,7 +256,7 @@ public class FitnesseExecutor {
 	public String getFitnessePageCmd() {
 		String targetPageExpression = builder.getFitnesseTargetPage();
 		if (targetPageExpression.contains("?"))
-			return "/" + targetPageExpression+"&format=xml";
+			return "/" + targetPageExpression+"&format=xml&includehtml";
 		
 		int pos = targetPageExpression.indexOf('&');
 		if (pos == -1) pos = targetPageExpression.length();
@@ -264,7 +264,7 @@ public class FitnesseExecutor {
 		return String.format("/%1$s?%2$s%3$s", 
 				targetPageExpression.substring(0, pos),
 				builder.getFitnesseTargetIsSuite() ? "suite" : "test",
-				targetPageExpression.substring(pos)+"&format=xml");
+				targetPageExpression.substring(pos)+"&format=xml&includehtml");
 	}
 
 	private void writeFitnesseResults(PrintStream log, FilePath resultsFilePath, byte[] results) {

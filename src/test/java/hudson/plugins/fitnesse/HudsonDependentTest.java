@@ -2,8 +2,8 @@ package hudson.plugins.fitnesse;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.model.FreeStyleProject;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.Shell;
 
@@ -13,7 +13,6 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.jvnet.hudson.test.HudsonTestCase;
 
 public class HudsonDependentTest extends HudsonTestCase {

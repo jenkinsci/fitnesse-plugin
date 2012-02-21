@@ -1,10 +1,11 @@
 package hudson.plugins.fitnesse;
 
-import hudson.model.AbstractBuild;
-import hudson.model.Hudson;
 import hudson.model.ModelObject;
 import hudson.model.Result;
+import hudson.model.AbstractBuild;
+import hudson.model.Hudson;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
+import hudson.tasks.test.TabulatedResult;
 import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResult;
 
@@ -13,11 +14,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-public class FitnesseResults extends TestResult implements Comparable<FitnesseResults>{
+public class FitnesseResults extends TabulatedResult implements Comparable<FitnesseResults>{
+	private static final Logger log = Logger.getLogger("FitNesse");
+	
 	private static final long serialVersionUID = 1L;
 	private transient boolean durationCalculated;
 	private transient long durationInMillis;
@@ -27,7 +31,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	
 	private Counts pageCounts;
 	private TestObject parent;
-	private List<FitnesseResults> details = new ArrayList<FitnesseResults>();
+	private List<FitnesseResults> childResults = new ArrayList<FitnesseResults>();
 	private AbstractBuild<?, ?> owner;
 	
 	public FitnesseResults(Counts pageCounts) {
@@ -42,7 +46,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	}
 
 	void addDetail(FitnesseResults fitnesseResults) {
-		details.add(fitnesseResults);
+		childResults.add(fitnesseResults);
 		fitnesseResults.setParent(this);
 	}
 	
@@ -101,9 +105,9 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 		return pageCounts.wrong + getExceptionCount();
 	}
 
-        public int getFailOnlyCount() {
-            return pageCounts.wrong;
-        }
+	public int getFailOnlyCount() {
+		return pageCounts.wrong;
+	}
 
 	@Override
 	public int getPassCount() {
@@ -162,7 +166,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 
 	private void calculateDurationInMillis() {
 		FitnesseResults earliest = null, latest = null;
-		for (FitnesseResults detail : details) {
+		for (FitnesseResults detail : childResults) {
 			if (earliest == null) {
 				earliest = detail;
 			} else if (detail.isEarlierThan(earliest)) {
@@ -176,6 +180,10 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 		}
 		durationInMillis = latest.millisAfter(earliest);
 		durationCalculated = true;
+	}
+	
+	public String getResultsDate() {
+		return pageCounts.resultsDate;
 	}
 
 	public boolean isEarlierThan(FitnesseResults other) {
@@ -275,7 +283,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	
 	private List<FitnesseResults> filteredCopyOfDetails(ResultsFilter countsFilter) {
 		List<FitnesseResults> filteredCopy = new ArrayList<FitnesseResults>(); 
-		for (FitnesseResults result : details) {
+		for (FitnesseResults result : childResults) {
 			if (countsFilter.include(result)) {
 				filteredCopy.add(result);
 			}
@@ -289,7 +297,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	}
 	
 	/**
-	 * referenced in summary.jelly
+	 * referenced in body.jelly
 	 */
 	public String toHtml(FitnesseResults results) {
 		FitnesseBuildAction buildAction = getOwner().getAction(FitnesseBuildAction.class);
@@ -298,6 +306,28 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 		}
 		return buildAction.getLinkFor(results.getName(), Hudson.getInstance().getRootUrl());
 	}
+
+	/**
+	 * referenced in body.jelly
+	 */
+	public String getDetailsLink(FitnesseResults results) {
+		if (results.childResults == null) {
+			return "&nbsp;";
+		}
+
+		String page = results.getName() + "Details";
+		return String.format("<a href=\"%s\">%s</a>", 
+					page, "Details");
+	}
+
+	@Override
+	public String getErrorDetails() {
+		if (pageCounts.content != null) {
+			return pageCounts.content;
+		}
+		return "";
+	}
+	
 	
 	/**
 	 * called from links embedded in history/trend graphs 
@@ -305,7 +335,86 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	 */
 	@Override
 	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
-		return findCorrespondingResult(token);
+		TestResult result = findCorrespondingResult(token);
+		if (result != null) {
+			return result;
+		}
+		return findChildByName(token);
 	}
 
+	private <T extends TestResult> T findChildByName(String aName) {
+		Collection<? extends TestResult> children = getChildren();
+		for (TestResult child : children) {
+			if (aName.equals(child.getName())) {
+				return (T) child;
+			}
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public String getUrl() {
+		String url = super.getUrl();
+		return url;
+	}
+	
+	@Override
+	public Collection<? extends TestResult> getChildren() {
+		if (!hasChildren()) {
+			return Collections.emptyList();
+		}
+		
+		List<TestResult> children = new ArrayList<TestResult>(childResults.size());
+		for (FitnesseResults child : childResults) {
+			TestResult childResult = getChildResult(child);
+			if (childResult != null) {
+				children.add(childResult);
+			}
+		}
+
+		return children;
+	}
+
+	protected TestResult getChildResult(FitnesseResults child) {
+		if (!child.hasResultsDetails()) {
+			return null;
+		}
+		return new ResultsDetails(this, child.getName() + "Details", child.pageCounts);
+	}
+
+	@Override
+	public boolean hasChildren() {
+		for (FitnesseResults child : childResults) {
+			if (child.hasResultsDetails()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected List<FitnesseResults> getChildResults() {
+		return childResults;
+	}
+	
+	protected boolean hasResultsDetails() {
+		return pageCounts != null && pageCounts.content != null;
+	}
+	
+	
+	
+	/**
+	 * Returns the html details of this result.
+	 */
+	protected String getResultsDetails() {
+		if (hasResultsDetails()) {
+			return pageCounts.content;
+		}
+		return "";
+	}
+	
+	@Override
+	public String getStdout() {
+		return getResultsDetails();
+	}
 }
