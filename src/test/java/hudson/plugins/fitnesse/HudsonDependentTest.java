@@ -21,7 +21,7 @@ public class HudsonDependentTest extends HudsonTestCase {
 		FitnesseResults parent = new FitnesseResults((Counts)null);
 		FitnesseResults child = new FitnesseResults((Counts)null);
 		parent.setOwner(new FreeStyleBuild(createFreeStyleProject(getName())));
-		parent.addDetail(child);
+		parent.addChild(child);
 		Assert.assertSame(parent.getOwner(), child.getOwner());
 	}
 	

@@ -1,7 +1,6 @@
 package hudson.plugins.fitnesse;
 
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
-import hudson.tasks.test.TestResult;
 
 import java.util.List;
 
@@ -37,17 +36,7 @@ public class CompoundFitnesseResults extends FitnesseResults {
 			Counts counts) {
 		super(counts);
 		for (FitnesseResults fitnesseResults : resultsList) {
-			addDetail(fitnesseResults);
+			addChild(fitnesseResults);
 		}
-	}
-	
-	public boolean hasChildren() {
-		return getChildResults().size() > 0;
-	}
-
-
-	@Override
-	protected TestResult getChildResult(FitnesseResults child) {
-		return child;
 	}
 }

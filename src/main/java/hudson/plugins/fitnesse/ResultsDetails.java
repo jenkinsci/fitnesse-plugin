@@ -22,15 +22,15 @@ public class ResultsDetails extends TestResult {
 	private static final long serialVersionUID = 3169974791899027186L;
 	
 	private FitnesseResults parentResults;
-
-	private Counts pageCounts;
-
 	private String name;
 
-	public ResultsDetails(FitnesseResults parent, String name, Counts pageCounts) {
+	public ResultsDetails(FitnesseResults parent, String name) {
 		this.parentResults = parent;
-		this.pageCounts = pageCounts;
 		this.name = name;
+	}
+
+	private Counts getPageCounts() {
+		return parentResults.getPageCounts();
 	}
 	
 	/**
@@ -71,7 +71,7 @@ public class ResultsDetails extends TestResult {
 	 * referenced from body.jelly
 	 */
 	public String getDetailsHtml() {
-		return pageCounts.content;
+		return getPageCounts().content;
 	}
 	
     @Override
@@ -130,7 +130,7 @@ public class ResultsDetails extends TestResult {
      * @return true if the test was not skipped and did not fail, false otherwise.
      */
     public boolean isPassed() {
-        return pageCounts.exceptions == 0 && pageCounts.wrong == 0;
+        return getPageCounts().exceptions == 0 && getPageCounts().wrong == 0;
     }
 
     /**
@@ -141,13 +141,13 @@ public class ResultsDetails extends TestResult {
      */
     @Exported(visibility=9)
     public boolean isSkipped() {
-    	return pageCounts.ignored > 0 && pageCounts.ignored == getNumberOfTestCases();
+    	return getPageCounts().ignored > 0 && getPageCounts().ignored == getNumberOfTestCases();
     }
     
     /**
      * Returns the altogether number of test cases, i.e. right, wrong, exceptions and ignored.
      */
     private int getNumberOfTestCases() {
-    	return pageCounts.ignored + pageCounts.exceptions + pageCounts.right + pageCounts.wrong;
+    	return getPageCounts().ignored + getPageCounts().exceptions + getPageCounts().right + getPageCounts().wrong;
     }
 }

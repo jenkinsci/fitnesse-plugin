@@ -117,16 +117,16 @@ public class FitnesseResultsTest {
 	private FitnesseResults setUpSummaryResults() {
 		FitnesseResults summary = new FitnesseResults((Counts)null);
 		for (FitnesseResults results : RIGHT) {
-			summary.addDetail(results);
+			summary.addChild(results);
 		}
 		for (FitnesseResults results : WRONG) {
-			summary.addDetail(results);
+			summary.addChild(results);
 		}
 		for (FitnesseResults results : IGNORED) {
-			summary.addDetail(results);
+			summary.addChild(results);
 		}
 		for (FitnesseResults results : EXCEPTION) {
-			summary.addDetail(results);
+			summary.addChild(results);
 		}
 		return summary;
 	}
@@ -166,8 +166,8 @@ public class FitnesseResultsTest {
 		FitnesseResults first = new FitnesseResults(BEFORE);
 		FitnesseResults second = new FitnesseResults(AFTER);
 		FitnesseResults summary = new FitnesseResults((Counts)null);
-		summary.addDetail(first);
-		summary.addDetail(second);
+		summary.addChild(first);
+		summary.addChild(second);
 		Assert.assertEquals(1.0f, summary.getDuration());
 	}
 }

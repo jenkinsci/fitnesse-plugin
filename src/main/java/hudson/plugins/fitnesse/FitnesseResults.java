@@ -20,6 +20,8 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 public class FitnesseResults extends TabulatedResult implements Comparable<FitnesseResults>{
+	private static final String DETAILS = "Details";
+
 	private static final Logger log = Logger.getLogger("FitNesse");
 	
 	private static final long serialVersionUID = 1L;
@@ -31,7 +33,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	
 	private Counts pageCounts;
 	private TestObject parent;
-	private List<FitnesseResults> childResults = new ArrayList<FitnesseResults>();
+	private List<FitnesseResults> details = new ArrayList<FitnesseResults>();
 	private AbstractBuild<?, ?> owner;
 	
 	public FitnesseResults(Counts pageCounts) {
@@ -41,12 +43,21 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	FitnesseResults(NativePageCounts allCounts) {
 		this(allCounts.getSummary());
 		for (Counts detail : allCounts.getDetails()) {
-			addDetail(new FitnesseResults(detail));
+			addChild(new FitnesseResults(detail));
 		}
 	}
 
-	void addDetail(FitnesseResults fitnesseResults) {
-		childResults.add(fitnesseResults);
+	private Object readResolve() {
+		// for some reason, XStream does not instantiate the details list,
+		// so we do it manually
+		if (details == null) {
+			details = new ArrayList<FitnesseResults>();
+		}
+		return this;
+	}
+	
+	void addChild(FitnesseResults fitnesseResults) {
+		details.add(fitnesseResults);
 		fitnesseResults.setParent(this);
 	}
 	
@@ -166,7 +177,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 
 	private void calculateDurationInMillis() {
 		FitnesseResults earliest = null, latest = null;
-		for (FitnesseResults detail : childResults) {
+		for (FitnesseResults detail : details) {
 			if (earliest == null) {
 				earliest = detail;
 			} else if (detail.isEarlierThan(earliest)) {
@@ -283,7 +294,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	
 	private List<FitnesseResults> filteredCopyOfDetails(ResultsFilter countsFilter) {
 		List<FitnesseResults> filteredCopy = new ArrayList<FitnesseResults>(); 
-		for (FitnesseResults result : childResults) {
+		for (FitnesseResults result : details) {
 			if (countsFilter.include(result)) {
 				filteredCopy.add(result);
 			}
@@ -308,16 +319,17 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	}
 
 	/**
-	 * referenced in body.jelly
+	 * referenced in body.jelly. Link is apparently relative to 
 	 */
-	public String getDetailsLink(FitnesseResults results) {
-		if (results.childResults == null) {
+	public String getDetailsLink() {
+		if (details == null) {
 			return "&nbsp;";
 		}
 
-		String page = results.getName() + "Details";
-		return String.format("<a href=\"%s\">%s</a>", 
-					page, "Details");
+		return String.format("<a href=\"%s/%s\">%s</a>", 
+				getName(), DETAILS, "Details");
+//		return String.format("<a href=\"%s/%s\">%s</a>", 
+//					getUrl(), "Details", "Details");
 	}
 
 	@Override
@@ -353,61 +365,61 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 		return null;
 	}
 	
+	/**
+	 * Returns <code>true</code> if there are child results available.
+	 * So far, only returns <code>true</code> if there is {@link #getHtmlContent()}
+	 * for this result available.
+	 */
 	@Override
-	public String getUrl() {
-		String url = super.getUrl();
-		return url;
+	public boolean hasChildren() {
+		return hasChildResults() || hasHtmlContent();
 	}
-	
+
+	/**
+	 * Returns the children of this result. Returns both the details and the html
+	 * content, if available.
+	 * @return the details and html content results, or an empty Collection
+	 */
 	@Override
 	public Collection<? extends TestResult> getChildren() {
 		if (!hasChildren()) {
 			return Collections.emptyList();
 		}
-		
-		List<TestResult> children = new ArrayList<TestResult>(childResults.size());
-		for (FitnesseResults child : childResults) {
-			TestResult childResult = getChildResult(child);
-			if (childResult != null) {
-				children.add(childResult);
-			}
+		List<TestResult> children = new ArrayList<TestResult>(getChildResults());
+		if (hasHtmlContent()) {
+			ResultsDetails htmlContent = new ResultsDetails(this, DETAILS);
+			children.add(htmlContent);
 		}
-
 		return children;
 	}
 
-	protected TestResult getChildResult(FitnesseResults child) {
-		if (!child.hasResultsDetails()) {
-			return null;
-		}
-		return new ResultsDetails(this, child.getName() + "Details", child.pageCounts);
-	}
-
-	@Override
-	public boolean hasChildren() {
-		for (FitnesseResults child : childResults) {
-			if (child.hasResultsDetails()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	protected List<FitnesseResults> getChildResults() {
-		return childResults;
+	/**
+	 * Returns <code>true</code> if there are children FitNesse results available
+	 */
+	protected boolean hasChildResults() {
+		return !getChildResults().isEmpty();
 	}
 	
-	protected boolean hasResultsDetails() {
+	/**
+	 * Returns the children FitNesse results that were added with {@link #addChild(FitnesseResults)}
+	 */
+	protected List<FitnesseResults> getChildResults() {
+		return details;
+	}
+
+	/**
+	 * Returns <code>true</code> if this results has html content
+	 * that is available via {@link #getHtmlContent()}
+	 */
+	protected boolean hasHtmlContent() {
 		return pageCounts != null && pageCounts.content != null;
 	}
 	
-	
-	
 	/**
-	 * Returns the html details of this result.
+	 * Returns the html content of this result.
 	 */
-	protected String getResultsDetails() {
-		if (hasResultsDetails()) {
+	protected String getHtmlContent() {
+		if (hasHtmlContent()) {
 			return pageCounts.content;
 		}
 		return "";
@@ -415,6 +427,13 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	
 	@Override
 	public String getStdout() {
-		return getResultsDetails();
+		return getHtmlContent();
+	}
+	
+	/**
+	 * Make page counts accessible to ResultsDetails
+	 */
+	Counts getPageCounts() {
+		return pageCounts;
 	}
 }
