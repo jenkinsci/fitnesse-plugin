@@ -15,6 +15,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class NativePageCounts extends DefaultHandler {
 	public static final String PAGE = "page";
 	public static final String PSEUDO_PAGE = "name";
+	public static final String CONTENT = "content";
 	public static final String APPROX_RESULT_DATE = "approxResultDate";
 	public static final String RIGHT = "right";
 	public static final String WRONG = "wrong";
@@ -33,13 +34,16 @@ public class NativePageCounts extends DefaultHandler {
 		if (COUNTABLE.contains(qName)) {
 			String page = attributes.getValue(PAGE);
 			String pseudoPage = attributes.getValue(PSEUDO_PAGE);
+			String content = attributes.getValue(CONTENT);
+			
 			Counts counts = new Counts(
 					page == null || page.equals("") ? pseudoPage : page,
 					qName.equals(SUMMARY) ? "" : resultsDateOf(attributes.getValue(APPROX_RESULT_DATE)), 
 					Integer.parseInt(attributes.getValue(RIGHT)), 
 					Integer.parseInt(attributes.getValue(WRONG)), 
 					Integer.parseInt(attributes.getValue(IGNORED)), 
-					Integer.parseInt(attributes.getValue(EXCEPTIONS)));
+					Integer.parseInt(attributes.getValue(EXCEPTIONS)),
+					content);
 			if (qName.equals(SUMMARY)) summary = counts;
 			allCounts.put(counts.page, counts);
 		}
@@ -66,6 +70,15 @@ public class NativePageCounts extends DefaultHandler {
 		return summary;
 	}
 	
+	public List<String> getDetailsContents() {
+		ArrayList<String> contents = new ArrayList<String>();
+		for (String key : allCounts.keySet()) {
+			Counts counts = allCounts.get(key);
+			if (counts != summary) contents.add(counts.content);
+		}
+		return contents;
+	}
+	
 	public List<Counts> getDetails() {
 		ArrayList<Counts> details = new ArrayList<Counts>();
 		for (String key : allCounts.keySet()) {
@@ -85,14 +98,16 @@ public class NativePageCounts extends DefaultHandler {
 		public final int wrong;
 		public final int ignored;
 		public final int exceptions;
+		public final String content;
 
-		public Counts(String page, String resultsDate, int right, int wrong, int ignored, int exceptions) {
+		public Counts(String page, String resultsDate, int right, int wrong, int ignored, int exceptions, String content) {
 			this.page = page;
 			this.resultsDate = resultsDate;
 			this.right = right;
 			this.wrong = wrong;
 			this.ignored = ignored;
 			this.exceptions = exceptions;
+			this.content = content;
 		}
 
 		public Date resultsDateAsDate() throws ParseException {

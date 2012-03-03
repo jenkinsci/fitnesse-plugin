@@ -8,7 +8,7 @@ import org.kohsuke.stapler.StaplerProxy;
 public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResultsAction> implements StaplerProxy {
 	private static final long serialVersionUID = 1L;
 	private FitnesseResults results;
-
+	
 	protected FitnesseResultsAction(AbstractBuild<?, ?> owner, FitnesseResults results) {
 		super(owner);
 		this.results = results;

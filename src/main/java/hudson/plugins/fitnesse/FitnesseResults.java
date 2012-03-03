@@ -1,10 +1,11 @@
 package hudson.plugins.fitnesse;
 
-import hudson.model.AbstractBuild;
-import hudson.model.Hudson;
 import hudson.model.ModelObject;
 import hudson.model.Result;
+import hudson.model.AbstractBuild;
+import hudson.model.Hudson;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
+import hudson.tasks.test.TabulatedResult;
 import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResult;
 
@@ -13,11 +14,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-public class FitnesseResults extends TestResult implements Comparable<FitnesseResults>{
+public class FitnesseResults extends TabulatedResult implements Comparable<FitnesseResults>{
+	private static final String DETAILS = "Details";
+
+	private static final Logger log = Logger.getLogger("FitNesse");
+	
 	private static final long serialVersionUID = 1L;
 	private transient boolean durationCalculated;
 	private transient long durationInMillis;
@@ -37,11 +43,20 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	FitnesseResults(NativePageCounts allCounts) {
 		this(allCounts.getSummary());
 		for (Counts detail : allCounts.getDetails()) {
-			addDetail(new FitnesseResults(detail));
+			addChild(new FitnesseResults(detail));
 		}
 	}
 
-	void addDetail(FitnesseResults fitnesseResults) {
+	private Object readResolve() {
+		// for some reason, XStream does not instantiate the details list,
+		// so we do it manually
+		if (details == null) {
+			details = new ArrayList<FitnesseResults>();
+		}
+		return this;
+	}
+	
+	void addChild(FitnesseResults fitnesseResults) {
 		details.add(fitnesseResults);
 		fitnesseResults.setParent(this);
 	}
@@ -101,9 +116,9 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 		return pageCounts.wrong + getExceptionCount();
 	}
 
-        public int getFailOnlyCount() {
-            return pageCounts.wrong;
-        }
+	public int getFailOnlyCount() {
+		return pageCounts.wrong;
+	}
 
 	@Override
 	public int getPassCount() {
@@ -176,6 +191,10 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 		}
 		durationInMillis = latest.millisAfter(earliest);
 		durationCalculated = true;
+	}
+	
+	public String getResultsDate() {
+		return pageCounts.resultsDate;
 	}
 
 	public boolean isEarlierThan(FitnesseResults other) {
@@ -289,7 +308,7 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	}
 	
 	/**
-	 * referenced in summary.jelly
+	 * referenced in body.jelly
 	 */
 	public String toHtml(FitnesseResults results) {
 		FitnesseBuildAction buildAction = getOwner().getAction(FitnesseBuildAction.class);
@@ -298,6 +317,29 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 		}
 		return buildAction.getLinkFor(results.getName(), Hudson.getInstance().getRootUrl());
 	}
+
+	/**
+	 * referenced in body.jelly. Link is apparently relative to 
+	 */
+	public String getDetailsLink() {
+		if (details == null) {
+			return "&nbsp;";
+		}
+
+		return String.format("<a href=\"%s/%s\">%s</a>", 
+				getName(), DETAILS, "Details");
+//		return String.format("<a href=\"%s/%s\">%s</a>", 
+//					getUrl(), "Details", "Details");
+	}
+
+	@Override
+	public String getErrorDetails() {
+		if (pageCounts.content != null) {
+			return pageCounts.content;
+		}
+		return "";
+	}
+	
 	
 	/**
 	 * called from links embedded in history/trend graphs 
@@ -305,7 +347,93 @@ public class FitnesseResults extends TestResult implements Comparable<FitnesseRe
 	 */
 	@Override
 	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
-		return findCorrespondingResult(token);
+		TestResult result = findCorrespondingResult(token);
+		if (result != null) {
+			return result;
+		}
+		return findChildByName(token);
 	}
 
+	private <T extends TestResult> T findChildByName(String aName) {
+		Collection<? extends TestResult> children = getChildren();
+		for (TestResult child : children) {
+			if (aName.equals(child.getName())) {
+				return (T) child;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Returns <code>true</code> if there are child results available.
+	 * So far, only returns <code>true</code> if there is {@link #getHtmlContent()}
+	 * for this result available.
+	 */
+	@Override
+	public boolean hasChildren() {
+		return hasChildResults() || hasHtmlContent();
+	}
+
+	/**
+	 * Returns the children of this result. Returns both the details and the html
+	 * content, if available.
+	 * @return the details and html content results, or an empty Collection
+	 */
+	@Override
+	public Collection<? extends TestResult> getChildren() {
+		if (!hasChildren()) {
+			return Collections.emptyList();
+		}
+		List<TestResult> children = new ArrayList<TestResult>(getChildResults());
+		if (hasHtmlContent()) {
+			ResultsDetails htmlContent = new ResultsDetails(this, DETAILS);
+			children.add(htmlContent);
+		}
+		return children;
+	}
+
+	/**
+	 * Returns <code>true</code> if there are children FitNesse results available
+	 */
+	protected boolean hasChildResults() {
+		return !getChildResults().isEmpty();
+	}
+	
+	/**
+	 * Returns the children FitNesse results that were added with {@link #addChild(FitnesseResults)}
+	 */
+	protected List<FitnesseResults> getChildResults() {
+		return details;
+	}
+
+	/**
+	 * Returns <code>true</code> if this results has html content
+	 * that is available via {@link #getHtmlContent()}
+	 */
+	protected boolean hasHtmlContent() {
+		return pageCounts != null && pageCounts.content != null;
+	}
+	
+	/**
+	 * Returns the html content of this result.
+	 */
+	protected String getHtmlContent() {
+		if (hasHtmlContent()) {
+			return pageCounts.content;
+		}
+		return "";
+	}
+	
+	@Override
+	public String getStdout() {
+		return getHtmlContent();
+	}
+	
+	/**
+	 * Make page counts accessible to ResultsDetails
+	 */
+	Counts getPageCounts() {
+		return pageCounts;
+	}
 }

@@ -2,8 +2,8 @@ package hudson.plugins.fitnesse;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.model.FreeStyleProject;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.Shell;
 
@@ -13,7 +13,6 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.jvnet.hudson.test.HudsonTestCase;
 
 public class HudsonDependentTest extends HudsonTestCase {
@@ -22,12 +21,11 @@ public class HudsonDependentTest extends HudsonTestCase {
 		FitnesseResults parent = new FitnesseResults((Counts)null);
 		FitnesseResults child = new FitnesseResults((Counts)null);
 		parent.setOwner(new FreeStyleBuild(createFreeStyleProject(getName())));
-		parent.addDetail(child);
+		parent.addChild(child);
 		Assert.assertSame(parent.getOwner(), child.getOwner());
 	}
 	
-	@Ignore("Test didn't work prior to version 1.5")
-	public void iTestBuildStartingFitnesseWithAbsoluteAndRelativePaths() throws Exception {
+	public void testBuildStartingFitnesseWithAbsoluteAndRelativePaths() throws Exception {
 		FreeStyleProject project = createFreeStyleProject(getName());
 		project.getBuildersList().clear();
 		project.getPublishersList().clear();

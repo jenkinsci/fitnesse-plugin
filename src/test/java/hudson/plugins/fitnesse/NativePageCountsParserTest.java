@@ -12,6 +12,7 @@ public class NativePageCountsParserTest {
 	private static final String TEST_RESULTS_HEAD = "<?xml version=\"1.0\"?><testResults>";
 	private static final String PAGE_RESULTS_HEAD = "<FitNesseVersion>20100103</FitNesseVersion><rootPath>SuiteBlah</rootPath><result>";
 	private static final String PAGE_RESULTS_COUNTS = "<counts><right>0</right><wrong>0</wrong><ignores>0</ignores><exceptions>0</exceptions></counts>";
+	private static final String PAGE_RESULTS_CONTENT = "<content><![CDATA[<br/><table border=\"1\" cellspacing=\"0\" _TABLENUMBER=7151028948633272397><tr><td>import</td></tr><tr><td>waferslim.fixtures</td></tr></table>]]></content>";
 	private static final String PAGE_RESULTS_NAME = "<relativePageName>TestBlah</relativePageName>";
 	private static final String PAGE_RESULTS_HISTORY = "<pageHistoryLink>WikiName.SuiteBlah.SuiteAll.TestBlah?pageHistory&amp;resultDate=20100307181143&amp;format=xml</pageHistoryLink>";
 	private static final String PAGE_RESULTS_TAIL = "</result>";
@@ -20,6 +21,7 @@ public class NativePageCountsParserTest {
 	private static final String RESULTS = TEST_RESULTS_HEAD
 											+ PAGE_RESULTS_HEAD
 											+ PAGE_RESULTS_COUNTS
+											+ PAGE_RESULTS_CONTENT
 											+ PAGE_RESULTS_NAME
 											+ PAGE_RESULTS_HISTORY
 											+ PAGE_RESULTS_TAIL
@@ -66,6 +68,14 @@ public class NativePageCountsParserTest {
 		Assert.assertEquals(2, testResults.getSummary().exceptions);
 	}
 
+	@Test
+	public void parserShouldCollectContents() throws Exception {
+		NativePageCounts testResults = fitnesseParser.parse(toInputStream(RESULTS));
+		Assert.assertEquals(2, testResults.size());
+		Assert.assertEquals("SuiteBlah", testResults.getSummary().page);
+		Assert.assertEquals(1, testResults.getDetailsContents().size());
+	}
+	
 	@Test
 	public void parserShouldCollectAllCountsFromSuiteFile() throws Exception {
 		InputStream sampleXml = getClass().getResourceAsStream("fitnesse-suite-results.xml");

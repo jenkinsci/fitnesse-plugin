@@ -14,17 +14,19 @@ public class NativePageCountsTest {
 	
 	@Test
 	public void countsShouldCollectValuesFromConstructor() {
-		Counts actual = new Counts("name", "201003112307", 1, 2, 3, 4);
+		String content = "<tr><td></td></tr>";
+		Counts actual = new Counts("name", "201003112307", 1, 2, 3, 4, content);
 		Assert.assertEquals("name", actual.page);
 		Assert.assertEquals(1, actual.right);
 		Assert.assertEquals(2, actual.wrong);
 		Assert.assertEquals(3, actual.ignored);
 		Assert.assertEquals(4, actual.exceptions);
+		Assert.assertEquals(content, actual.content);
 	}
 
 	@Test
 	public void countsToStringShouldSpellOutValues() {
-		Counts actual = new Counts("name", "2010xxxx", 11, 10, 9, 8);
+		Counts actual = new Counts("name", "2010xxxx", 11, 10, 9, 8, null);
 		Assert.assertEquals("name (2010xxxx): 11 right, 10 wrong, 9 ignored, 8 exceptions", 
 				actual.toString());
 	}
@@ -34,7 +36,7 @@ public class NativePageCountsTest {
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear(Calendar.MILLISECOND);
 		Date aDate = calendar.getTime();
-		Counts actual = new Counts("name", Counts.RESULTS_DATE_FORMAT.format(aDate), 11, 10, 9, 8);
+		Counts actual = new Counts("name", Counts.RESULTS_DATE_FORMAT.format(aDate), 11, 10, 9, 8, null);
 		Assert.assertEquals(aDate, actual.resultsDateAsDate());
 	}
 	
@@ -88,6 +90,7 @@ public class NativePageCountsTest {
 		Assert.assertEquals(6, results.getDetails().get(0).wrong);
 		Assert.assertEquals(7, results.getDetails().get(0).ignored);
 		Assert.assertEquals(8, results.getDetails().get(0).exceptions);
+		Assert.assertEquals("<tr></tr>", results.getDetails().get(0).content);
 	}
 
 	private void addDetailAttributes(AttributesImpl attributes,
@@ -97,6 +100,7 @@ public class NativePageCountsTest {
 		attributes.addAttribute("", "", NativePageCounts.WRONG, "String", "6");
 		attributes.addAttribute("", "", NativePageCounts.IGNORED, "String", "7");
 		attributes.addAttribute("", "", NativePageCounts.EXCEPTIONS, "String", "8");
+		attributes.addAttribute("", "", NativePageCounts.CONTENT, "String", "<tr></tr>");
 	}
 
 	@Test

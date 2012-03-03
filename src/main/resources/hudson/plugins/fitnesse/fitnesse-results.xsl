@@ -62,6 +62,9 @@
 		<xsl:attribute name="exceptions">
 			<xsl:value-of select="counts/exceptions"/>
 		</xsl:attribute>
+		<xsl:attribute name="content">
+			<xsl:value-of select="content"/>
+		</xsl:attribute>
 	</detail>
 </xsl:template>
 

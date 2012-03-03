@@ -73,14 +73,14 @@ public class History {
 	public TestObject getTestObject() {
 		return testObject;
 	}
-	
+
     public boolean historyAvailable() {
        if (testObject.getOwner().getParent().getBuilds().size() > 1)
            return true;
         else
-           return false; 
+           return false;
     }
-	
+
 	public List<TestResult> getList() {
 		List<TestResult> list = new ArrayList<TestResult>();
 		for (AbstractBuild<?,?> b: testObject.getOwner().getParent().getBuilds()) {
@@ -114,7 +114,7 @@ public class History {
                    });
                }
                return data;
-           }           
+           }
            protected String generateToolTip(ChartLabel label, int row, int column) {
         	   return label.o.getOwner().getDisplayName() + " : " + label.o.getDurationString();
            }
@@ -135,31 +135,31 @@ public class History {
                     data.add(o.getSkipCount(), "0Skipped", new ChartLabel(o));
                 }
                 return data;
-            }           
+            }
             protected String generateToolTip(ChartLabel label, int row, int column) {
-            	String build = label.o.getOwner().getDisplayName() + " : ";
-            	switch(row) {
-            		case 0:
-            			return build + String.valueOf(Messages.AbstractTestResultAction_skip(label.o.getSkipCount()));
-            		case 1:
-            			return build + String.valueOf(Messages.AbstractTestResultAction_fail(label.o.getFailCount()));
-            		default:
-            			return build + String.valueOf(Messages.AbstractTestResultAction_test(label.o.getTotalCount()));
-            	}
+                String build = label.o.getOwner().getDisplayName() + " : ";
+                switch(row) {
+                    case 0:
+                        return String.valueOf(Messages.AbstractTestResultAction_skip(build, label.o.getSkipCount()));
+                    case 1:
+                        return String.valueOf(Messages.AbstractTestResultAction_fail(build, label.o.getFailCount()));
+                    default:
+                        return String.valueOf(Messages.AbstractTestResultAction_test(build, label.o.getTotalCount()));
+                }
             }
         };
     }
 
     private abstract class GraphImpl extends Graph {
         private final String yLabel;
-        
+
         protected GraphImpl(String yLabel) {
             super(testObject.getOwner().getTimestamp(),graphWidth,graphHeight);
             this.yLabel =  yLabel;
         }
 
         protected abstract DataSetBuilder<String, ChartLabel> createDataSet();
-        
+
         protected abstract String generateToolTip(ChartLabel label, int row, int column);
 
         @SuppressWarnings("serial")
@@ -253,7 +253,7 @@ public class History {
             AbstractBuild<?,?> build = o.getOwner();
             String buildLink = build.getUrl();
             String actionUrl = o.getTestResultAction().getUrlName();
-            this.url = Hudson.getInstance().getRootUrl() + buildLink + actionUrl + o.getUrl();             
+            this.url = Hudson.getInstance().getRootUrl() + buildLink + actionUrl + o.getUrl();
         }
 
         public int compareTo(ChartLabel that) {
