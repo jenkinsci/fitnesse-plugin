@@ -194,7 +194,8 @@ public class FitnesseExecutor {
 				} catch (Exception e) {
 					// swallow - file may not exist
 				}
-				final byte[] bytes = getHttpBytes(logger, readFromURL, runnerWithTimeOut);
+				final byte[] bytes = getHttpBytes(logger, readFromURL, runnerWithTimeOut,
+						builder.getFitnesseHttpTimeout());
 				writeFitnesseResults(logger, writeToFilePath, bytes); 
 			}
 		};
@@ -208,13 +209,14 @@ public class FitnesseExecutor {
 		runnerWithTimeOut.run(readAndWriteResults, logToConsole);
 	}
 	
-	public byte[] getHttpBytes(PrintStream log, URL pageCmdTarget, Resettable timeout) {
+	public byte[] getHttpBytes(PrintStream log, URL pageCmdTarget, Resettable timeout, int httpTimeout) {
 		InputStream inputStream = null;
 		ByteArrayOutputStream bucket = new ByteArrayOutputStream();
 
 		try {
 			log.println("Connnecting to " + pageCmdTarget);
 			HttpURLConnection connection = (HttpURLConnection) pageCmdTarget.openConnection();
+			connection.setReadTimeout(httpTimeout);
 			log.println("Connected: " + connection.getResponseCode() + "/" + connection.getResponseMessage());
 
 			inputStream = connection.getInputStream();
