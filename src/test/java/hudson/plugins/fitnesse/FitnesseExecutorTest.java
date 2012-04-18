@@ -2,6 +2,8 @@ package hudson.plugins.fitnesse;
 
 import hudson.EnvVars;
 import hudson.FilePath;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -12,9 +14,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 public class FitnesseExecutorTest {
 
@@ -215,7 +214,8 @@ public class FitnesseExecutorTest {
 		Resettable resettable = new Resettable() {
 			public void reset() { resetWasCalled = true; }
 		};
-		byte[] bytes = executor.getHttpBytes(new PrintStream(logBucket), new URL("http://hudson-ci.org/"), resettable);
+		byte[] bytes = executor.getHttpBytes(new PrintStream(logBucket), new URL("http://hudson-ci.org/"),
+				resettable, 60*1000);
 		Assert.assertTrue(bytes.length > 0);
 		Assert.assertTrue(new String(bytes).contains("<html"));
 		Assert.assertTrue(new String(bytes).contains("</html>"));
