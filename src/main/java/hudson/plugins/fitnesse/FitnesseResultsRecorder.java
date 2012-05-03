@@ -71,6 +71,8 @@ public class FitnesseResultsRecorder extends Recorder {
 		try {
 			FilePath[] resultFiles = getResultFiles(build);
 			FitnesseResults results = getResults(listener.getLogger(), resultFiles);
+			if (results == null) return true; // no Fitnesse results found at all
+			
 			FitnesseResultsAction action = new FitnesseResultsAction(build, results);
 			if (results.getBuildResult() != null) build.setResult(results.getBuildResult());
 			build.addAction(action);

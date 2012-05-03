@@ -157,4 +157,17 @@ public class HudsonDependentTest extends HudsonTestCase {
 		Assert.assertTrue(resultsAction.getResult().getPassCount() > 0);
 		Assert.assertEquals(2, resultsAction.getResult().getFailCount());
 	}
+	
+	public void testBuildWithoutResults() throws Exception {
+		FreeStyleProject project = createFreeStyleProject(getName());
+		project.getBuildersList().clear();
+		project.getPublishersList().clear();
+		String resultsFile = "fitnesse-results-inexistant.xml";
+		project.getPublishersList().add(new FitnesseResultsRecorder(resultsFile));
+		
+		FreeStyleBuild build = project.scheduleBuild2(0).get();
+		Assert.assertTrue(build.getLogFile().getAbsolutePath(), Result.SUCCESS.equals(build.getResult()));
+		FitnesseResultsAction resultsAction = build.getAction(FitnesseResultsAction.class);
+		Assert.assertNull(resultsAction);
+	}
 }
