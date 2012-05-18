@@ -7,6 +7,7 @@ import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.ModelObject;
+import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
@@ -50,6 +51,7 @@ public class FitnesseBuilder extends Builder {
 
 	static final int _URL_READ_TIMEOUT_MILLIS = 60*1000;
 	static final String _LOCALHOST = "localhost";
+	static final String _HOSTNAME_SLAVE_PROPERTY = "HOST_NAME";
 	
 	private Map<String, String> options;
 
@@ -77,9 +79,16 @@ public class FitnesseBuilder extends Builder {
 	/**
 	 * referenced in config.jelly
 	 */
-    public String getFitnesseHost() {
-    	if (getFitnesseStart()) return _LOCALHOST;
-    	return getOption(FITNESSE_HOST, "unknown_host");
+    
+	public String getFitnesseHost(AbstractBuild<?,?> build) throws InterruptedException, IOException  {
+		if (getFitnesseStart()){
+			EnvironmentVariablesNodeProperty prop = build.getBuiltOn().getNodeProperties().get(EnvironmentVariablesNodeProperty.class);
+		  	if (prop.getEnvVars()!=null && prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY)!=null){
+		  		return prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY);
+		  	} else {
+		  		return _LOCALHOST;
+		  	}
+		} else return getOption(FITNESSE_HOST, "unknown_host");
     }
     
     /**

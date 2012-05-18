@@ -42,8 +42,8 @@ public class FitnesseExecutor {
     throws InterruptedException {
 		Proc fitnesseProc = null;
 		StdConsole console = new StdConsole();
-		build.addAction(getFitnesseBuildAction());
 		try {
+			build.addAction(getFitnesseBuildAction(build));
 	    	if (builder.getFitnesseStart()) {
 	    		fitnesseProc = startFitnesse(build, launcher, environment, logger, console);
 	    		if (!procStarted(fitnesseProc, logger, console)) {
@@ -54,7 +54,7 @@ public class FitnesseExecutor {
 	    	
 	    	FilePath resultsFilePath = getResultsFilePath(getWorkingDirectory(build), 
 	    												builder.getFitnessePathToXmlResultsOut());
-			readAndWriteFitnesseResults(logger, console, getFitnessePageCmdURL(), resultsFilePath);
+			readAndWriteFitnesseResults(logger, console, getFitnessePageCmdURL(build), resultsFilePath);
 			return true;
 		} catch (Throwable t) {
 			t.printStackTrace(logger);
@@ -66,10 +66,10 @@ public class FitnesseExecutor {
 		}
 	}
 
-	private FitnesseBuildAction getFitnesseBuildAction() {
+	private FitnesseBuildAction getFitnesseBuildAction(AbstractBuild<?,?> build) throws InterruptedException, IOException {
 		return new FitnesseBuildAction(
 				builder.getFitnesseStart(),
-				builder.getFitnesseHost(), 
+				builder.getFitnesseHost(build), 
 				builder.getFitnessePort());
 	}
 
@@ -248,12 +248,13 @@ public class FitnesseExecutor {
 		return bucket.toByteArray();
 	}
 
-	public URL getFitnessePageCmdURL() throws MalformedURLException {
+	public URL getFitnessePageCmdURL(AbstractBuild<?,?> build) throws Exception {
 		return new URL("http", 
-				builder.getFitnesseHost(), 
+				builder.getFitnesseHost(build), 
 				builder.getFitnessePort(), 
 				getFitnessePageCmd());
 	}
+	
 
 	public String getFitnessePageCmd() {
 		String targetPageExpression = builder.getFitnesseTargetPage();
