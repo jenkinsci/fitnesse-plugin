@@ -36,8 +36,18 @@ public class FitnesseProjectAction implements Action {
     /**
      * Used in floatingBox.jelly
      */
+    public boolean hasTrend() {
+    	return getLatestResults() != null;
+    }
+    
+    /**
+     * Used in floatingBox.jelly
+     */
     public History getTrend() {
     	FitnesseResultsAction latestResults = getLatestResults();
+    	if (latestResults == null) {
+    		return null;
+    	}
     	FitnesseResults result = latestResults.getResult();
 		return new History(result,500,200);
     }
