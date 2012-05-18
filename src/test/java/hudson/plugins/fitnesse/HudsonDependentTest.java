@@ -24,7 +24,7 @@ public class HudsonDependentTest extends HudsonTestCase {
 		parent.addChild(child);
 		Assert.assertSame(parent.getOwner(), child.getOwner());
 	}
-	
+
 	public void testBuildStartingFitnesseWithAbsoluteAndRelativePaths() throws Exception {
 		FreeStyleProject project = createFreeStyleProject(getName());
 		project.getBuildersList().clear();
@@ -40,16 +40,16 @@ public class HudsonDependentTest extends HudsonTestCase {
 		options.put(FitnesseBuilder.TARGET_IS_SUITE, Boolean.TRUE.toString());
 		options.put(FitnesseBuilder.PATH_TO_RESULTS, resultsFile);
 		FitnesseBuilder builder = new FitnesseBuilder(options);
-		
+
 		project.getBuildersList().add(builder);
 		FitnesseResultsRecorder fitnesseResultsRecorder = new FitnesseResultsRecorder(resultsFile);
 		project.getPublishersList().add(fitnesseResultsRecorder);
-		//AbsolutePath build 
+		//AbsolutePath build
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		Assert.assertTrue(build.getLogFile().getAbsolutePath(), Result.FAILURE.equals(build.getResult()));
 		FitnesseResultsAction resultsAction = build.getAction(FitnesseResultsAction.class);
 		assertExpectedResults(resultsAction);
-		
+
 		FitnesseProjectAction projectAction = (FitnesseProjectAction) fitnesseResultsRecorder.getProjectActions(project).toArray()[0];
 		Assert.assertSame(resultsAction, projectAction.getLatestResults());
 		Assert.assertFalse(projectAction.getTrend().historyAvailable());
@@ -57,17 +57,17 @@ public class HudsonDependentTest extends HudsonTestCase {
 		project.getBuildersList().clear();
 		project.getPublishersList().clear();
 		resultsFile = "fitnesse-results2.xml";
-		
+
 		project.getBuildersList().add(new Shell("cp " + builder.getFitnessePathToJar() + " " + build.getWorkspace().getRemote()));
 		project.getBuildersList().add(new Shell("cp -r " + builder.getFitnessePathToRoot() + " " + build.getWorkspace().getRemote()));
-		options.put(FitnesseBuilder.PATH_TO_JAR, "fitnesse.jar"); 
-		options.put(FitnesseBuilder.PATH_TO_ROOT, "FitNesseRoot"); 
+		options.put(FitnesseBuilder.PATH_TO_JAR, "fitnesse.jar");
+		options.put(FitnesseBuilder.PATH_TO_ROOT, "FitNesseRoot");
 		options.put(FitnesseBuilder.PATH_TO_RESULTS, resultsFile);
 
 		project.getBuildersList().add(builder);
 		fitnesseResultsRecorder = new FitnesseResultsRecorder(resultsFile);
 		project.getPublishersList().add(fitnesseResultsRecorder);
-		//RelativePath build 
+		//RelativePath build
 		build = project.scheduleBuild2(0).get();
 		Assert.assertTrue(build.getLogFile().getAbsolutePath(), Result.FAILURE.equals(build.getResult()));
 		resultsAction = build.getAction(FitnesseResultsAction.class);
@@ -81,11 +81,11 @@ public class HudsonDependentTest extends HudsonTestCase {
 	private String getTestResourceFitnesseJar() {
 		return new File(new File(System.getProperty("user.dir")), "target/test-classes/fitnesse.jar").getAbsolutePath();
 	}
-	
+
 	private String getTestResourceFitNesseRoot() {
 		return new File(new File(System.getProperty("user.dir")), "target/test-classes/FitNesseRoot").getAbsolutePath();
 	}
-	
+
 	private void assertExpectedResults(FitnesseResultsAction resultsAction) {
 		Assert.assertEquals("passed", 1, resultsAction.getResult().getPassCount());
 		Assert.assertEquals("failed", 2, resultsAction.getResult().getFailCount());
@@ -95,7 +95,7 @@ public class HudsonDependentTest extends HudsonTestCase {
 
 	public void testBuildForStartedFitnesse() throws Exception {
 		File workingDir = new File(getTestResourceFitNesseRoot()).getParentFile();
-		String[] commands = new String[] {"java", "-jar", getTestResourceFitnesseJar(), 
+		String[] commands = new String[] {"java", "-jar", getTestResourceFitnesseJar(),
 			"-d", workingDir.getPath(),
 			"-r", "FitNesseRoot", "-p", "8082"};
 		Process process = new ProcessBuilder(commands).directory(workingDir).start();
@@ -105,7 +105,7 @@ public class HudsonDependentTest extends HudsonTestCase {
 			project.getBuildersList().clear();
 			project.getPublishersList().clear();
 			String resultsFile = "fitnesse-results3.xml";
-			
+
 			Map<String, String> options = new HashMap<String, String>();
 			options.put(FitnesseBuilder.START_FITNESSE, Boolean.FALSE.toString());
 			options.put(FitnesseBuilder.FITNESSE_HOST, "localhost");
@@ -114,7 +114,7 @@ public class HudsonDependentTest extends HudsonTestCase {
 			options.put(FitnesseBuilder.TARGET_IS_SUITE, Boolean.TRUE.toString());
 			options.put(FitnesseBuilder.PATH_TO_RESULTS, resultsFile);
 			FitnesseBuilder builder = new FitnesseBuilder(options);
-			
+
 			project.getBuildersList().add(builder);
 			project.getPublishersList().add(new FitnesseResultsRecorder(resultsFile));
 			FreeStyleBuild build = project.scheduleBuild2(0).get();
@@ -134,7 +134,7 @@ public class HudsonDependentTest extends HudsonTestCase {
 		project.getBuildersList().add(new Shell("echo")); // only want this to get workspace
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		FilePath workspace = build.getWorkspace();
-		
+
 		Map<String, String> options = new HashMap<String, String>();
 		options.put(FitnesseBuilder.START_FITNESSE, Boolean.TRUE.toString());
 		options.put(FitnesseBuilder.PATH_TO_JAR, workspace.child("fitnesse.jar").getRemote());
@@ -144,27 +144,27 @@ public class HudsonDependentTest extends HudsonTestCase {
 		options.put(FitnesseBuilder.TARGET_IS_SUITE, Boolean.FALSE.toString());
 		options.put(FitnesseBuilder.PATH_TO_RESULTS, resultsFile);
 		FitnesseBuilder builder = new FitnesseBuilder(options);
-		
+
 		project.getBuildersList().clear();
 		project.getPublishersList().clear();
 		project.getBuildersList().add(new Shell("cp " + getTestResourceFitnesseJar() + " " + workspace.getRemote()));
 		project.getBuildersList().add(builder);
 		project.getPublishersList().add(new FitnesseResultsRecorder(resultsFile));
-		
+
 		build = project.scheduleBuild2(0).get();
 		Assert.assertTrue(build.getLogFile().getAbsolutePath(), Result.FAILURE.equals(build.getResult()));
 		FitnesseResultsAction resultsAction = build.getAction(FitnesseResultsAction.class);
 		Assert.assertTrue(resultsAction.getResult().getPassCount() > 0);
-		Assert.assertEquals(2, resultsAction.getResult().getFailCount());
+		Assert.assertEquals(4, resultsAction.getResult().getFailCount());
 	}
-	
+
 	public void testBuildWithoutResults() throws Exception {
 		FreeStyleProject project = createFreeStyleProject(getName());
 		project.getBuildersList().clear();
 		project.getPublishersList().clear();
 		String resultsFile = "fitnesse-results-inexistant.xml";
 		project.getPublishersList().add(new FitnesseResultsRecorder(resultsFile));
-		
+
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		Assert.assertTrue(build.getLogFile().getAbsolutePath(), Result.SUCCESS.equals(build.getResult()));
 		FitnesseResultsAction resultsAction = build.getAction(FitnesseResultsAction.class);
