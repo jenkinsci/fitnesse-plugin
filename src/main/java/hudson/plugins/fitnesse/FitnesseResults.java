@@ -1,13 +1,16 @@
 package hudson.plugins.fitnesse;
 
-import hudson.model.ModelObject;
-import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.Hudson;
+import hudson.model.ModelObject;
+import hudson.model.Result;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.test.TabulatedResult;
 import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResult;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.Exported;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -15,9 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 public class FitnesseResults extends TabulatedResult implements Comparable<FitnesseResults>{
 	private static final String DETAILS = "Details";
@@ -100,6 +100,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	 * Required for {@link TestObject#getId}
 	 */
 	@Override
+	@Exported(visibility=2)
 	public String getName() {
 		return pageCounts.page;
 	}
@@ -112,15 +113,18 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	}
 
 	@Override
+	@Exported(visibility=2)
 	public int getFailCount() {
 		return pageCounts.wrong + getExceptionCount();
 	}
 
+	@Exported(visibility=2)
 	public int getFailOnlyCount() {
 		return pageCounts.wrong;
 	}
 
 	@Override
+	@Exported(visibility=2)
 	public int getPassCount() {
 		return pageCounts.right;
 	}
@@ -133,6 +137,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	/**
 	 * referenced in summary.jelly
 	 */
+	@Exported(visibility=2)
 	public int getIgnoredCount() {
 		return pageCounts.ignored;
 	}
@@ -140,6 +145,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	/**
 	 * referenced in summary.jelly
 	 */
+	@Exported(visibility=2)
 	public int getExceptionCount() {
 		return pageCounts.exceptions;
 	}
@@ -170,6 +176,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	}
 
 	@Override
+	@Exported(visibility=2)
 	public float getDuration() {
 		if (!durationCalculated) calculateDurationInMillis();
 		return durationInMillis / 1000.0f;
@@ -189,10 +196,11 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 				latest = detail;
 			}
 		}
-		durationInMillis = latest.millisAfter(earliest);
+		durationInMillis = latest == null? 0 : latest.millisAfter(earliest);
 		durationCalculated = true;
 	}
-	
+
+	@Exported(visibility=1)
 	public String getResultsDate() {
 		return pageCounts.resultsDate;
 	}
@@ -258,6 +266,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	}
 
 	@Override
+	@Exported(visibility=1)
 	public Collection<FitnesseResults> getFailedTests() {
 		if (failed == null) {
 			failed = filteredCopyOfDetails(new ResultsFilter() {
@@ -269,6 +278,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 		return failed;
 	}
 	@Override
+	@Exported(visibility=1)
 	public Collection<FitnesseResults> getPassedTests() {
 		if (passed == null) {
 			passed = filteredCopyOfDetails(new ResultsFilter() {
@@ -281,6 +291,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	}
 
 	@Override
+	@Exported(visibility=1)
 	public Collection<FitnesseResults> getSkippedTests() {
 		if (skipped == null) {
 			skipped = filteredCopyOfDetails(new ResultsFilter() {
@@ -381,6 +392,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	 * @return the details and html content results, or an empty Collection
 	 */
 	@Override
+	@Exported(visibility=1)
 	public Collection<? extends TestResult> getChildren() {
 		if (!hasChildren()) {
 			return Collections.emptyList();
