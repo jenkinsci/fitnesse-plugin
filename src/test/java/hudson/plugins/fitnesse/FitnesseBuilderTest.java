@@ -7,6 +7,24 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class FitnesseBuilderTest {
+   @Test
+   public void getJavaHomeShouldReturnSpecificJavaHomeIfSpecified() {
+      HashMap<String, String> options = new HashMap<String, String>();
+      String expectedJavaHome = "/c/temp/java/";
+      options.put(FitnesseBuilder.JAVA_HOME, expectedJavaHome);
+      FitnesseBuilder builder = new FitnesseBuilder(options);
+      Assert.assertEquals(expectedJavaHome, builder.getFitnesseJavaHome());
+   }
+   
+   @Test
+   public void getJavaHomeShouldReturnJavaHomeEnvironmentVariableValueIfNotSpecified() {
+      HashMap<String, String> options = new HashMap<String, String>();
+      String expectedJavaHome = "";
+      FitnesseBuilder builder = new FitnesseBuilder(options);
+      
+      Assert.assertEquals(expectedJavaHome, builder.getFitnesseJavaHome());
+   }
+   
 	@Test
 	public void getPortShouldReturnLocalPortIfSpecified() {
 		HashMap<String, String> options = new HashMap<String, String>();

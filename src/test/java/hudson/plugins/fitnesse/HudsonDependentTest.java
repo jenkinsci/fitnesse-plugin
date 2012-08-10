@@ -48,6 +48,7 @@ public class HudsonDependentTest extends HudsonTestCase {
 		FreeStyleBuild build = project.scheduleBuild2(0).get();
 		Assert.assertTrue(build.getLogFile().getAbsolutePath(), Result.FAILURE.equals(build.getResult()));
 		FitnesseResultsAction resultsAction = build.getAction(FitnesseResultsAction.class);
+		System.out.println();
 		assertExpectedResults(resultsAction);
 
 		FitnesseProjectAction projectAction = (FitnesseProjectAction) fitnesseResultsRecorder.getProjectActions(project).toArray()[0];

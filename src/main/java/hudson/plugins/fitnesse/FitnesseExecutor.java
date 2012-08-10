@@ -85,6 +85,9 @@ public class FitnesseExecutor {
 		String java = "java"; 
 		if (envVars.containsKey("JAVA_HOME"))
 			java = new File(new File(envVars.get("JAVA_HOME"), "bin"), java).getAbsolutePath();
+		if(!builder.getFitnesseJavaHome().isEmpty()){
+		   java = new File(new File(builder.getFitnesseJavaHome(), "bin"), java).getAbsolutePath();
+		}
 		String fitnesseJavaOpts = builder.getFitnesseJavaOpts();
 		String[] java_opts = ("".equals(fitnesseJavaOpts) ? new String[0] : fitnesseJavaOpts.split(" "));
 

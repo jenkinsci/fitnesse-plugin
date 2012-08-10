@@ -41,6 +41,7 @@ public class FitnesseBuilder extends Builder {
 	public static final String FITNESSE_PORT_LOCAL = "fitnessePortLocal";
 	public static final String FITNESSE_ADDITIONAL_OPTIONS = "additionalFitnesseOptions";
 	public static final String JAVA_OPTS = "fitnesseJavaOpts";
+	public static final String JAVA_HOME = "fitnesseJavaHome";
 	public static final String PATH_TO_JAR = "fitnessePathToJar";
 	public static final String PATH_TO_ROOT = "fitnessePathToRoot";
 	public static final String TARGET_PAGE = "fitnesseTargetPage";
@@ -91,6 +92,13 @@ public class FitnesseBuilder extends Builder {
 		} else return getOption(FITNESSE_HOST, "unknown_host");
     }
     
+	/**
+	 * referenced in config.jelly
+	 */
+	public String getFitnesseJavaHome() {
+	   return getOption(JAVA_HOME, "");
+	}
+	
     /**
      * referenced in config.jelly
      */
@@ -235,6 +243,14 @@ public class FitnesseBuilder extends Builder {
     			return FormValidation.error("Port must be a number.");
     		}
     		return FormValidation.ok();
+    	}
+    	
+    	public FormValidation doCheckFitnesseJavaHome(@QueryParameter String value) throws IOException, ServletException {
+    	  if (value.length()==0)
+           return FormValidation.ok("Defaults to project's JAVA_HOME");
+    	  if (!new File(value).exists())
+          return FormValidation.error("Path to provided JAVA_HOME does not exist.");
+    	   return FormValidation.ok();
     	}
     	
     	public FormValidation doCheckFitnesseJavaOpts(@QueryParameter String value) throws IOException, ServletException {
