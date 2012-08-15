@@ -41,7 +41,7 @@ public class FitnesseBuilder extends Builder {
 	public static final String FITNESSE_PORT_LOCAL = "fitnessePortLocal";
 	public static final String FITNESSE_ADDITIONAL_OPTIONS = "additionalFitnesseOptions";
 	public static final String JAVA_OPTS = "fitnesseJavaOpts";
-	public static final String JAVA_HOME = "fitnesseJavaHome";
+	public static final String FITNESSE_JDK = "fitnesseJdk";
 	public static final String PATH_TO_JAR = "fitnessePathToJar";
 	public static final String PATH_TO_ROOT = "fitnessePathToRoot";
 	public static final String TARGET_PAGE = "fitnesseTargetPage";
@@ -93,11 +93,11 @@ public class FitnesseBuilder extends Builder {
     }
     
 	/**
-	 * referenced in config.jelly
-	 */
-	public String getFitnesseJavaHome() {
-	   return getOption(JAVA_HOME, "");
-	}
+    * referenced in config.jelly
+    */
+	 public String getFitnesseJdk() {
+	      return getOption(FITNESSE_JDK, "");
+	   }    
 	
     /**
      * referenced in config.jelly
@@ -245,11 +245,9 @@ public class FitnesseBuilder extends Builder {
     		return FormValidation.ok();
     	}
     	
-    	public FormValidation doCheckFitnesseJavaHome(@QueryParameter String value) throws IOException, ServletException {
+    	public FormValidation doCheckFitnesseJdk(@QueryParameter String value) throws IOException, ServletException {
     	  if (value.length()==0)
-           return FormValidation.ok("Defaults to project's JAVA_HOME");
-    	  if (!new File(value).exists())
-          return FormValidation.error("Path to provided JAVA_HOME does not exist.");
+           return FormValidation.ok("Defaults to project's JDK");
     	   return FormValidation.ok();
     	}
     	
@@ -339,7 +337,7 @@ public class FitnesseBuilder extends Builder {
 			if (Boolean.parseBoolean(startFitnesseValue)) {
 				return newFitnesseBuilder(startFitnesseValue, 
 						collectFormData(formData, new String[] {
-							JAVA_OPTS, JAVA_WORKING_DIRECTORY, JAVA_HOME,
+							FITNESSE_JDK, JAVA_OPTS, JAVA_WORKING_DIRECTORY,
 							PATH_TO_JAR, PATH_TO_ROOT, FITNESSE_PORT_LOCAL, 
 							TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, PATH_TO_RESULTS, 
 							FITNESSE_ADDITIONAL_OPTIONS
@@ -371,6 +369,6 @@ public class FitnesseBuilder extends Builder {
 			}
 			return targetElements;
 		}
-    }    
+    }
 }
 

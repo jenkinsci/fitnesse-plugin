@@ -3,9 +3,10 @@ package hudson.plugins.fitnesse;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.Proc;
 import hudson.Launcher.ProcStarter;
+import hudson.Proc;
 import hudson.model.AbstractBuild;
+import hudson.model.Hudson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -14,7 +15,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -85,8 +85,9 @@ public class FitnesseExecutor {
 		String java = "java"; 
 		if (envVars.containsKey("JAVA_HOME"))
 			java = new File(new File(envVars.get("JAVA_HOME"), "bin"), java).getAbsolutePath();
-		if(!builder.getFitnesseJavaHome().isEmpty()){
-		   java = new File(new File(builder.getFitnesseJavaHome(), "bin"), java).getAbsolutePath();
+		if(!builder.getFitnesseJdk().isEmpty()){
+		   File customJavaHome = Hudson.getInstance().getJDK(builder.getFitnesseJdk()).getBinDir();
+		   java = new File(customJavaHome, java).getAbsolutePath();
 		}
 		String fitnesseJavaOpts = builder.getFitnesseJavaOpts();
 		String[] java_opts = ("".equals(fitnesseJavaOpts) ? new String[0] : fitnesseJavaOpts.split(" "));

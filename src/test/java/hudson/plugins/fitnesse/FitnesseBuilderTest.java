@@ -8,21 +8,21 @@ import org.junit.Test;
 
 public class FitnesseBuilderTest {
    @Test
-   public void getJavaHomeShouldReturnSpecificJavaHomeIfSpecified() {
+   public void getJdkShouldReturnSpecificJavaHomeIfSpecified() {
       HashMap<String, String> options = new HashMap<String, String>();
-      String expectedJavaHome = "/c/temp/java/";
-      options.put(FitnesseBuilder.JAVA_HOME, expectedJavaHome);
+      String expectedJavaHome = "jdk1.6.0_18";
+      options.put(FitnesseBuilder.FITNESSE_JDK, expectedJavaHome);
       FitnesseBuilder builder = new FitnesseBuilder(options);
-      Assert.assertEquals(expectedJavaHome, builder.getFitnesseJavaHome());
+      Assert.assertEquals(expectedJavaHome, builder.getFitnesseJdk());
    }
    
    @Test
-   public void getJavaHomeShouldReturnJavaHomeEnvironmentVariableValueIfNotSpecified() {
+   public void getJdkShouldReturnNothingIfNotSpecifiedSoThatTheDefaultJDKIsUsed() {
       HashMap<String, String> options = new HashMap<String, String>();
       String expectedJavaHome = "";
       FitnesseBuilder builder = new FitnesseBuilder(options);
       
-      Assert.assertEquals(expectedJavaHome, builder.getFitnesseJavaHome());
+      Assert.assertEquals(expectedJavaHome, builder.getFitnesseJdk());
    }
    
 	@Test

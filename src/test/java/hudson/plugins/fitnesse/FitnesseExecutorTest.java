@@ -112,7 +112,7 @@ public class FitnesseExecutorTest {
 	public void javaCmdShouldReferenceFitnesseSpecificJavaHome() throws IOException {
 	   File javaHome = File.createTempFile("JavaHome", "");
 	   executor = getExecutorForBuilder(
-	                                    new String[] {FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT, FitnesseBuilder.JAVA_HOME},
+	                                    new String[] {FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT, FitnesseBuilder.FITNESSE_JDK},
 	                                    new String[] {getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9876", javaHome.getAbsolutePath()});
 	   
 	   EnvVars envVars = new EnvVars();

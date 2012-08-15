@@ -29,13 +29,19 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/fitnesseStartTrue" 
   checked="${instance.fitnesseStart==true}">
     
-	  <f:entry title="Fitnesse Java Home" 
-	  help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/javaHome">
-	    <f:textbox name="fitnesseJavaHome" 
-        checkUrl="'descriptorByName/hudson.plugins.fitnesse.FitnesseBuilder/checkFitnesseJavaHome?value='+toValue(this)" 
-	    value="${instance.fitnesseJavaHome}" />
-	  </f:entry>
-	  
+    <j:set var="jdks" value="${app.JDKs}" />
+    <j:if test="${jdks.size() gt 1}">
+    <!-- if there's only one JDK configured, always use that. -->
+    	<f:entry title="Fitnesse JDK"
+             description="JDK to be used for Fitnesse">
+      		<select class="setting-input validated" name="fitnesseJdk" checkUrl="'${rootURL}/defaultJDKCheck?value='+this.value">
+        		<j:forEach var="inst" items="${jdks}">
+          			<f:option selected="${inst.name==instance.fitnesseJdk}" value="${inst.name}">${inst.name}</f:option>
+        		</j:forEach>
+      		</select>
+    	</f:entry>
+  </j:if>
+    
 	  <f:entry title="Java startup options" 
 	  help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/javaOpts">
 	    <f:textbox name="fitnesseJavaOpts" 
