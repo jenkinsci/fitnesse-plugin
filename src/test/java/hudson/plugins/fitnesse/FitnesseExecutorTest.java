@@ -107,6 +107,29 @@ public class FitnesseExecutorTest {
 		Assert.assertEquals("-p", cmd.get(7));
 		Assert.assertEquals("9876", cmd.get(8));
 	}
+	
+	@Test
+	public void javaCmdShouldReferenceFitnesseSpecificJavaHome() throws IOException {
+	   File javaHome = File.createTempFile("JavaHome", "");
+	   executor = getExecutorForBuilder(
+	                                    new String[] {FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT, FitnesseBuilder.FITNESSE_JDK},
+	                                    new String[] {getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9876", javaHome.getAbsolutePath()});
+	   
+	   EnvVars envVars = new EnvVars();
+	   FilePath workingDirectory = new FilePath(new File(TMP_DIR));
+	   ArrayList<String> cmd = executor.getJavaCmd(workingDirectory, envVars);
+	   
+	   Assert.assertEquals(new File(new File(javaHome, "bin"), "java").getAbsolutePath(), 
+	                       cmd.get(0));
+	   Assert.assertEquals("-jar", cmd.get(1));
+	   Assert.assertEquals(getTestResourceFitnesseJar(), cmd.get(2));
+	   Assert.assertEquals("-d", cmd.get(3));
+	   Assert.assertEquals(new File(getTestResourceFitNesseRoot()).getParent(), cmd.get(4));
+	   Assert.assertEquals("-r", cmd.get(5));
+	   Assert.assertEquals("FitNesseRoot", cmd.get(6));
+	   Assert.assertEquals("-p", cmd.get(7));
+	   Assert.assertEquals("9876", cmd.get(8));
+	}
 
 	@Test
 	public void javaCmdShouldHandleRelativePaths() throws IOException {
