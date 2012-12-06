@@ -29,7 +29,7 @@ import org.kohsuke.stapler.StaplerRequest;
 /**
  * Execute fitnesse tests, either by starting a new fitnesse instance
  * or by using a fitnesse instance running elsewhere.
- *  
+ *
  * @author Tim Bacon
  */
 public class FitnesseBuilder extends Builder {
@@ -53,23 +53,23 @@ public class FitnesseBuilder extends Builder {
 	static final int _URL_READ_TIMEOUT_MILLIS = 60*1000;
 	static final String _LOCALHOST = "localhost";
 	static final String _HOSTNAME_SLAVE_PROPERTY = "HOST_NAME";
-	
+
 	private Map<String, String> options;
 
     @DataBoundConstructor
 	public FitnesseBuilder(Map<String, String> options) {
-    	// Use n,v pairs to ease future extension 
+    	// Use n,v pairs to ease future extension
     	this.options = options;
     }
 
     private String getOption(String key, String valueIfKeyNotFound) {
     	if (options.containsKey(key)) {
     		String value = options.get(key);
-    		if (value!=null && !"".equals(value)) return value; 
+    		if (value!=null && !"".equals(value)) return value;
     	}
     	return valueIfKeyNotFound;
     }
-    
+
     /**
      * referenced in config.jelly
      */
@@ -80,7 +80,14 @@ public class FitnesseBuilder extends Builder {
 	/**
 	 * referenced in config.jelly
 	 */
-    
+	public String getFitnesseHost() {
+		if (getFitnesseStart()) {
+			return _LOCALHOST;
+		} else {
+			return getOption(FITNESSE_HOST, "unknown_host");
+		}
+	}
+
 	public String getFitnesseHost(AbstractBuild<?,?> build) throws InterruptedException, IOException  {
 		if (getFitnesseStart()){
 			EnvironmentVariablesNodeProperty prop = build.getBuiltOn().getNodeProperties().get(EnvironmentVariablesNodeProperty.class);
@@ -91,21 +98,21 @@ public class FitnesseBuilder extends Builder {
 		  	}
 		} else return getOption(FITNESSE_HOST, "unknown_host");
     }
-    
+
 	/**
     * referenced in config.jelly
     */
 	 public String getFitnesseJdk() {
 	      return getOption(FITNESSE_JDK, "");
-	   }    
-	
+	   }
+
     /**
      * referenced in config.jelly
      */
     public String getFitnesseJavaOpts() {
     	return getOption(JAVA_OPTS, "");
     }
-    
+
     /**
      * referenced in config.jelly
      */
@@ -115,7 +122,7 @@ public class FitnesseBuilder extends Builder {
     		File jarFile = new File(fitnessePathToJar);
 			if (jarFile.exists()) {
     			fitnesseJarDir = jarFile.getParentFile().getAbsolutePath();
-			} else { 
+			} else {
 				fitnesseJarDir = jarFile.getParent();
 				if (fitnesseJarDir == null) fitnesseJarDir = "";
     		}
@@ -128,8 +135,8 @@ public class FitnesseBuilder extends Builder {
      */
     public int getFitnessePort() {
     	return Integer.parseInt(
-			getOption(FITNESSE_PORT_REMOTE, 
-				getOption(FITNESSE_PORT_LOCAL, 
+			getOption(FITNESSE_PORT_REMOTE,
+				getOption(FITNESSE_PORT_LOCAL,
 					getOption(FITNESSE_PORT, "-1"))));
     }
 
@@ -139,7 +146,7 @@ public class FitnesseBuilder extends Builder {
     public String getFitnessePathToJar() {
 		return getOption(PATH_TO_JAR, "fitnesse.jar");
 	}
-    
+
     /**
      * referenced in config.jelly
      * Defaults to empty string
@@ -147,8 +154,8 @@ public class FitnesseBuilder extends Builder {
     public String getAdditionalFitnesseOptions() {
     	String sanitizedOptions = getOption(FITNESSE_ADDITIONAL_OPTIONS, "");
     	// remove quotes that Jenkins config wraps around anything with a space in it
-    	if(sanitizedOptions.length()>2 
-    			&& sanitizedOptions.startsWith("\"") 
+    	if(sanitizedOptions.length()>2
+    			&& sanitizedOptions.startsWith("\"")
     			&& sanitizedOptions.endsWith("\"")){
     		sanitizedOptions = sanitizedOptions.substring(1,sanitizedOptions.length()-1);
     	}
@@ -175,7 +182,7 @@ public class FitnesseBuilder extends Builder {
     public boolean getFitnesseTargetIsSuite() {
     	return Boolean.parseBoolean(getOption(TARGET_IS_SUITE, "False"));
     }
-    
+
     /**
      * referenced in config.jelly
      */
@@ -187,7 +194,7 @@ public class FitnesseBuilder extends Builder {
      * referenced in config.jelly
      */
     public int getFitnesseHttpTimeout() {
-    	return Integer.parseInt(getOption(HTTP_TIMEOUT, 
+    	return Integer.parseInt(getOption(HTTP_TIMEOUT,
 			String.valueOf(_URL_READ_TIMEOUT_MILLIS)));
 	}
 
@@ -195,7 +202,7 @@ public class FitnesseBuilder extends Builder {
      * {@link Builder}
      */
     @Override
-	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) 
+	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
     throws IOException, InterruptedException {
     	PrintStream logger = listener.getLogger();
 		logger.println(getClass().getName() + ": " + options);
@@ -210,28 +217,28 @@ public class FitnesseBuilder extends Builder {
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl)super.getDescriptor();
     }
-	
+
     /**
      *  See <tt>src/main/resources/hudson/plugins/fitnesse/FitnesseBuilder/config.jelly</tt>
      */
-    @Extension 
+    @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
-    	
+
     	public FormValidation doCheckFitnesseHost(@QueryParameter String value) throws IOException, ServletException {
     		if (value.length()==0)
     			return FormValidation.error("Please specify the host of the fitnesse instance.");
     		return FormValidation.ok();
     	}
-    	
+
     	public FormValidation doCheckAdditionalFitnesseOptions(@QueryParameter String value) throws IOException, ServletException {
     		if (value.length()>0){
     			if(value.contains("-r") || value.contains("-p") || value.contains("-d"))
     				return FormValidation.error("Please use the appropriate config fields to specify options for -r, -d, and -p.");
     		}
-    			
+
     		return FormValidation.ok();
     	}
-    	
+
     	public FormValidation doCheckFitnessePort(@QueryParameter String value) throws IOException, ServletException {
     		if (value.length()==0)
     			return FormValidation.error("Please specify the fitnesse port.");
@@ -244,13 +251,13 @@ public class FitnesseBuilder extends Builder {
     		}
     		return FormValidation.ok();
     	}
-    	
+
     	public FormValidation doCheckFitnesseJdk(@QueryParameter String value) throws IOException, ServletException {
     	  if (value.length()==0)
            return FormValidation.ok("Defaults to project's JDK");
     	   return FormValidation.ok();
     	}
-    	
+
     	public FormValidation doCheckFitnesseJavaOpts(@QueryParameter String value) throws IOException, ServletException {
         	return FormValidation.ok();
         }
@@ -290,7 +297,7 @@ public class FitnesseBuilder extends Builder {
         public FormValidation doCheckFitnesseTargetIsSuite(@QueryParameter String value) throws IOException, ServletException {
             return FormValidation.ok();
         }
-        
+
         public FormValidation doCheckFitnesseHttpTimeout(@QueryParameter String value) throws IOException, ServletException {
         	if (value.length()==0)
         		return FormValidation.ok("Default timeout " + _URL_READ_TIMEOUT_MILLIS + "ms will be used.");
@@ -314,12 +321,12 @@ public class FitnesseBuilder extends Builder {
          * {@link BuildStepDescriptor}
          */
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
-            // indicates that this builder can be used with all kinds of project types 
+            // indicates that this builder can be used with all kinds of project types
             return true;
         }
 
         /**
-         * {@link ModelObject} 
+         * {@link ModelObject}
          */
         @Override
         public String getDisplayName() {
@@ -335,18 +342,18 @@ public class FitnesseBuilder extends Builder {
 				throws FormException {
 			String startFitnesseValue = formData.getJSONObject(START_FITNESSE).getString("value");
 			if (Boolean.parseBoolean(startFitnesseValue)) {
-				return newFitnesseBuilder(startFitnesseValue, 
+				return newFitnesseBuilder(startFitnesseValue,
 						collectFormData(formData, new String[] {
 							FITNESSE_JDK, JAVA_OPTS, JAVA_WORKING_DIRECTORY,
-							PATH_TO_JAR, PATH_TO_ROOT, FITNESSE_PORT_LOCAL, 
-							TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, PATH_TO_RESULTS, 
+							PATH_TO_JAR, PATH_TO_ROOT, FITNESSE_PORT_LOCAL,
+							TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, PATH_TO_RESULTS,
 							FITNESSE_ADDITIONAL_OPTIONS
 						})
 				);
 			}
-			return newFitnesseBuilder(startFitnesseValue, 
+			return newFitnesseBuilder(startFitnesseValue,
 					collectFormData(formData, new String[] {
-						FITNESSE_HOST, FITNESSE_PORT_REMOTE,  
+						FITNESSE_HOST, FITNESSE_PORT_REMOTE,
 						TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, PATH_TO_RESULTS
 					})
 			);
@@ -363,7 +370,7 @@ public class FitnesseBuilder extends Builder {
 				if (formData.has(key)) {
 					targetElements.put(key, formData.getString(key));
 				} else {
-					targetElements.put(key, 
+					targetElements.put(key,
 						formData.getJSONObject(START_FITNESSE).getString(key));
 				}
 			}
