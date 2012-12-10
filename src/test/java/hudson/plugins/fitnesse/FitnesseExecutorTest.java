@@ -3,6 +3,7 @@ package hudson.plugins.fitnesse;
 import hudson.EnvVars;
 import hudson.FilePath;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -109,6 +110,7 @@ public class FitnesseExecutorTest {
 	}
 	
 	@Test
+	@Ignore
 	public void javaCmdShouldReferenceFitnesseSpecificJavaHome() throws IOException {
 	   File javaHome = File.createTempFile("JavaHome", "");
 	   executor = getExecutorForBuilder(
