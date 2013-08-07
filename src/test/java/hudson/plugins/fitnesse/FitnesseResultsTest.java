@@ -168,6 +168,6 @@ public class FitnesseResultsTest {
 		FitnesseResults summary = new FitnesseResults((Counts)null);
 		summary.addChild(first);
 		summary.addChild(second);
-		Assert.assertEquals(1.0f, summary.getDuration());
+		Assert.assertEquals(1.0f, summary.getDuration(), 0.0f);
 	}
 }
