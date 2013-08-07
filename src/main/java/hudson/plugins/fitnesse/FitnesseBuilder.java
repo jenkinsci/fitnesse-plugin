@@ -48,6 +48,7 @@ public class FitnesseBuilder extends Builder {
 	public static final String TARGET_IS_SUITE = "fitnesseTargetIsSuite";
 	public static final String PATH_TO_RESULTS = "fitnessePathToXmlResultsOut";
 	public static final String HTTP_TIMEOUT = "fitnesseHttpTimeout";
+	public static final String TEST_TIMEOUT = "fitnesseTestTimeout";
 	public static final String JAVA_WORKING_DIRECTORY = "fitnesseJavaWorkingDirectory";
 
 	static final int _URL_READ_TIMEOUT_MILLIS = 60*1000;
@@ -197,6 +198,14 @@ public class FitnesseBuilder extends Builder {
     	return Integer.parseInt(getOption(HTTP_TIMEOUT,
 			String.valueOf(_URL_READ_TIMEOUT_MILLIS)));
 	}
+    
+    /**
+     * referenced in config.jelly
+     */
+    public int getFitnesseTestTimeout() {
+    	return Integer.parseInt(getOption(TEST_TIMEOUT,
+			String.valueOf(_URL_READ_TIMEOUT_MILLIS)));
+	}
 
     /**
      * {@link Builder}
@@ -309,6 +318,17 @@ public class FitnesseBuilder extends Builder {
         	return FormValidation.ok();
         }
 
+        public FormValidation doCheckFitnesseTestTimeout(@QueryParameter String value) throws IOException, ServletException {
+        	if (value.length()==0)
+        		return FormValidation.ok("Default timeout " + _URL_READ_TIMEOUT_MILLIS + "ms will be used.");
+        	try {
+        		if (Integer.parseInt(value) < 0) return FormValidation.error("Timeout must be a positive integer.");
+        	} catch (NumberFormatException e) {
+        		return FormValidation.error("Timeout must be a number.");
+        	}
+        	return FormValidation.ok();
+        }        
+        
         public FormValidation doCheckFitnessePathToXmlResultsOut(@QueryParameter String value) throws IOException, ServletException {
         	if (value.length()==0)
         		return FormValidation.error("Please specify where to write fitnesse results to.");
@@ -346,7 +366,7 @@ public class FitnesseBuilder extends Builder {
 						collectFormData(formData, new String[] {
 							FITNESSE_JDK, JAVA_OPTS, JAVA_WORKING_DIRECTORY,
 							PATH_TO_JAR, PATH_TO_ROOT, FITNESSE_PORT_LOCAL,
-							TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, PATH_TO_RESULTS,
+							TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, TEST_TIMEOUT, PATH_TO_RESULTS,
 							FITNESSE_ADDITIONAL_OPTIONS
 						})
 				);
@@ -354,7 +374,7 @@ public class FitnesseBuilder extends Builder {
 			return newFitnesseBuilder(startFitnesseValue,
 					collectFormData(formData, new String[] {
 						FITNESSE_HOST, FITNESSE_PORT_REMOTE,
-						TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, PATH_TO_RESULTS
+						TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, TEST_TIMEOUT, PATH_TO_RESULTS
 					})
 			);
 		}

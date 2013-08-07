@@ -105,6 +105,11 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/httpTimeout"> 
     <f:textbox name="fitnesseHttpTimeout" />
   </f:entry>
+  
+  <f:entry title="Test Timeout (ms)" field="fitnesseTestTimeout"
+	help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/testTimeout"> 
+    <f:textbox name="fitnesseTestTimeout" />
+  </f:entry>
 
   <f:entry title="Path to fitnesse xml results file" field="fitnessePathToXmlResultsOut"
   help="/descriptor/hudson.plugins.fitnesse.FitnesseResultsRecorder/help/pathToXmlResults">
