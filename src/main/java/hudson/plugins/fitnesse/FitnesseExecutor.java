@@ -189,7 +189,7 @@ public class FitnesseExecutor {
 	private void readAndWriteFitnesseResults(final PrintStream logger, final StdConsole console,
 											final URL readFromURL, final FilePath writeToFilePath)	
 	throws InterruptedException {
-		final RunnerWithTimeOut runnerWithTimeOut = new RunnerWithTimeOut(builder.getFitnesseHttpTimeout());
+		final RunnerWithTimeOut runnerWithTimeOut = new RunnerWithTimeOut(builder.getFitnesseTestTimeout());
 	
 		Runnable readAndWriteResults = new Runnable() {
 			public void run() {
@@ -243,8 +243,10 @@ public class FitnesseExecutor {
 		} finally {
 			if (inputStream != null) {
 				try {
+					log.println("Force close of input stream.");
 					inputStream.close();
 				} catch (Exception e) {
+					log.println("Caught exception while trying to close input stream.");
 					// swallow
 				}
 			}
@@ -257,8 +259,7 @@ public class FitnesseExecutor {
 				builder.getFitnesseHost(build), 
 				builder.getFitnessePort(), 
 				getFitnessePageCmd());
-	}
-	
+	}	
 
 	public String getFitnessePageCmd() {
 		String targetPageExpression = builder.getFitnesseTargetPage();

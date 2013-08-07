@@ -90,6 +90,15 @@ public class FitnesseBuilderTest {
 	}
 	
 	@Test
+	public void getTestTimeoutShouldReturn60000UnlessValueIsExplicit() {
+		HashMap<String, String> options = new HashMap<String, String>();
+		FitnesseBuilder builder = new FitnesseBuilder(options);
+		Assert.assertEquals(60000, builder.getFitnesseTestTimeout());
+		options.put(FitnesseBuilder.TEST_TIMEOUT, "1000");
+		Assert.assertEquals(1000, builder.getFitnesseTestTimeout());
+	}
+	
+	@Test
 	public void getJavaWorkingDirShouldReturnParentOfFitnessseJarUnlessValueIsExplicit() throws Exception {
 		HashMap<String, String> options = new HashMap<String, String>();
 		File tmpFile = File.createTempFile("fitnesse", ".jar");
