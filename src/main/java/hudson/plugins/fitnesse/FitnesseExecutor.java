@@ -83,12 +83,13 @@ public class FitnesseExecutor {
 
 	public ArrayList<String> getJavaCmd(FilePath workingDirectory, EnvVars envVars) {
 		String java = "java"; 
-		if (envVars.containsKey("JAVA_HOME"))
-			java = new File(new File(envVars.get("JAVA_HOME"), "bin"), java).getAbsolutePath();
 		if(!builder.getFitnesseJdk().isEmpty()){
 		   File customJavaHome = Hudson.getInstance().getJDK(builder.getFitnesseJdk()).getBinDir();
 		   java = new File(customJavaHome, java).getAbsolutePath();
+		} else if (envVars.containsKey("JAVA_HOME")) {
+			java = new File(new File(envVars.get("JAVA_HOME"), "bin"), java).getAbsolutePath();
 		}
+		
 		String fitnesseJavaOpts = builder.getFitnesseJavaOpts();
 		String[] java_opts = ("".equals(fitnesseJavaOpts) ? new String[0] : fitnesseJavaOpts.split(" "));
 

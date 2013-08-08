@@ -91,7 +91,7 @@ public class FitnesseBuilder extends Builder {
 	public String getFitnesseHost(AbstractBuild<?,?> build) throws InterruptedException, IOException  {
 		if (getFitnesseStart()){
 			EnvironmentVariablesNodeProperty prop = build.getBuiltOn().getNodeProperties().get(EnvironmentVariablesNodeProperty.class);
-		  	if (prop.getEnvVars()!=null && prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY)!=null){
+		  	if (prop!=null && prop.getEnvVars()!=null && prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY)!=null){
 		  		return prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY);
 		  	} else {
 		  		return _LOCALHOST;
