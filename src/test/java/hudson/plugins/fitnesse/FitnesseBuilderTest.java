@@ -1,10 +1,19 @@
 package hudson.plugins.fitnesse;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+import hudson.model.AbstractBuild;
+import hudson.model.Node;
+import hudson.slaves.EnvironmentVariablesNodeProperty;
+import hudson.util.DescribableList;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class FitnesseBuilderTest {
    @Test
@@ -128,5 +137,23 @@ public class FitnesseBuilderTest {
 		FitnesseBuilder builder = new FitnesseBuilder(options);
 		Assert.assertEquals("", 
 				builder.getFitnesseJavaWorkingDirectory());
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void getFitnesseHostShouldNotThrowANullPointerWhenNodePropertyIsNull() throws InterruptedException, IOException {
+		@SuppressWarnings("rawtypes")
+		AbstractBuild build = Mockito.mock(AbstractBuild.class);
+		Node node = Mockito.mock(Node.class);
+		when(build.getBuiltOn()).thenReturn(node);
+		@SuppressWarnings("rawtypes")
+		DescribableList describableList = Mockito.mock(DescribableList.class);
+		when(node.getNodeProperties()).thenReturn(describableList);
+		when(describableList.get(EnvironmentVariablesNodeProperty.class)).thenReturn(null);
+
+		HashMap<String, String> options = new HashMap<String, String>();
+		options.put(FitnesseBuilder.START_FITNESSE, Boolean.toString(true));
+		FitnesseBuilder builder = new FitnesseBuilder(options);
+		assertEquals(FitnesseBuilder._LOCALHOST, builder.getFitnesseHost(build));
 	}
 }
