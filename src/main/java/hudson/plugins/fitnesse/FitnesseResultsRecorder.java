@@ -28,8 +28,6 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.xml.transform.TransformerException;
 
-import jenkins.model.Jenkins;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
