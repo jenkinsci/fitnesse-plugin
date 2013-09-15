@@ -7,6 +7,7 @@ import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor;
 import hudson.model.ModelObject;
+import hudson.plugins.fitnesse.FitnesseResultsRecorder.DescriptorImpl;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
@@ -224,13 +225,15 @@ public class FitnesseBuilder extends Builder {
      */
 	@Override
     public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl)super.getDescriptor();
+        return DESCRIPTOR;
     }
 
     /**
      *  See <tt>src/main/resources/hudson/plugins/fitnesse/FitnesseBuilder/config.jelly</tt>
      */
     @Extension
+    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+    
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
     	public FormValidation doCheckFitnesseHost(@QueryParameter String value) throws IOException, ServletException {

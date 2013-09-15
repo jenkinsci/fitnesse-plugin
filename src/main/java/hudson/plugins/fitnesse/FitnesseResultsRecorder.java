@@ -28,10 +28,12 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.xml.transform.TransformerException;
 
+import jenkins.model.Jenkins;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-public class FitnesseResultsRecorder extends Recorder {
+public class FitnesseResultsRecorder extends Recorder{
 	
 	private final String fitnessePathToXmlResultsIn;
 
@@ -148,14 +150,17 @@ public class FitnesseResultsRecorder extends Recorder {
 	 */
 	@Override
 	public DescriptorImpl getDescriptor() {
-		return (DescriptorImpl) super.getDescriptor();
+		DescriptorImpl result = DESCRIPTOR;
+		return result;
 	}
 
 	/**
      *  See <tt>src/main/resources/hudson/plugins/fitnesse/FitnesseResultsRecorder/config.jelly</tt>
      */
     @Extension
-	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+    
+	public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 		
 		public FormValidation doCheckFitnessePathToXmlResultsIn(@QueryParameter String value) throws IOException, ServletException {
         	if (value.length()==0)
