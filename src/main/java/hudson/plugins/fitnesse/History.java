@@ -32,12 +32,14 @@ import hudson.util.ChartUtil;
 import hudson.util.ColorPalette;
 import hudson.util.DataSetBuilder;
 import hudson.util.Graph;
+import hudson.util.RunList;
 import hudson.util.ShiftedCategoryAxis;
 import hudson.util.StackedAreaRenderer2;
 
 import java.awt.Color;
 import java.awt.Paint;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jfree.chart.ChartFactory;
@@ -75,10 +77,13 @@ public class History {
 	}
 
     public boolean historyAvailable() {
-       if (testObject.getOwner().getParent().getBuilds().size() > 1)
-           return true;
-        else
-           return false;
+        Iterator<?> builds = testObject.getOwner().getParent().getBuilds().iterator();
+        if (!builds.hasNext()) {
+            return false;
+        } else {
+            builds.next();
+            return builds.hasNext();
+        }
     }
 
 	public List<TestResult> getList() {
