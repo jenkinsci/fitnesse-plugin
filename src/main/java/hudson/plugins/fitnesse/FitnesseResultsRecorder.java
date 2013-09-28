@@ -1,5 +1,6 @@
 package hudson.plugins.fitnesse;
 
+import com.google.common.collect.Lists;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -52,7 +53,7 @@ public class FitnesseResultsRecorder extends Recorder {
 	 */
 	@Override
 	public Collection<Action> getProjectActions(AbstractProject<?, ?> project) {
-		return Collections.<Action>singleton(new FitnesseProjectAction(project));
+		return Lists.<Action>newArrayList(new FitnesseProjectAction(project), new FitnesseHistoryAction(project));
 	}
 
 	/**
@@ -89,10 +90,10 @@ public class FitnesseResultsRecorder extends Recorder {
 		FilePath workingDirectory = FitnesseExecutor.getWorkingDirectory(build);
 		return getResultFiles(workingDirectory);
 	}
-	
+
 	public FilePath[] getResultFiles(FilePath workingDirectory) throws IOException, InterruptedException {
 		FilePath resultsFile = FitnesseExecutor.getResultsFilePath(workingDirectory, fitnessePathToXmlResultsIn);
-		
+
 		if (resultsFile.exists()) {
 			// directly configured single file
 			return new FilePath[] { resultsFile };
@@ -104,12 +105,12 @@ public class FitnesseResultsRecorder extends Recorder {
 
 	public FitnesseResults getResults(PrintStream logger, FilePath[] resultsFiles) throws IOException, TransformerException {
 		List<FitnesseResults> resultsList = new ArrayList<FitnesseResults>();
-		
+
 		for (FilePath filePath : resultsFiles) {
 			FitnesseResults singleResults = getResults(logger, filePath);
 			resultsList.add(singleResults);
 		}
-		
+
 		if (resultsList.isEmpty()) {
 			return null;
 		}
@@ -118,18 +119,18 @@ public class FitnesseResultsRecorder extends Recorder {
 		}
 		return CompoundFitnesseResults.createFor(resultsList);
 	}
-	
+
 	public FitnesseResults getResults(PrintStream logger, FilePath resultsFile) throws IOException, TransformerException {
 		InputStream resultsInputStream = null;
 		try {
-			logger.println("Reading results as " + Charset.defaultCharset().displayName() 
+			logger.println("Reading results as " + Charset.defaultCharset().displayName()
 					+ " from " + resultsFile.getRemote());
 			resultsInputStream = resultsFile.read();
-			
+
 			logger.println("Parsing results... ");
 			NativePageCountsParser pageCountsParser = new NativePageCountsParser();
 			NativePageCounts pageCounts = pageCountsParser.parse(resultsInputStream);
-			
+
 			logger.println("Got results: " + pageCounts.getSummary());
 			return new FitnesseResults(pageCounts);
 		} finally {
