@@ -23,7 +23,6 @@ import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -53,8 +52,10 @@ public class FitnesseResultsRecorder extends Recorder {
 	 */
 	@Override
 	public Collection<Action> getProjectActions(AbstractProject<?, ?> project) {
-		return Collections
-				.<Action> singleton(new FitnesseProjectAction(project));
+		final Collection<Action> list = new ArrayList<Action>();
+		list.add(new FitnesseProjectAction(project));
+		list.add(new FitnesseHistoryAction(project));
+		return list;
 	}
 
 	/**
