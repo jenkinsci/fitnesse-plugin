@@ -1,14 +1,17 @@
 package hudson.plugins.fitnesse;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import org.kohsuke.stapler.StaplerProxy;
+
+import javax.annotation.Nullable;
+
+import static java.util.Collections.*;
 
 public class FitnesseHistoryAction implements StaplerProxy, Action {
 	private final AbstractProject<?, ?> project;
@@ -17,16 +20,32 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 		this.project = project;
 	}
 
-	private List<String> getPages(List<FitnesseResults> builds) {
-		Set<String> pages = new HashSet<String>();
+	public List<String> getPages(List<FitnesseResults> builds) {
+		Map<String, PageInfo> pages = new HashMap<String, PageInfo>();
 
 		for (FitnesseResults results : builds) {
 			for (FitnesseResults result : results.getChildResults()) {
-				pages.add(result.getName());
+				PageInfo info = pages.get(result.getName());
+				if (info == null) {
+					info = new PageInfo(result.getName());
+					pages.put(result.getName(), info);
+				}
+				info.recordResult(result);
 			}
 		}
 
-		return new ArrayList<String>(pages);
+		return sorted(pages);
+	}
+
+	private List<String> sorted(Map<String, PageInfo> map) {
+		List<PageInfo> pages = new ArrayList<PageInfo>(map.values());
+		sort(pages, reverseOrder(new PageInfo.ByErraticness()));
+		return Lists.transform(pages, new Function<PageInfo, String>() {
+
+			public String apply(@Nullable PageInfo input) {
+				return input == null ? null : input.page;
+			}
+		});
 	}
 
 	private List<FitnesseResults> getBuilds(AbstractProject<?, ?> project) {
@@ -62,4 +81,40 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 		return "fitnesseHistory";
 	}
 
+	private static class PageInfo {
+		private final String page;
+
+		private boolean lastResultWasPass = true;
+
+		/** The number of switches between 'fail' and 'pass' or vice-versa. */
+		private int numberOfSwitches = 0;
+
+		/** The number of times this test was seen at all */
+		private int numberOfOccurrances = 0;
+
+		public PageInfo(String page) {
+			this.page = page;
+		}
+
+		public void recordResult(FitnesseResults result) {
+			if (result.isPassedOverall() || result.isFailedOverall()) {
+				numberOfOccurrances++;
+				if (lastResultWasPass == result.isFailedOverall()) {
+					numberOfSwitches++;
+				}
+				lastResultWasPass = result.isPassedOverall();
+			}
+		}
+
+		private Integer erraticnessIndex() {
+			return 100 * numberOfSwitches / numberOfOccurrances;
+		}
+
+		private static class ByErraticness implements Comparator<PageInfo> {
+
+			public int compare(PageInfo o1, PageInfo o2) {
+				return o1.erraticnessIndex().compareTo(o2.erraticnessIndex());
+			}
+		}
+	}
 }
