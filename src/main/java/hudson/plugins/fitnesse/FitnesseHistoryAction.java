@@ -8,16 +8,15 @@ import hudson.model.Action;
 import org.kohsuke.stapler.StaplerProxy;
 
 public class FitnesseHistoryAction implements StaplerProxy, Action {
-    private AbstractProject<?, ?> project;
+    private final FitnesseHistory history;
 
     public FitnesseHistoryAction(AbstractProject<?, ?> project) {
-        this.project = project;
+        List<String> pages = Lists.newArrayList("Foo", "Bar");
+        this.history = new FitnesseHistory(project, pages, null);
     }
 
     public Object getTarget() {
-        List<String> pages = Lists.newArrayList("Foo", "Bar");
-
-        return new FitnesseHistory(pages, null);
+        return history;
     }
 
     public String getIconFileName() {
