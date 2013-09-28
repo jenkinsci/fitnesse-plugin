@@ -48,9 +48,9 @@ public class FitnesseHistory {
 		for (FitnesseResults child : build.getChildResults()) {
 			if (page.equals(child.getName())) {
 				if (child.isPassedOverall()) {
-					return "OK";
+					return "pass";
 				} else if (child.isFailedOverall()) {
-					return "FAIL";
+					return "fail";
 				} else {
 					return "";
 				}
