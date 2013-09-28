@@ -19,7 +19,7 @@
           <tr>
             <td>${page}</td>
             <j:forEach var="build" items="${it.builds}">
-              <td>${it.getResult(page, build)}</td>
+              <td><a href="${build.owner.absoluteUrl}/fitnesseReport/${page}/Details">${it.getResult(page, build)}</a></td>
             </j:forEach>
           </tr>
         </j:forEach>
