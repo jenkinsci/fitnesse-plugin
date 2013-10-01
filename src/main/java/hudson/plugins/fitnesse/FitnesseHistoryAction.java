@@ -107,7 +107,11 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 		}
 
 		private Integer erraticnessIndex() {
-			return 100 * numberOfSwitches / numberOfOccurrances;
+			if (numberOfOccurrances == 0) {
+				return 0;
+			} else {
+				return 100 * numberOfSwitches / numberOfOccurrances;
+			}
 		}
 
 		private static class ByErraticness implements Comparator<PageInfo> {
