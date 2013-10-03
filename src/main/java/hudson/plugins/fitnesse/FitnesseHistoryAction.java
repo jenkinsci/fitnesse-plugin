@@ -9,8 +9,6 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import org.kohsuke.stapler.StaplerProxy;
 
-import javax.annotation.Nullable;
-
 import static java.util.Collections.*;
 
 public class FitnesseHistoryAction implements StaplerProxy, Action {
@@ -42,7 +40,7 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 		sort(pages, reverseOrder(new PageInfo.ByErraticness()));
 		return Lists.transform(pages, new Function<PageInfo, String>() {
 
-			public String apply(@Nullable PageInfo input) {
+			public String apply(PageInfo input) {
 				return input == null ? null : input.page;
 			}
 		});
