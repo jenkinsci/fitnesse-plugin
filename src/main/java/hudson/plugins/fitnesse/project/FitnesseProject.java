@@ -86,7 +86,7 @@ public class FitnesseProject extends Project<FitnesseProject,FitnesseBuild> impl
 				properties += "\nfitnesse.suite=" + suite;
 			}
 
-			return new Maven("integration-test", getMavenInstallationName(), "pom.xml", properties, "");
+			return new Maven("integration-test", null, "pom.xml", properties, "");
 		}
 
 		private SCM scmFor(String scmUrl, String branch) {
@@ -110,29 +110,5 @@ public class FitnesseProject extends Project<FitnesseProject,FitnesseBuild> impl
 			repoList.add(new UserRemoteConfig(url, null, null));
 			return repoList;
 		}
-
-		public Maven.DescriptorImpl getMavenDescriptor() {
-			return Jenkins.getInstance().getDescriptorByType(Maven.DescriptorImpl.class);
-		}
-
-		/**
-		 * Gets the Maven to invoke.
-		 * If null, we pick any random Maven installation.
-		 */
-		public String getMavenInstallationName() throws Exception {
-			Maven.MavenInstallation result = null;
-
-			for(Maven.MavenInstallation i : getMavenDescriptor().getInstallations()) {
-				// TODO How to select the right one?
-				result = i;
-			}
-
-			if (result == null) {
-				throw new Exception("No maven installation found");
-			} else {
-				return result.getName();
-			}
-		}
 	}
-
 }
