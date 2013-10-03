@@ -5,3 +5,7 @@ target
 work
 /bin
 /target/
+atlassian-ide-plugin.xml
+.idea
+*.iml
+out
