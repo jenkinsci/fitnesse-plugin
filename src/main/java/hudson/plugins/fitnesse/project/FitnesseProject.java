@@ -70,11 +70,14 @@ public class FitnesseProject extends Project<FitnesseProject,FitnesseBuild> impl
 				fitnesseProject.getBuildersList().add(mavenBuilderFor(suite, environment));
 			} catch (Exception e) {
 				LOGGER.log(Level.INFO, "Error initializing Maven, creating job without it");
-
 			}
 			fitnesseProject.getBuildersList().add(new Maven("integration-test", getMavenInstallationName(), "pom.xml",
 					"fitnesse.environment=" + environment + "\nfitnesse.suite=" + suite, ""));
-			fitnesseProject.getPublishersList().add(new FitnesseResultsRecorder("target/fitnesse-results.xml"));
+			try {
+				fitnesseProject.getPublishersList().add(new FitnesseResultsRecorder("target/fitnesse-results.xml"));
+			} catch (IOException e) {
+				LOGGER.log(Level.INFO, "Error initializing FitNesse reporting, creating job without it");
+			}
 			return fitnesseProject;
 		}
 
@@ -87,7 +90,7 @@ public class FitnesseProject extends Project<FitnesseProject,FitnesseBuild> impl
 				properties += "\nfitnesse.suite=" + suite;
 			}
 
-			return new Maven("integration-test", null, "pom.xml", properties, "");
+			return new Maven("integration-test -Pregression-test", null, "pom.xml", properties, "");
 		}
 
 		private SCM scmFor(String scmUrl, String branch) {

@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
@@ -37,7 +38,7 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 
 	private List<String> sorted(Map<String, PageInfo> map) {
 		List<PageInfo> pages = new ArrayList<PageInfo>(map.values());
-		sort(pages, reverseOrder(new PageInfo.ByErraticness()));
+		sort(pages, PageInfo.defaultOrdering());
 		return Lists.transform(pages, new Function<PageInfo, String>() {
 
 			public String apply(PageInfo input) {
@@ -112,10 +113,21 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 			}
 		}
 
-		private static class ByErraticness implements Comparator<PageInfo> {
+		public static Comparator<PageInfo> defaultOrdering() {
+			return new PageInfo.ByErraticness().reverse().compound(new PageInfo.ByPage());
+		}
+
+		private static class ByErraticness extends Ordering<PageInfo> {
 
 			public int compare(PageInfo o1, PageInfo o2) {
 				return o1.erraticnessIndex().compareTo(o2.erraticnessIndex());
+			}
+		}
+
+		private static class ByPage extends Ordering<PageInfo> {
+
+			public int compare(PageInfo o1, PageInfo o2) {
+				return o1.page.compareTo(o2.page);
 			}
 		}
 	}
