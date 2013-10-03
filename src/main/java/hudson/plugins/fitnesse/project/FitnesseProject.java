@@ -12,7 +12,6 @@ import hudson.plugins.git.util.DefaultBuildChooser;
 import hudson.scm.SCM;
 import hudson.scm.SubversionSCM;
 import hudson.tasks.Maven;
-import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.Stapler;
 
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.util.Collections.emptyList;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class FitnesseProject extends Project<FitnesseProject,FitnesseBuild> implements TopLevelItem {
@@ -81,7 +79,10 @@ public class FitnesseProject extends Project<FitnesseProject,FitnesseBuild> impl
 		}
 
 		private Maven mavenBuilderFor(String suite, String environment) throws Exception {
-			String properties = "fitnesse.environment=" + environment;
+			String properties = "";
+			if (isNotBlank(environment)) {
+				properties += "fitnesse.environment=" + environment;
+			}
 			if (isNotBlank(suite)) {
 				properties += "\nfitnesse.suite=" + suite;
 			}
@@ -96,7 +97,7 @@ public class FitnesseProject extends Project<FitnesseProject,FitnesseBuild> impl
 					branches = Lists.newArrayList(new BranchSpec(branch));
 				}
 
-				return new GitSCM(null, createRepoList(scmUrl), branches, null, false,
+				return new GitSCM(null, createGitRepoList(scmUrl), branches, null, false,
 						Collections.<SubmoduleConfig>emptyList(), false, false, new DefaultBuildChooser(), null, null,
 						false, null, null, null, null, null, false, false, false, false, null, null, false, null, false,
 						false);
@@ -105,7 +106,7 @@ public class FitnesseProject extends Project<FitnesseProject,FitnesseBuild> impl
 			}
 		}
 
-		static private List<UserRemoteConfig> createRepoList(String url) {
+		static private List<UserRemoteConfig> createGitRepoList(String url) {
 			List<UserRemoteConfig> repoList = new ArrayList<UserRemoteConfig>();
 			repoList.add(new UserRemoteConfig(url, null, null));
 			return repoList;
