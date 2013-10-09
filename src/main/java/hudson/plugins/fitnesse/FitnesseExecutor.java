@@ -83,8 +83,6 @@ public class FitnesseExecutor {
 
 	public ArrayList<String> getJavaCmd(FilePath workingDirectory, EnvVars envVars) {
 		String java = "java"; 
-		if (envVars.containsKey("JAVA_HOME"))
-			java = new File(new File(envVars.get("JAVA_HOME"), "bin"), java).getAbsolutePath();
 		if(!builder.getFitnesseJdk(envVars).isEmpty()){
 		   File customJavaHome = Hudson.getInstance().getJDK(builder.getFitnesseJdk(envVars)).getBinDir();
 		   java = new File(customJavaHome, java).getAbsolutePath();
