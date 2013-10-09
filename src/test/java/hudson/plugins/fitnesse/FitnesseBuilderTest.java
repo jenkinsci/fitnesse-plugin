@@ -6,6 +6,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.Node;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.util.DescribableList;
+import hudson.EnvVars;
 
 import java.io.File;
 import java.io.IOException;
@@ -154,6 +155,7 @@ public class FitnesseBuilderTest {
 		HashMap<String, String> options = new HashMap<String, String>();
 		options.put(FitnesseBuilder.START_FITNESSE, Boolean.toString(true));
 		FitnesseBuilder builder = new FitnesseBuilder(options);
-		assertEquals(FitnesseBuilder._LOCALHOST, builder.getFitnesseHost(build));
+		EnvVars envVars = new EnvVars();
+		assertEquals(FitnesseBuilder._LOCALHOST, builder.getFitnesseHost(build, envVars));
 	}
 }
