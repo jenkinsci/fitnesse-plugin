@@ -43,7 +43,7 @@ public class FitnesseExecutor {
 		Proc fitnesseProc = null;
 		StdConsole console = new StdConsole();
 		try {
-			build.addAction(getFitnesseBuildAction(build));
+			build.addAction(getFitnesseBuildAction(build, environment));
 	    	if (builder.getFitnesseStart()) {
 	    		fitnesseProc = startFitnesse(build, launcher, environment, logger, console);
 	    		if (!procStarted(fitnesseProc, logger, console)) {
@@ -53,8 +53,8 @@ public class FitnesseExecutor {
 	    	}
 	    	
 	    	FilePath resultsFilePath = getResultsFilePath(getWorkingDirectory(build), 
-	    												builder.getFitnessePathToXmlResultsOut());
-			readAndWriteFitnesseResults(logger, console, getFitnessePageCmdURL(build), resultsFilePath);
+	    												builder.getFitnessePathToXmlResultsOut(environment));
+			readAndWriteFitnesseResults(logger, console, getFitnessePageCmdURL(build, environment), resultsFilePath, environment);
 			return true;
 		} catch (Throwable t) {
 			t.printStackTrace(logger);
@@ -66,10 +66,10 @@ public class FitnesseExecutor {
 		}
 	}
 
-	private FitnesseBuildAction getFitnesseBuildAction(AbstractBuild<?,?> build) throws InterruptedException, IOException {
+	private FitnesseBuildAction getFitnesseBuildAction(AbstractBuild<?,?> build, EnvVars environment) throws InterruptedException, IOException {
 		return new FitnesseBuildAction(
 				builder.getFitnesseStart(),
-				builder.getFitnesseHost(build), 
+				builder.getFitnesseHost(build, environment), 
 				builder.getFitnessePort());
 	}
 
@@ -83,14 +83,13 @@ public class FitnesseExecutor {
 
 	public ArrayList<String> getJavaCmd(FilePath workingDirectory, EnvVars envVars) {
 		String java = "java"; 
-		if(!builder.getFitnesseJdk().isEmpty()){
-		   File customJavaHome = Hudson.getInstance().getJDK(builder.getFitnesseJdk()).getBinDir();
+		if(!builder.getFitnesseJdk(envVars).isEmpty()){
+		   File customJavaHome = Hudson.getInstance().getJDK(builder.getFitnesseJdk(envVars)).getBinDir();
 		   java = new File(customJavaHome, java).getAbsolutePath();
 		} else if (envVars.containsKey("JAVA_HOME")) {
 			java = new File(new File(envVars.get("JAVA_HOME"), "bin"), java).getAbsolutePath();
 		}
-		
-		String fitnesseJavaOpts = builder.getFitnesseJavaOpts();
+		String fitnesseJavaOpts = builder.getFitnesseJavaOpts(envVars);
 		String[] java_opts = ("".equals(fitnesseJavaOpts) ? new String[0] : fitnesseJavaOpts.split(" "));
 
 		String absolutePathToFitnesseJar = getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, builder.getFitnessePathToJar());
@@ -188,9 +187,9 @@ public class FitnesseExecutor {
 	}
 	
 	private void readAndWriteFitnesseResults(final PrintStream logger, final StdConsole console,
-											final URL readFromURL, final FilePath writeToFilePath)	
+											final URL readFromURL, final FilePath writeToFilePath, final EnvVars environment)	
 	throws InterruptedException {
-		final RunnerWithTimeOut runnerWithTimeOut = new RunnerWithTimeOut(builder.getFitnesseTestTimeout());
+		final RunnerWithTimeOut runnerWithTimeOut = new RunnerWithTimeOut(builder.getFitnesseTestTimeout(environment));
 	
 		Runnable readAndWriteResults = new Runnable() {
 			public void run() {
@@ -200,7 +199,7 @@ public class FitnesseExecutor {
 					// swallow - file may not exist
 				}
 				final byte[] bytes = getHttpBytes(logger, readFromURL, runnerWithTimeOut,
-						builder.getFitnesseHttpTimeout());
+						builder.getFitnesseHttpTimeout(environment));
 				writeFitnesseResults(logger, writeToFilePath, bytes); 
 			}
 		};
@@ -255,15 +254,16 @@ public class FitnesseExecutor {
 		return bucket.toByteArray();
 	}
 
-	public URL getFitnessePageCmdURL(AbstractBuild<?,?> build) throws Exception {
+	public URL getFitnessePageCmdURL(AbstractBuild<?,?> build, EnvVars environment) throws Exception {
 		return new URL("http", 
-				builder.getFitnesseHost(build), 
+				builder.getFitnesseHost(build, environment), 
 				builder.getFitnessePort(), 
-				getFitnessePageCmd());
-	}	
+				getFitnessePageCmd(environment));
+	}
+	
 
-	public String getFitnessePageCmd() {
-		String targetPageExpression = builder.getFitnesseTargetPage();
+	public String getFitnessePageCmd(EnvVars environment) {
+		String targetPageExpression = builder.getFitnesseTargetPage(environment);
 		if (targetPageExpression.contains("?"))
 			return "/" + targetPageExpression+"&format=xml&includehtml";
 		
