@@ -21,7 +21,7 @@ public class FitnesseResultsRecorderTest {
 		FitnesseResultsRecorder recorder = new FitnesseResultsRecorder(resultsFile);
 		ByteArrayOutputStream log = new ByteArrayOutputStream();
 		Assert.assertNotNull(recorder.getResults(new PrintStream(log), 
-				new FilePath(new File(System.getProperty("user.dir"))).child(resultsFile)));
+				new FilePath(new File(System.getProperty("user.dir"))).child(resultsFile),null));
 	}
 
 	@Test
@@ -34,7 +34,7 @@ public class FitnesseResultsRecorderTest {
 		Assert.assertNotNull(resultFiles);
 		Assert.assertEquals(2, resultFiles.length);
 
-		FitnesseResults results = recorder.getResults(new PrintStream(log), resultFiles);
+		FitnesseResults results = recorder.getResults(new PrintStream(log), resultFiles,null);
 		Assert.assertNotNull(results);
 		Assert.assertTrue(results.hasChildren());
 		Collection<? extends TestResult> children = results.getChildren();

@@ -2,7 +2,6 @@ package hudson.plugins.fitnesse;
 
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
@@ -12,7 +11,6 @@ import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
-import hudson.EnvVars;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,17 +71,6 @@ public class FitnesseBuilder extends Builder {
     	return valueIfKeyNotFound;
     }
 
-    private String getOption(String key, String valueIfKeyNotFound, EnvVars environment) { 
-    	if (environment!=null){
-    		if (options.containsKey(key)) {
-    			String value = options.get(key);
-    			if (value!=null && !"".equals(value)) return Util.replaceMacro(value, environment);
-    		} else return valueIfKeyNotFound;
-    	} else return getOption(key, valueIfKeyNotFound);
-    	
-    	return valueIfKeyNotFound;
-    }
-
     /**
      * referenced in config.jelly
      */
@@ -102,23 +89,15 @@ public class FitnesseBuilder extends Builder {
 		}
 	}
 
-	public String getFitnesseHost(EnvVars environment) {
-		if (getFitnesseStart()) {
-			return _LOCALHOST;
-		} else {
-			return getOption(FITNESSE_HOST, "unknown_host", environment);
-		}
-	}
-
-	public String getFitnesseHost(AbstractBuild<?,?> build, EnvVars environment) throws InterruptedException, IOException  {
-		if (getFitnesseStart()){		
+	public String getFitnesseHost(AbstractBuild<?,?> build) throws InterruptedException, IOException  {
+		if (getFitnesseStart()){
 			EnvironmentVariablesNodeProperty prop = build.getBuiltOn().getNodeProperties().get(EnvironmentVariablesNodeProperty.class);
 		  	if (prop!=null && prop.getEnvVars()!=null && prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY)!=null){
 		  		return prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY);
 		  	} else {
 		  		return _LOCALHOST;
 		  	}
-		} else return getOption(FITNESSE_HOST, "unknown_host", environment);
+		} else return getOption(FITNESSE_HOST, "unknown_host");
     }
 
 	/**
@@ -128,19 +107,11 @@ public class FitnesseBuilder extends Builder {
 	      return getOption(FITNESSE_JDK, "");
 	   }
 
-	 public String getFitnesseJdk(EnvVars environment) {
-	      return getOption(FITNESSE_JDK, "", environment);
-	 }
-	 
-	 /**
-	 * referenced in config.jelly
-	 */
-	 public String getFitnesseJavaOpts() {
-	   	return getOption(JAVA_OPTS, "");
-	 }
-
-    public String getFitnesseJavaOpts(EnvVars environment) {
-    	return getOption(JAVA_OPTS, "", environment);
+    /**
+     * referenced in config.jelly
+     */
+    public String getFitnesseJavaOpts() {
+    	return getOption(JAVA_OPTS, "");
     }
 
     /**
@@ -165,7 +136,9 @@ public class FitnesseBuilder extends Builder {
      */
     public int getFitnessePort() {
     	return Integer.parseInt(
-			getOption(FITNESSE_PORT_REMOTE, getOption(FITNESSE_PORT_LOCAL, getOption(FITNESSE_PORT, "-1"))));
+			getOption(FITNESSE_PORT_REMOTE,
+				getOption(FITNESSE_PORT_LOCAL,
+					getOption(FITNESSE_PORT, "-1"))));
     }
 
     /**
@@ -196,20 +169,12 @@ public class FitnesseBuilder extends Builder {
     public String getFitnessePathToRoot() {
     	return getOption(PATH_TO_ROOT, "FitNesseRoot");
     }
-   
-    public String getFitnessePathToRoot(EnvVars environment) {
-    	return getOption(PATH_TO_ROOT, "FitNesseRoot", environment);
-    }
-    
+
     /**
      * referenced in config.jelly
      */
 	public String getFitnesseTargetPage() {
 		return getOption(TARGET_PAGE, "");
-    }
-	
-	public String getFitnesseTargetPage(EnvVars environment) {
-		return getOption(TARGET_PAGE, "", environment);
     }
 
 	/**
@@ -224,38 +189,22 @@ public class FitnesseBuilder extends Builder {
      */
     public String getFitnessePathToXmlResultsOut() {
     	return getOption(PATH_TO_RESULTS, "fitnesse-results.xml");
-    }    
-
-    public String getFitnessePathToXmlResultsOut(EnvVars environment) {
-    	return getOption(PATH_TO_RESULTS, "fitnesse-results.xml", environment);
     }
 
     /**
      * referenced in config.jelly
      */
     public int getFitnesseHttpTimeout() {
-    	return Integer.parseInt(getOption(HTTP_TIMEOUT, 
-    			String.valueOf(_URL_READ_TIMEOUT_MILLIS)));
-	}    
-
-    public int getFitnesseHttpTimeout(EnvVars environment) {
-    	return Integer.parseInt(getOption(HTTP_TIMEOUT, 
-    			String.valueOf(_URL_READ_TIMEOUT_MILLIS), 
-    			environment));
+    	return Integer.parseInt(getOption(HTTP_TIMEOUT,
+			String.valueOf(_URL_READ_TIMEOUT_MILLIS)));
 	}
-	
-	 /**
+    
+    /**
      * referenced in config.jelly
      */
     public int getFitnesseTestTimeout() {
     	return Integer.parseInt(getOption(TEST_TIMEOUT,
 			String.valueOf(_URL_READ_TIMEOUT_MILLIS)));
-	}
-
-    public int getFitnesseTestTimeout(EnvVars environment) {
-    	return Integer.parseInt(getOption(TEST_TIMEOUT,
-			String.valueOf(_URL_READ_TIMEOUT_MILLIS),
-			environment));
 	}
 
     /**
@@ -360,26 +309,26 @@ public class FitnesseBuilder extends Builder {
 
         public FormValidation doCheckFitnesseHttpTimeout(@QueryParameter String value) throws IOException, ServletException {
         	if (value.length()==0)
-        		return FormValidation.ok("Default HTTP timeout " + _URL_READ_TIMEOUT_MILLIS + "ms will be used.");
+        		return FormValidation.ok("Default timeout " + _URL_READ_TIMEOUT_MILLIS + "ms will be used.");
         	try {
-        		if (Integer.parseInt(value) < 0) return FormValidation.error("HTTP timeout must be a positive integer.");
+        		if (Integer.parseInt(value) < 0) return FormValidation.error("Timeout must be a positive integer.");
         	} catch (NumberFormatException e) {
-        		if (!value.startsWith("$"))	return FormValidation.error("HTTP timeout must be a number.");
-        	}
-        	return FormValidation.ok();
-        }
-		
-		public FormValidation doCheckFitnesseTestTimeout(@QueryParameter String value) throws IOException, ServletException {
-        	if (value.length()==0)
-        		return FormValidation.ok("Default test timeout " + _URL_READ_TIMEOUT_MILLIS + "ms will be used.");
-        	try {
-        		if (Integer.parseInt(value) < 0) return FormValidation.error("Test timeout must be a positive integer.");
-        	} catch (NumberFormatException e) {
-        		if (!value.startsWith("$"))	return FormValidation.error("Test timeout must be a number.");
+        		return FormValidation.error("Timeout must be a number.");
         	}
         	return FormValidation.ok();
         }
 
+        public FormValidation doCheckFitnesseTestTimeout(@QueryParameter String value) throws IOException, ServletException {
+        	if (value.length()==0)
+        		return FormValidation.ok("Default timeout " + _URL_READ_TIMEOUT_MILLIS + "ms will be used.");
+        	try {
+        		if (Integer.parseInt(value) < 0) return FormValidation.error("Timeout must be a positive integer.");
+        	} catch (NumberFormatException e) {
+        		return FormValidation.error("Timeout must be a number.");
+        	}
+        	return FormValidation.ok();
+        }        
+        
         public FormValidation doCheckFitnessePathToXmlResultsOut(@QueryParameter String value) throws IOException, ServletException {
         	if (value.length()==0)
         		return FormValidation.error("Please specify where to write fitnesse results to.");

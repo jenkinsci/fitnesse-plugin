@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ public class NativePageCounts extends DefaultHandler {
 
 	private Counts summary;
 	private Map<String, Counts> allCounts = new HashMap<String, Counts>();
+	private Map<String, String> allContents = new HashMap<String, String>();
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) {
@@ -43,7 +45,8 @@ public class NativePageCounts extends DefaultHandler {
 					Integer.parseInt(attributes.getValue(WRONG)), 
 					Integer.parseInt(attributes.getValue(IGNORED)), 
 					Integer.parseInt(attributes.getValue(EXCEPTIONS)),
-					content);
+					"");
+			allContents.put(page, content);
 			if (qName.equals(SUMMARY)) summary = counts;
 			allCounts.put(counts.page, counts);
 		}
@@ -57,6 +60,11 @@ public class NativePageCounts extends DefaultHandler {
 
 	public int size() {
 		return allCounts.size();
+	}
+	
+
+	public Map<String, String> getAllContents() {
+		return allContents;
 	}
 
 	public Counts getSummary() {
@@ -79,6 +87,10 @@ public class NativePageCounts extends DefaultHandler {
 		return contents;
 	}
 	
+	public Collection<Counts> getAllCounts(){
+		return allCounts.values();
+	}
+	
 	public List<Counts> getDetails() {
 		ArrayList<Counts> details = new ArrayList<Counts>();
 		for (String key : allCounts.keySet()) {
@@ -99,6 +111,7 @@ public class NativePageCounts extends DefaultHandler {
 		public final int ignored;
 		public final int exceptions;
 		public final String content;
+		public String contentFile;
 
 		public Counts(String page, String resultsDate, int right, int wrong, int ignored, int exceptions, String content) {
 			this.page = page;
