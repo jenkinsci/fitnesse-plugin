@@ -8,10 +8,9 @@ import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResult;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Logger;
@@ -76,33 +75,33 @@ public class ResultsDetails extends TestResult {
 	}
 
 	/**
-	 * referenced from body.jelly
+	 * referenced from body.jelly Reads the fitnesse-result from file. The
+	 * result is stored on user request in order to keep the memory footprint
+	 * small.
 	 */
 	public String getDetailsHtml() {
 		this.parentResults.getName();
-		// return getPageCounts().content;
-		// return "<b>hello world</b>";
 		StringBuffer ret = new StringBuffer();
-		String fileName =  parentResults.getPageCounts().contentFile;
-		File file = new File(fileName);
-		ret.append("<br/><b>fileName: " + parentResults.getPageCounts().contentFile + "</b>");
+		// get the saved filename including its path
+		String fileName = parentResults.getPageCounts().contentFile;
+		BufferedReader br = null;
 		try {
-			// Open the file that is the first
-			// command line parameter
-			FileInputStream fstream = new FileInputStream(file);
-			// Get the object of DataInputStream
-			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			br = new BufferedReader(new FileReader(fileName));
 			String strLine;
-			// Read File Line By Line
 			while ((strLine = br.readLine()) != null) {
 				ret.append(strLine);
-				ret.append("\n");
 			}
-			// Close the input stream
-			in.close();
-		} catch (Exception e) {// Catch exception if any
-			return "exception while reading file: " + fileName + "\n" + e.toString();
+		} catch (IOException e) {
+			return "exception while reading file: " + fileName + "\n"
+					+ e.toString();
+		} finally {
+			if (null != br) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					// think we can ignore this exception ...
+				}
+			}
 		}
 		return ret.toString();
 	}

@@ -26,7 +26,7 @@ public class FitnesseBuildAction extends InvisibleAction implements Action {
 	}
 
 	public String getLinkFor(String fitnessePage) {
-		return getLinkFor(fitnessePage, null);
+		return getLinkFor(fitnessePage, null, fitnessePage);
 	}
 	
 	public String getLinkFor(String fitnessePage, String hudsonHost) {

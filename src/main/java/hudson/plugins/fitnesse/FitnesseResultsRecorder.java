@@ -151,8 +151,6 @@ public class FitnesseResultsRecorder extends Recorder {
 
 			logger.println("all-content: " + pageCounts.getAllContents().size());
 			logger.println("resultsFile: " + getFitnessePathToXmlResultsIn());
-			// logger.println("content: " +
-			// pageCounts.getAllContents().values().iterator().next());
 			writeFitnesseResultFiles(logger, pageCounts, build.getRootDir());
 
 			logger.println("Got results: " + pageCounts.getSummary());
@@ -214,12 +212,27 @@ public class FitnesseResultsRecorder extends Recorder {
 		}
 	}
 
+	/**
+	 * Gets a parsed fitnesse result and writes it to separate file. Putting the
+	 * fitnesse result in a separate file as performance reasons. E.g. for a
+	 * huge Test-Suite the actual fitnesse result can grow up to several MB.
+	 * First implementation of fitnesse plugin has stored the result to the
+	 * build.xml. This was very handy to present the result but slowed down
+	 * jenkins since a request to the fitnesse result leat to putting the entire
+	 * build.xml into the memory. With this function the fitnesse result is only
+	 * load to memory if the user clicks on it.
+	 * 
+	 * @param logger
+	 * @param pageCounts
+	 * @param rootDir
+	 */
 	private void writeFitnesseResultFiles(PrintStream logger,
 			NativePageCounts pageCounts, File rootDir) {
 		String rootDirName = rootDir.getAbsolutePath() + "/";
 		logger.println("write fitnesse results to: " + rootDirName);
 		Map<String, String> allContent = pageCounts.getAllContents();
 		logger.println("allContent:\n" + allContent.keySet());
+		// iterate over all fitnesse tests in a suite
 		for (Counts iCount : pageCounts.getAllCounts()) {
 			String name = iCount.page;
 			String content = allContent.get(name);
@@ -227,17 +240,29 @@ public class FitnesseResultsRecorder extends Recorder {
 				logger.println("could not find content for page: " + name);
 				continue;
 			}
+			BufferedWriter out = null;
+			String fileName = rootDirName + name;
 			try {
-				// Create file
-				String fileName = rootDirName + name;
+				// Create separate file for every test in a suite
 				FileWriter fstream = new FileWriter(fileName);
-				BufferedWriter out = new BufferedWriter(fstream);
+				out = new BufferedWriter(fstream);
 				out.write(content);
-				// Close the output stream
-				out.close();
+				// Just store the path to the filename. 
+				// Any help welcome how to
+				// restore the path of the saved file when the user wants to see the details
 				iCount.contentFile = fileName;
-			} catch (Exception e) {// Catch exception if any
-				logger.println(e.toString());
+			} catch (IOException e) {
+				logger.println("error while writing to out file" + fileName
+						+ "\n" + e.toString());
+			} finally {
+				if (null != out) {
+					try {
+						out.close();
+					} catch (IOException e) {
+						logger.println("could not close out stream: " + "\n"
+								+ fileName + e.toString());
+					}
+				}
 			}
 		}
 	}
