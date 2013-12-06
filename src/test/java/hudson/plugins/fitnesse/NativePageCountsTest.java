@@ -90,7 +90,7 @@ public class NativePageCountsTest {
 		Assert.assertEquals(6, results.getDetails().get(0).wrong);
 		Assert.assertEquals(7, results.getDetails().get(0).ignored);
 		Assert.assertEquals(8, results.getDetails().get(0).exceptions);
-		Assert.assertEquals("<tr></tr>", results.getDetails().get(0).content);
+		Assert.assertEquals("", results.getDetails().get(0).content);
 	}
 
 	private void addDetailAttributes(AttributesImpl attributes,

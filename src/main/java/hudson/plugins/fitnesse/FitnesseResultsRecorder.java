@@ -77,7 +77,7 @@ public class FitnesseResultsRecorder extends Recorder {
 		try {
 			FilePath[] resultFiles = getResultFiles(build);
 			FitnesseResults results = getResults(listener.getLogger(),
-					resultFiles, build);
+					resultFiles, build.getRootDir());
 			if (results == null)
 				return true; // no Fitnesse results found at all
 
@@ -117,12 +117,12 @@ public class FitnesseResultsRecorder extends Recorder {
 	}
 
 	public FitnesseResults getResults(PrintStream logger,
-			FilePath[] resultsFiles, AbstractBuild<?, ?> build)
+			FilePath[] resultsFiles, File rootDir)
 			throws IOException, TransformerException {
 		List<FitnesseResults> resultsList = new ArrayList<FitnesseResults>();
 
 		for (FilePath filePath : resultsFiles) {
-			FitnesseResults singleResults = getResults(logger, filePath, build);
+			FitnesseResults singleResults = getResults(logger, filePath, rootDir);
 			resultsList.add(singleResults);
 		}
 
@@ -136,7 +136,7 @@ public class FitnesseResultsRecorder extends Recorder {
 	}
 
 	public FitnesseResults getResults(PrintStream logger, FilePath resultsFile,
-			AbstractBuild<?, ?> build) throws IOException, TransformerException {
+			File rootDir) throws IOException, TransformerException {
 		InputStream resultsInputStream = null;
 		try {
 			logger.println("Reading results as "
@@ -151,7 +151,7 @@ public class FitnesseResultsRecorder extends Recorder {
 
 			logger.println("all-content: " + pageCounts.getAllContents().size());
 			logger.println("resultsFile: " + getFitnessePathToXmlResultsIn());
-			writeFitnesseResultFiles(logger, pageCounts, build.getRootDir());
+			writeFitnesseResultFiles(logger, pageCounts, rootDir);
 
 			logger.println("Got results: " + pageCounts.getSummary());
 			return new FitnesseResults(pageCounts);
