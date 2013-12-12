@@ -331,6 +331,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 
 	/**
 	 * referenced in body.jelly. Link is apparently relative to 
+	 * This is the left column, which reads the results from file
 	 */
 	public String getDetailsLink() {
 		if (details == null) {
@@ -341,6 +342,18 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 				getName(), DETAILS, "Details");
 //		return String.format("<a href=\"%s/%s\">%s</a>", 
 //					getUrl(), "Details", "Details");
+	}
+	
+	/**
+	 * referenced in body.jelly. 
+	 * The link points to the history of the fitnesse server. Note the history may not always be available.
+	 */
+	public String getDetailRemoteLink() {
+		FitnesseBuildAction buildAction = getOwner().getAction(FitnesseBuildAction.class);
+		if (buildAction == null) {
+			buildAction = FitnesseBuildAction.NULL_ACTION;
+		}
+		return buildAction.getLinkFor(getName() + "?pageHistory&resultDate="+getResultsDate(), null, "Details");
 	}
 
 	@Override
