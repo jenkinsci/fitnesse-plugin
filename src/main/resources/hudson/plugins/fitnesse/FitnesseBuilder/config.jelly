@@ -30,7 +30,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
   checked="${instance.fitnesseStart==true}">
     
     <j:set var="jdks" value="${app.JDKs}" />
-    <j:if test="${jdks.size() gt 1}">
+    <j:if test="${jdks.size() gt 0}">
     <!-- if there's only one JDK configured, always use that. -->
     	<f:entry title="Fitnesse JDK"
              description="JDK to be used for Fitnesse">
