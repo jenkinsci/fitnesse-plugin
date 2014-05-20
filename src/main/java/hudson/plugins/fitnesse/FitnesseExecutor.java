@@ -40,20 +40,20 @@ public class FitnesseExecutor {
     public boolean execute(AbstractBuild<?, ?> build, Launcher launcher, PrintStream logger, EnvVars environment) 
     throws InterruptedException {
 		Proc fitnesseProc = null;
-		StdConsole console = new StdConsole();
 		try {
 			build.addAction(getFitnesseBuildAction(build, environment));
 	    	if (builder.getFitnesseStart()) {
-	    		fitnesseProc = startFitnesse(build, launcher, environment, logger, console);
-	    		if (!procStarted(fitnesseProc, logger, console)) {
+				fitnesseProc = startFitnesse(build, launcher, environment, logger);
+				if (!procStarted(fitnesseProc, logger)) {
     				return false;
 	    		}
-				console.log(logger);
 	    	}
 	    	
 	    	FilePath resultsFilePath = getResultsFilePath(getWorkingDirectory(build), 
 	    												builder.getFitnessePathToXmlResultsOut(environment));
-			readAndWriteFitnesseResults(logger, console, getFitnessePageCmdURL(build, environment), resultsFilePath, environment);
+			readAndWriteFitnesseResults(logger,
+			    getFitnessePageCmdURL(build, environment), resultsFilePath,
+			    environment);
 			return true;
 		} catch (Throwable t) {
 			t.printStackTrace(logger);
@@ -62,7 +62,6 @@ public class FitnesseExecutor {
 			return false;
 		} finally {
 			killProc(logger, fitnesseProc);
-			console.log(logger);
 		}
 	}
 
@@ -73,11 +72,12 @@ public class FitnesseExecutor {
 				builder.getFitnessePort());
 	}
 
-	private Proc startFitnesse(AbstractBuild<?,?> build, Launcher launcher, EnvVars envVars, PrintStream logger, StdConsole console) throws IOException {
+	private Proc startFitnesse(AbstractBuild<?, ?> build, Launcher launcher,
+	    EnvVars envVars, PrintStream logger) throws IOException {
 		logger.println("Starting new Fitnesse instance...");
 		ProcStarter procStarter = launcher.launch().cmds(getJavaCmd(getWorkingDirectory(build), envVars));
 		procStarter.pwd(new File(getAbsolutePathToFileThatMayBeRelativeToWorkspace(getWorkingDirectory(build), builder.getFitnesseJavaWorkingDirectory())));
-    	console.provideStdOutAndStdErrFor(procStarter);
+		procStarter.stdout(logger).stderr(logger);
 		return procStarter.start();
     }
 
@@ -139,10 +139,10 @@ public class FitnesseExecutor {
 		return addOps.toArray(ret);
 	}
 
-	private boolean procStarted(Proc fitnesseProc, PrintStream log,
-	    StdConsole console) throws IOException, InterruptedException {
+	private boolean procStarted(Proc fitnesseProc, PrintStream log)
+	    throws IOException, InterruptedException {
 		if (fitnesseProc.isAlive()) {
-			return fitnesseStarted(log, console, builder.getFitnessePort());
+			return fitnesseStarted(log, builder.getFitnessePort());
 		}
 		return false;
 	}
@@ -152,7 +152,7 @@ public class FitnesseExecutor {
 	 * 
 	 * @return true if fitnesse has started, false otherwise
 	 */
-	public boolean fitnesseStarted(PrintStream log, StdConsole console, int port)
+	public boolean fitnesseStarted(final PrintStream log, int port)
 	    throws InterruptedException {
 		final String url = "http://localhost:" + port + "/";
 
@@ -172,8 +172,6 @@ public class FitnesseExecutor {
 				if (connection != null)
 					connection.disconnect(); // TOAA : à faire ??
 			}
-
-			console.log(log);
 		}
 
 		if (!launched)
@@ -196,8 +194,9 @@ public class FitnesseExecutor {
 		}
 	}
 	
-	private void readAndWriteFitnesseResults(final PrintStream logger, final StdConsole console,
-											final URL readFromURL, final FilePath writeToFilePath, final EnvVars environment)	
+	private void readAndWriteFitnesseResults(final PrintStream logger,
+	    final URL readFromURL, final FilePath writeToFilePath,
+	    final EnvVars environment)
 	throws InterruptedException {
 		final RunnerWithTimeOut runnerWithTimeOut = new RunnerWithTimeOut(builder.getFitnesseTestTimeout(environment));
 	
@@ -214,13 +213,8 @@ public class FitnesseExecutor {
 			}
 		};
 		
-		ResetEvent logToConsole = new ResetEvent() {
-			public void onReset() {
-				console.log(logger);
-			}
-		};
 		
-		runnerWithTimeOut.run(readAndWriteResults, logToConsole);
+		runnerWithTimeOut.run(readAndWriteResults);
 	}
 	
 	public byte[] getHttpBytes(PrintStream log, URL pageCmdTarget, Resettable timeout, int httpTimeout) {
