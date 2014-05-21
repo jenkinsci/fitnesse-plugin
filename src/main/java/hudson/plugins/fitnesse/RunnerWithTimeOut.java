@@ -1,6 +1,6 @@
 package hudson.plugins.fitnesse;
 
-public class RunnerWithTimeOut {
+public class RunnerWithTimeOut implements Resettable {
 	static final int POLL_EVERY_MILLIS = 500;
 	private final int timeOutMillis;
 	
@@ -12,6 +12,7 @@ public class RunnerWithTimeOut {
 
 	public void run(Runnable runnable) throws InterruptedException {
 		int sleepMillis = timeOutMillis < POLL_EVERY_MILLIS ? timeOutMillis : POLL_EVERY_MILLIS;
+		reset();
 
 		Thread thread = new Thread(runnable);
 		thread.start();
@@ -26,4 +27,12 @@ public class RunnerWithTimeOut {
 			throw new InterruptedException("Waited " + waitedAlready + "ms");
 		}
 	}
+
+	public void reset() {
+		waitedAlready = 0;
+	}
+}
+
+interface Resettable {
+	void reset();
 }
