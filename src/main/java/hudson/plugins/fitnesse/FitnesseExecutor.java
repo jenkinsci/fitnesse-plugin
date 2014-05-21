@@ -199,8 +199,7 @@ public class FitnesseExecutor {
 				} catch (Exception e) {
 					// swallow - file may not exist
 				}
-				final byte[] bytes = getHttpBytes(readFromURL, runnerWithTimeOut,
-						builder.getFitnesseHttpTimeout(environment));
+				final byte[] bytes = getHttpBytes(readFromURL, runnerWithTimeOut, builder.getFitnesseHttpTimeout(environment));
 				writeFitnesseResults(writeToFilePath, bytes); 
 			}
 		};
