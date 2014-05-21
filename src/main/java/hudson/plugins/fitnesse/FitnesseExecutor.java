@@ -28,8 +28,9 @@ import java.util.regex.Pattern;
  * @author Tim Bacon
  */
 public class FitnesseExecutor {
-	private static final int SLEEP_MILLIS = 1000;
+	private static final int SLEET_MILLIS = 1000;
   private static final int STARTUP_TIMEOUT_MILLIS = 30 * 1000;
+	private static final int READ_PAGE_TIMEOUT = 10 * 1000;
 	
 	private final FitnesseBuilder builder;
 	private final PrintStream logger;
@@ -147,12 +148,12 @@ public class FitnesseExecutor {
 		long waitedAlready;
 		boolean launched = false;
 		logger.print("Wait for Fitnesse Server start");
-		for (waitedAlready = 0; waitedAlready < STARTUP_TIMEOUT_MILLIS; waitedAlready += SLEEP_MILLIS) {
-			Thread.sleep(SLEEP_MILLIS);
+		for (waitedAlready = 0; waitedAlready < STARTUP_TIMEOUT_MILLIS; waitedAlready += SLEET_MILLIS) {
 			HttpURLConnection connection = null;
 			try {
 				connection = (HttpURLConnection) fitnessePageURL.openConnection();
-				connection.setRequestMethod("GET");
+				connection.setRequestMethod("HEAD");
+				connection.setReadTimeout(READ_PAGE_TIMEOUT);
 				int responseCode = connection.getResponseCode();
 				if (responseCode != 200)
 					throw new RuntimeException(String.format("Response for page %1 is %2", fitnessePageURL, responseCode));
@@ -160,16 +161,17 @@ public class FitnesseExecutor {
 				break;
 			} catch (IOException e) {
 				logger.print('.');
+				Thread.sleep(SLEET_MILLIS);
 				launched = false;
 			} finally {
 				if (connection != null)
-					connection.disconnect(); // TOAA : à faire ??
+					connection.disconnect();
 			}
 		}
 
 		logger.printf(launched //
-				? "\nFitnesse server started in %1ms.\n" //
-				: "\nFitnesse server NOT started in %1ms", //
+		? "\nFitnesse server started in %sms.\n" //
+		    : "\nFitnesse server NOT started in %sms", //
 				waitedAlready);
 
 		return launched;
@@ -181,7 +183,7 @@ public class FitnesseExecutor {
 				proc.kill();
 				for (int i=0; i < 4; ++i) {
 					if (proc.isAlive())
-						Thread.sleep(SLEEP_MILLIS);
+						Thread.sleep(SLEET_MILLIS);
 				}
 			} catch (Exception e) {
 				e.printStackTrace(logger);
@@ -208,7 +210,7 @@ public class FitnesseExecutor {
 		runnerWithTimeOut.run(readAndWriteResults);
 	}
 	
-	public byte[] getHttpBytes(URL pageCmdTarget, RunnerWithTimeOut timeout, int httpTimeout) {
+	public byte[] getHttpBytes(URL pageCmdTarget, Resettable timeout, int httpTimeout) {
 		InputStream inputStream = null;
 		ByteArrayOutputStream bucket = new ByteArrayOutputStream();
 
@@ -224,6 +226,7 @@ public class FitnesseExecutor {
 			int lastRead;
 			while ((lastRead = inputStream.read(buf)) > 0) {
 				bucket.write(buf, 0, lastRead);
+				timeout.reset();
 				recvd += lastRead;
 				if (recvd - lastLogged > 1024) {
 					logger.println(recvd/1024 + "k...");
@@ -248,22 +251,22 @@ public class FitnesseExecutor {
 		return bucket.toByteArray();
 	}
 
-	public URL getFitnessePage(AbstractBuild<?, ?> build, EnvVars environment, boolean withCommand) throws IOException {
+	/* package for test */ URL getFitnessePage(AbstractBuild<?, ?> build, EnvVars environment, boolean withCommand) throws IOException {
 		return new URL("http", //
 				builder.getFitnesseHost(build, environment), //
 				builder.getFitnessePort(), //
 				withCommand ? getFitnessePageCmd(environment) : getFitnessePageBase(environment));
 	}
-	
-	private String getFitnessePageBase(EnvVars environment) {
+
+	/* package for test */String getFitnessePageBase(EnvVars environment) {
 		String targetPageExpression = builder.getFitnesseTargetPage(environment);
 		int pos = targetPageExpression.indexOf('?');
 		if (pos == -1)
 			pos = targetPageExpression.length();
-		return targetPageExpression.substring(0, pos);
+		return "/" + targetPageExpression.substring(0, pos);
 	}
 
-	private String getFitnessePageCmd(EnvVars environment) {
+	/* package for test */String getFitnessePageCmd(EnvVars environment) {
 		String targetPageExpression = builder.getFitnesseTargetPage(environment);
 		if (targetPageExpression.contains("?"))
 			return "/" + targetPageExpression + "&format=xml&includehtml";
