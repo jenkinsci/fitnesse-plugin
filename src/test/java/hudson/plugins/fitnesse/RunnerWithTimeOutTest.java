@@ -37,7 +37,7 @@ public class RunnerWithTimeOutTest {
 	@Test
 	public void resettingRunnerShouldRestartTimeOutCountdown() throws Exception {
 		runner = new RunnerWithTimeOut(600);
-		final Resettable resettable = runner;
+		final RunnerWithTimeOut resettable = runner;
 		runner.run(new Runnable() {
 			public void run() {
 				try {
@@ -51,23 +51,5 @@ public class RunnerWithTimeOutTest {
 				}
 			}
 		});
-	}
-	
-	private boolean eventWasFired;
-	@Test
-	public void resettingRunnerWithResetEventShouldFireResetEvent() throws Exception {
-		eventWasFired = false;
-		runner = new RunnerWithTimeOut(100);
-		final Resettable resettable = runner;
-		runner.run(new Runnable() {
-			public void run() {
-				resettable.reset();
-			}
-		}, new ResetEvent() {
-			public void onReset() {
-				eventWasFired = true;
-			}
-		});
-		Assert.assertTrue(eventWasFired);
 	}
 }
