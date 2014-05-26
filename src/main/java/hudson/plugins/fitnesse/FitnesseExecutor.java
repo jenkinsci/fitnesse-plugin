@@ -152,11 +152,12 @@ public class FitnesseExecutor {
 			HttpURLConnection connection = null;
 			try {
 				connection = (HttpURLConnection) fitnessePageURL.openConnection();
-				connection.setRequestMethod("HEAD");
+				connection.setRequestMethod("GET"); //HEAD is not allowed on Fitnesse server (error 400)
 				connection.setReadTimeout(READ_PAGE_TIMEOUT);
 				int responseCode = connection.getResponseCode();
 				if (responseCode != 200)
-					throw new RuntimeException(String.format("Response for page %1 is %2", fitnessePageURL, responseCode));
+					throw new RuntimeException(String.format("Response for page %s is %d", fitnessePageURL,
+					    responseCode));
 				launched = true;
 				break;
 			} catch (IOException e) {
