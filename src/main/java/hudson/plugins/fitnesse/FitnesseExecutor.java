@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * @author Tim Bacon
  */
 public class FitnesseExecutor {
-	private static final int SLEET_MILLIS = 1000;
+	private static final int SLEEP_MILLIS = 1000;
   private static final int STARTUP_TIMEOUT_MILLIS = 30 * 1000;
 	private static final int READ_PAGE_TIMEOUT = 10 * 1000;
 	
@@ -148,7 +148,7 @@ public class FitnesseExecutor {
 		long waitedAlready;
 		boolean launched = false;
 		logger.print("Wait for Fitnesse Server start");
-		for (waitedAlready = 0; waitedAlready < STARTUP_TIMEOUT_MILLIS; waitedAlready += SLEET_MILLIS) {
+		for (waitedAlready = 0; waitedAlready < STARTUP_TIMEOUT_MILLIS; waitedAlready += SLEEP_MILLIS) {
 			HttpURLConnection connection = null;
 			try {
 				connection = (HttpURLConnection) fitnessePageURL.openConnection();
@@ -162,7 +162,7 @@ public class FitnesseExecutor {
 				break;
 			} catch (IOException e) {
 				logger.print('.');
-				Thread.sleep(SLEET_MILLIS);
+				Thread.sleep(SLEEP_MILLIS);
 				launched = false;
 			} finally {
 				if (connection != null)
@@ -184,7 +184,7 @@ public class FitnesseExecutor {
 				proc.kill();
 				for (int i=0; i < 4; ++i) {
 					if (proc.isAlive())
-						Thread.sleep(SLEET_MILLIS);
+						Thread.sleep(SLEEP_MILLIS);
 				}
 			} catch (Exception e) {
 				e.printStackTrace(logger);
