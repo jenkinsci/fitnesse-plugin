@@ -57,8 +57,7 @@ public class FitnesseExecutor {
 			return true;
 		} catch (Throwable t) {
 			t.printStackTrace(logger);
-			if (t instanceof InterruptedException)
-				throw (InterruptedException) t;
+			if (t instanceof InterruptedException) throw (InterruptedException) t;
 			return false;
 		} finally {
 			killProc(fitnesseProc);
@@ -287,8 +286,7 @@ public class FitnesseExecutor {
 			e2.printStackTrace(logger);
 		} finally {
 			try {
-				if (resultsStream != null)
-					resultsStream.close();
+				if (resultsStream != null) resultsStream.close();
 			} catch (Exception e) {
 				// swallow
 			}
