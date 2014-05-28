@@ -65,8 +65,7 @@ public class FitnesseExecutor {
 		}
 	}
 
-	private FitnesseBuildAction getFitnesseBuildAction(AbstractBuild<?, ?> build, EnvVars environment)
-	    throws IOException {
+	private FitnesseBuildAction getFitnesseBuildAction(AbstractBuild<?, ?> build, EnvVars environment) throws IOException {
 		return new FitnesseBuildAction(
 				builder.getFitnesseStart(),
 				builder.getFitnesseHost(build, environment), 
@@ -112,8 +111,7 @@ public class FitnesseExecutor {
 	
 		ArrayList<String> cmd = new ArrayList<String>();
 		cmd.add(java);
-		if (java_opts.length > 0)
-			cmd.addAll(Arrays.asList(java_opts));
+		if (java_opts.length > 0) cmd.addAll(Arrays.asList(java_opts));
 		cmd.addAll(Arrays.asList(jar_opts));
 		cmd.addAll(Arrays.asList(fitnesse_opts2));
 		
@@ -179,8 +177,7 @@ public class FitnesseExecutor {
 			try {
 				proc.kill();
 				for (int i=0; i < 4; ++i) {
-					if (proc.isAlive())
-						Thread.sleep(SLEEP_MILLIS);
+					if (proc.isAlive()) Thread.sleep(SLEEP_MILLIS);
 				}
 			} catch (Exception e) {
 				e.printStackTrace(logger);
@@ -266,11 +263,10 @@ public class FitnesseExecutor {
 	/* package for test */String getFitnessePageCmd(EnvVars environment) {
 		String targetPageExpression = builder.getFitnesseTargetPage(environment);
 		if (targetPageExpression.contains("?"))
-			return "/" + targetPageExpression + "&format=xml&includehtml";
+			return "/" + targetPageExpression+"&format=xml&includehtml";
 		
 		int pos = targetPageExpression.indexOf('&');
-		if (pos == -1)
-			pos = targetPageExpression.length();
+		if (pos == -1) pos = targetPageExpression.length();
 		
 		return String.format("/%1$s?%2$s%3$s", 
 				targetPageExpression.substring(0, pos),
@@ -301,8 +297,7 @@ public class FitnesseExecutor {
 
 	static FilePath getWorkingDirectory(AbstractBuild<?, ?> build) {
 		FilePath workspace = build.getWorkspace();
-		if (workspace != null)
-			return workspace;
+		if (workspace != null) return workspace;
 		return new FilePath(build.getRootDir());
 	}
 	
@@ -319,8 +314,7 @@ public class FitnesseExecutor {
 	}
 	
 	static String getAbsolutePathToFileThatMayBeRelativeToWorkspace(FilePath workingDirectory, String fileName) {
-		if (new File(fileName).exists())
-			return fileName;
+		if (new File(fileName).exists()) return fileName;
 		return new File(workingDirectory.getRemote(), fileName).getAbsolutePath();
 	}
 }

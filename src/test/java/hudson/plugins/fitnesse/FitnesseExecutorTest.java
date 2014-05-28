@@ -2,6 +2,9 @@ package hudson.plugins.fitnesse;
 
 import hudson.EnvVars;
 import hudson.FilePath;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -11,10 +14,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
 
 public class FitnesseExecutorTest {
 
