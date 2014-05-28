@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  */
 public class FitnesseExecutor {
 	private static final int SLEEP_MILLIS = 1000;
-  private static final int STARTUP_TIMEOUT_MILLIS = 30 * 1000;
+	private static final int STARTUP_TIMEOUT_MILLIS = 30 * 1000;
 	private static final int READ_PAGE_TIMEOUT = 10 * 1000;
 	
 	private final FitnesseBuilder builder;
@@ -156,8 +156,7 @@ public class FitnesseExecutor {
 				connection.setReadTimeout(READ_PAGE_TIMEOUT);
 				int responseCode = connection.getResponseCode();
 				if (responseCode != 200)
-					throw new RuntimeException(String.format("Response for page %s is %d", fitnessePageURL,
-					    responseCode));
+					throw new RuntimeException(String.format("Response for page %s is %d", fitnessePageURL, responseCode));
 				launched = true;
 				break;
 			} catch (IOException e) {
