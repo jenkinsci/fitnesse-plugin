@@ -37,7 +37,7 @@ public class RunnerWithTimeOutTest {
 	@Test
 	public void resettingRunnerShouldRestartTimeOutCountdown() throws Exception {
 		runner = new RunnerWithTimeOut(600);
-		final RunnerWithTimeOut resettable = runner;
+		final Resettable resettable = runner;
 		runner.run(new Runnable() {
 			public void run() {
 				try {
