@@ -169,10 +169,7 @@ public class FitnesseExecutor {
 			}
 		}
 
-		logger.printf(launched //
-		? "\nFitnesse server started in %sms.\n" //
-		    : "\nFitnesse server NOT started in %sms", //
-				waitedAlready);
+		logger.printf(launched ? "\nFitnesse server started in %sms.\n" : "\nFitnesse server NOT started in %sms", waitedAlready);
 
 		return launched;
 	}
