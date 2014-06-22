@@ -52,22 +52,4 @@ public class RunnerWithTimeOutTest {
 			}
 		});
 	}
-	
-	private boolean eventWasFired;
-	@Test
-	public void resettingRunnerWithResetEventShouldFireResetEvent() throws Exception {
-		eventWasFired = false;
-		runner = new RunnerWithTimeOut(100);
-		final Resettable resettable = runner;
-		runner.run(new Runnable() {
-			public void run() {
-				resettable.reset();
-			}
-		}, new ResetEvent() {
-			public void onReset() {
-				eventWasFired = true;
-			}
-		});
-		Assert.assertTrue(eventWasFired);
-	}
 }

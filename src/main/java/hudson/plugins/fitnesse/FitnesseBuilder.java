@@ -110,16 +110,16 @@ public class FitnesseBuilder extends Builder {
 		}
 	}
 
-	public String getFitnesseHost(AbstractBuild<?,?> build, EnvVars environment) throws InterruptedException, IOException  {
+	public String getFitnesseHost(AbstractBuild<?, ?> build, EnvVars environment) {
 		if (getFitnesseStart()){		
 			EnvironmentVariablesNodeProperty prop = build.getBuiltOn().getNodeProperties().get(EnvironmentVariablesNodeProperty.class);
-		  	if (prop!=null && prop.getEnvVars()!=null && prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY)!=null){
-		  		return prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY);
-		  	} else {
-		  		return _LOCALHOST;
-		  	}
+			if (prop != null && prop.getEnvVars() != null && prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY) != null) {
+				return prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY);
+			} else {
+				return _LOCALHOST;
+			}
 		} else return getOption(FITNESSE_HOST, "unknown_host", environment);
-    }
+	}
 
 	/**
     * referenced in config.jelly
@@ -264,10 +264,10 @@ public class FitnesseBuilder extends Builder {
     @Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
     throws IOException, InterruptedException {
-    	PrintStream logger = listener.getLogger();
+		PrintStream logger = listener.getLogger();
 		logger.println(getClass().getName() + ": " + options);
-		FitnesseExecutor fitnesseExecutor = new FitnesseExecutor(this);
-		return fitnesseExecutor.execute(build, launcher, logger, build.getEnvironment(listener));
+		FitnesseExecutor fitnesseExecutor = new FitnesseExecutor(this, logger);
+		return fitnesseExecutor.execute(build, launcher, build.getEnvironment(listener));
 	}
 
     /**
