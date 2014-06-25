@@ -1,7 +1,5 @@
 package hudson.plugins.fitnesse;
 
-import static java.util.Collections.emptyList;
-import jenkins.model.Jenkins;
 import hudson.model.AbstractBuild;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.test.AbstractTestResultAction;
@@ -16,6 +14,8 @@ import java.util.Collections;
 import java.util.logging.Logger;
 
 import org.kohsuke.stapler.export.Exported;
+
+import static java.util.Collections.*;
 
 /**
  * Represents the details of a FitNesseResults instance, i.e. the FitNesse html
@@ -72,13 +72,6 @@ public class ResultsDetails extends TestResult {
 			return this;
 
 		return null;
-	}
-
-	/**
-	 * referenced from body.jelly Returns Jenkins root URL to form correct paths to static resources
-	 */
-	public String getRootUrlFromRequest() {
-		return Jenkins.getInstance().getRootUrlFromRequest();
 	}
 
 	/**
