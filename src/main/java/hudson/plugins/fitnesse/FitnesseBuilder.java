@@ -350,7 +350,7 @@ public class FitnesseBuilder extends Builder {
          */
         @Override
         public String getDisplayName() {
-            return "Execute fitnesse tests";
+            return "Execute FitNesse tests";
         }
 
         /**

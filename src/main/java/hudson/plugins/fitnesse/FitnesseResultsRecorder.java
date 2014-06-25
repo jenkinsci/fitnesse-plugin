@@ -160,7 +160,7 @@ public class FitnesseResultsRecorder extends Recorder {
 		
 		public FormValidation doCheckFitnessePathToXmlResultsIn(@QueryParameter String value) throws IOException, ServletException {
         	if (value.length()==0)
-        		return FormValidation.error("Please specify where to read fitnesse results from.");
+        		return FormValidation.error("Please specify where to read FitNesse results from.");
         	if (!value.endsWith("xml"))
         		return FormValidation.warning("File does not end with 'xml': is that correct?");
         	return FormValidation.ok();
@@ -180,7 +180,7 @@ public class FitnesseResultsRecorder extends Recorder {
          */
 		@Override
 		public String getDisplayName() {
-			return "Publish Fitnesse results report";
+			return "Publish FitNesse results report";
 		}
 	}
 }

@@ -38,7 +38,7 @@
 	<artifactId>fitnesse</artifactId>
 	<version>1.9-SNAPSHOT</version>
 	<packaging>hpi</packaging>
-	<name>Hudson Fitnesse plugin</name>
+	<name>Hudson FitNesse plugin</name>
 	<url>http://wiki.jenkins-ci.org/display/HUDSON/Fitnesse+Plugin</url>
 
 	<developers>
