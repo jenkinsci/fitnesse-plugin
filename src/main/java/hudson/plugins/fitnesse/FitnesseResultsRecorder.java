@@ -181,7 +181,7 @@ public class FitnesseResultsRecorder extends Recorder {
 				ServletException {
 			if (value.length() == 0)
 				return FormValidation
-						.error("Please specify where to read fitnesse results from.");
+						.error("Please specify where to read FitNesse results from.");
 			if (!value.endsWith("xml"))
 				return FormValidation
 						.warning("File does not end with 'xml': is that correct?");
