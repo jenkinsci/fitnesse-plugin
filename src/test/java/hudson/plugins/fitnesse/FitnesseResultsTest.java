@@ -45,7 +45,8 @@ public class FitnesseResultsTest {
 	};
 
 	private static FitnesseResults resultsForCounts(int right, int wrong, int ignored, int exceptions) {
-		return new FitnesseResults(new Counts("", "20100320184439", right, wrong, ignored, exceptions, null)); 
+		return new FitnesseResults(new Counts("", "20100320184439", right, wrong, ignored, exceptions,
+		    0, null));
 	}
 	
 	@Test
@@ -131,8 +132,8 @@ public class FitnesseResultsTest {
 		return summary;
 	}
 
-	private static final Counts BEFORE = new Counts("", "20100313174438", 1, 2, 3, 4, null);
-	private static final Counts AFTER = new Counts("", "20100313174439", 1, 2, 3, 4, null);
+	private static final Counts BEFORE = new Counts("", "20100313174438", 1, 2, 3, 4, 0, null);
+	private static final Counts AFTER = new Counts("", "20100313174439", 1, 2, 3, 4, 0, null);
 	
 	@Test
 	public void isEarlierThanShouldDependOnCounts() {
@@ -161,13 +162,4 @@ public class FitnesseResultsTest {
 		Assert.assertEquals(0, second.millisAfter(second));
 	}
 	
-	@Test
-	public void durationShouldBeDifferenceBetweenEarliestAndLatestResults() {
-		FitnesseResults first = new FitnesseResults(BEFORE);
-		FitnesseResults second = new FitnesseResults(AFTER);
-		FitnesseResults summary = new FitnesseResults((Counts)null);
-		summary.addChild(first);
-		summary.addChild(second);
-		Assert.assertEquals(1.0f, summary.getDuration(), 0.0f);
-	}
 }

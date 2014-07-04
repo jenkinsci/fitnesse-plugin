@@ -1,16 +1,13 @@
 package hudson.plugins.fitnesse;
 
-import hudson.model.AbstractBuild;
-import hudson.model.Hudson;
 import hudson.model.ModelObject;
 import hudson.model.Result;
+import hudson.model.AbstractBuild;
+import hudson.model.Hudson;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.test.TabulatedResult;
 import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResult;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-import org.kohsuke.stapler.export.Exported;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -19,14 +16,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.Exported;
+
 public class FitnesseResults extends TabulatedResult implements Comparable<FitnesseResults>{
 	private static final String DETAILS = "Details";
 
 	private static final Logger log = Logger.getLogger("FitNesse");
 	
 	private static final long serialVersionUID = 1L;
-	private transient boolean durationCalculated;
-	private transient long durationInMillis;
 	private transient List<FitnesseResults> failed = null;
 	private transient List<FitnesseResults> skipped = null;
 	private transient List<FitnesseResults> passed = null;
@@ -178,26 +177,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	@Override
 	@Exported(visibility=2)
 	public float getDuration() {
-		if (!durationCalculated) calculateDurationInMillis();
-		return durationInMillis / 1000.0f;
-	}
-
-	private void calculateDurationInMillis() {
-		FitnesseResults earliest = null, latest = null;
-		for (FitnesseResults detail : details) {
-			if (earliest == null) {
-				earliest = detail;
-			} else if (detail.isEarlierThan(earliest)) {
-				earliest = detail;
-			}
-			if (latest == null) {
-				latest = detail;
-			} else if (detail.isLaterThan(latest)) {
-				latest = detail;
-			}
-		}
-		durationInMillis = latest == null? 0 : latest.millisAfter(earliest);
-		durationCalculated = true;
+		return pageCounts.duration / 1000.0f;
 	}
 
 	@Exported(visibility=1)
