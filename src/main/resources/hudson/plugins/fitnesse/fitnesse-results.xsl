@@ -7,8 +7,6 @@
 			<xsl:value-of select="FitNesseVersion"/>
 		</xsl:attribute>
 
-		<xsl:apply-templates select="//result"/>
-
 		<summary>
 			<xsl:attribute name="page" >
 				<xsl:value-of select="rootPath"/>
@@ -18,6 +16,8 @@
 			</xsl:attribute>
 			<xsl:apply-templates select="finalCounts" />
 		</summary>
+    
+		<xsl:apply-templates select="//result"/>
 
 	</hudson-fitnesse-plugin-report>
 </xsl:template>

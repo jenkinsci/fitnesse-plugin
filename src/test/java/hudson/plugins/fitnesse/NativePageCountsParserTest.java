@@ -102,7 +102,6 @@ public class NativePageCountsParserTest {
 		NativePageCounts testResults = fitnesseParser.parse(sampleXml, System.out, "./target/");
 		Assert.assertEquals(1, testResults.size());
 		Assert.assertEquals("TestDecisionTable", testResults.getSummary().page);
-		//KO
 		Assert.assertEquals(16, testResults.getSummary().right);
 		Assert.assertEquals(2, testResults.getSummary().wrong);
 		Assert.assertEquals(0, testResults.getSummary().ignored);
