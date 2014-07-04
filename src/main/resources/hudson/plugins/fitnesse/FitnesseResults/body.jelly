@@ -1,27 +1,46 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
 	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
 	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-	<table>
 	<j:if test="${it.failCount > 0}">
-		<tr class="result-failed"><td><strong>Wrong and Exceptions: ${it.failCount}</strong></td></tr>
-		<tr><th>Name</th><th>Right</th><th>Wrong</th><th>Ignored</th><th>Exceptions</th><th>Duration</th><th>Details-Captured</th><th>Details-Remote</th></tr>
+		<div class="result-failed"><strong>Wrong and Exceptions: ${it.failCount}</strong>
+
+		<table class="pane bigtable">
+			<tr>
+		    <td class="pane-header"><a class="sortheader" href="#">Name<span class="sortarrow"></span></a></td>
+		    <td class="pane-header"><a class="sortheader" href="#">Right<span class="sortarrow"></span></a></td>
+		    <th>Wrong</th><th>Ignored</th><th>Exceptions</th><th>Duration</th><th>Details-Captured</th><th>Details-Remote</th></tr>
 	    <j:forEach var="r" items="${it.failedTests}">
 		    <tr><td>${it.toHtml(r)}</td><td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td><td>${r.duration}</td><td>${r.getDetailsLink()}</td><td>${r.getDetailRemoteLink()}</td></tr>
 	    </j:forEach>
+		</table>
+		</div>
 	</j:if>
 	<j:if test="${it.skipCount > 0}">
-		<tr class="result-skipped"><td><strong>Ignored: ${it.skipCount}</strong></td></tr>
-		<tr><th>Name</th><th>Right</th><th>Wrong</th><th>Ignored</th><th>Exceptions</th><th>Duration</th><th>Details-Captured</th><th>Details-Remote</th></tr>
+		<div class="result-skipped"><strong>Ignored: ${it.skipCount}</strong>
+
+		<table class="pane bigtable">
+			<tr>
+		    <td class="pane-header"><a class="sortheader" href="#">Name<span class="sortarrow"></span></a></td>
+		    <td class="pane-header"><a class="sortheader" href="#">Right<span class="sortarrow"></span></a></td>
+		    <th>Wrong</th><th>Ignored</th><th>Exceptions</th><th>Duration</th><th>Details-Captured</th><th>Details-Remote</th></tr>
 	    <j:forEach var="r" items="${it.skippedTests}">
 		    <tr><td>${it.toHtml(r)}</td><td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td><td>${r.duration}</td><td>${r.getDetailsLink()}</td><td>${r.getDetailRemoteLink()}</td></tr>
 	    </j:forEach>
+		</table>
+		</div>
 	</j:if>
 	<j:if test="${it.passCount > 0}">
-		<tr class="result-passed"><td><strong>Right: ${it.passCount}</strong></td></tr>
-		<tr><th>Name</th><th>Right</th><th>Wrong</th><th>Ignored</th><th>Exceptions</th><th>Duration</th><th>Details-Captured</th><th>Details-Remote</th></tr>
+		<div class="result-passed"><strong>Right: ${it.passCount}</strong>
+
+		<table class="pane bigtable">
+			<tr>
+		    <td class="pane-header"><a class="sortheader" href="#">Name<span class="sortarrow"></span></a></td>
+		    <td class="pane-header"><a class="sortheader" href="#">Right<span class="sortarrow"></span></a></td>
+		    <th>Wrong</th><th>Ignored</th><th>Exceptions</th><th>Duration</th><th>Details-Captured</th><th>Details-Remote</th></tr>
 	    <j:forEach var="r" items="${it.passedTests}">
 		    <tr><td>${it.toHtml(r)}</td><td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td><td>${r.duration}</td><td>${r.getDetailsLink()}</td><td>${r.getDetailRemoteLink()}</td></tr>
 	    </j:forEach>
+		</table>
+		</div>
 	</j:if>
-	</table>
 </j:jelly>
