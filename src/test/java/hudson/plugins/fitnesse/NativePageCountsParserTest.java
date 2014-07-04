@@ -95,8 +95,6 @@ public class NativePageCountsParserTest {
 		Assert.assertEquals(4, testResults.getSummary().duration);
 	}
 
-	// Test testResults.getAllContents
-
 	@Test
 	public void parserShouldCollectAllCountsFromSingleTestFile() throws Exception {
 		InputStream sampleXml = getClass().getResourceAsStream("fitnesse-test-results.xml");
