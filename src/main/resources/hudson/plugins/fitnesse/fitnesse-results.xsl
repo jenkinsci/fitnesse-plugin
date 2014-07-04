@@ -63,6 +63,9 @@
 		<xsl:attribute name="duration">
 			<xsl:value-of select="runTimeInMillis"/>
 		</xsl:attribute>
+		<xsl:attribute name="content">
+			<xsl:value-of select="content"/>
+		</xsl:attribute>
 	</detail>
 </xsl:template>
 

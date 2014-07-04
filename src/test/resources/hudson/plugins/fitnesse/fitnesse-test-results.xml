@@ -1480,10 +1480,10 @@ Example of a Slim DecisionTable --<br/>based on <a href="http://fitnesse.org/Fit
   
   
   <finalCounts>
-    <right>1</right>
-    <wrong>2</wrong>
-    <ignores>3</ignores>
-    <exceptions>4</exceptions>
+    <right>0</right>
+    <wrong>0</wrong>
+    <ignores>0</ignores>
+    <exceptions>0</exceptions>
   </finalCounts>
   <totalRunTimeInMillis>4</totalRunTimeInMillis>
   
