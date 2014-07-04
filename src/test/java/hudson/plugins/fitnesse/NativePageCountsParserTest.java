@@ -92,6 +92,7 @@ public class NativePageCountsParserTest {
 		Assert.assertEquals(5, testResults.getSummary().wrong);
 		Assert.assertEquals(1, testResults.getSummary().ignored);
 		Assert.assertEquals(2, testResults.getSummary().exceptions);
+		Assert.assertEquals(4, testResults.getSummary().duration);
 	}
 
 	// Test testResults.getAllContents
@@ -106,6 +107,7 @@ public class NativePageCountsParserTest {
 		Assert.assertEquals(2, testResults.getSummary().wrong);
 		Assert.assertEquals(0, testResults.getSummary().ignored);
 		Assert.assertEquals(0, testResults.getSummary().exceptions);
+		Assert.assertEquals(1, testResults.getSummary().duration);
 	}
 
 	private ByteArrayInputStream toInputStream(String aString) {
