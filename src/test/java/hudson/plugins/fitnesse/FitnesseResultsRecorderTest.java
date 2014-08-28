@@ -20,8 +20,7 @@ public class FitnesseResultsRecorderTest {
 				resultsFile);
 		FilePath resultFile = new FilePath(new File(
 				System.getProperty("user.dir"))).child(resultsFile);
-		Assert.assertNotNull(recorder.getResults(System.out,
-				resultFile, new File(resultFile.getParent().getBaseName())));
+		Assert.assertNotNull(recorder.getResults(System.out, resultFile, new File("./target")));
 	}
 
 	@Test
@@ -35,8 +34,7 @@ public class FitnesseResultsRecorderTest {
 		Assert.assertNotNull(resultFiles);
 		Assert.assertEquals(2, resultFiles.length);
 
-		FitnesseResults results = recorder.getResults(System.out,
-				resultFiles, new File(resultFiles[0].getParent().getParent().getBaseName()));
+		FitnesseResults results = recorder.getResults(System.out, resultFiles, new File("./target"));
 		Assert.assertNotNull(results);
 		Assert.assertTrue(results.hasChildren());
 		Collection<? extends TestResult> children = results.getChildren();
