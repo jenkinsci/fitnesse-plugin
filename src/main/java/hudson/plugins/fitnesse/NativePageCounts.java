@@ -174,7 +174,7 @@ public class NativePageCounts extends DefaultHandler {
 	 */
 	private String writeFitnesseResultFiles(String pageName, String htmlContent) {
 		if (null == htmlContent) {
-			logger.println("Could not find content for page: " + pageName);
+			logger.println(" Could not find content for page: " + pageName);
 			return null;
 		}
 		BufferedWriter out = null;
@@ -184,7 +184,7 @@ public class NativePageCounts extends DefaultHandler {
 			FileWriter fstream = new FileWriter(fileName);
 			out = new BufferedWriter(fstream);
 			out.write(htmlContent);
-			// Just store the path to the filename.
+			logger.println(" File: " + fileName + " wrote");
 			return fileName;
 		} catch (IOException e) {
 			logger.println("Error while writing to out file: " + fileName + "\n" + e.toString());
