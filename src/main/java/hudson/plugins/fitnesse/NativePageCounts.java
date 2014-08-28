@@ -178,7 +178,7 @@ public class NativePageCounts extends DefaultHandler {
 			return null;
 		}
 		BufferedWriter out = null;
-		String fileName = rootDirName + pageName + ".htm";
+		String fileName = rootDirName + pageName;
 		try {
 			// Create separate file for every test in a suite
 			FileWriter fstream = new FileWriter(fileName);

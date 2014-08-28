@@ -14,7 +14,7 @@ public class NativePageCountsTest {
 	
 	@Test
 	public void countsShouldCollectValuesFromConstructor() {
-	  String contentFileName = "./fileName.html";
+		String contentFileName = "./fileName";
 		Counts actual = new Counts("name", "201003112307", 1, 2, 3, 4, contentFileName);
 		Assert.assertEquals("name", actual.page);
 		Assert.assertEquals(1, actual.right);
@@ -90,7 +90,7 @@ public class NativePageCountsTest {
 		Assert.assertEquals(6, results.getDetails().get(0).wrong);
 		Assert.assertEquals(7, results.getDetails().get(0).ignored);
 		Assert.assertEquals(8, results.getDetails().get(0).exceptions);
-		Assert.assertEquals("./target/name.htm", results.getDetails().get(0).contentFile);
+		Assert.assertEquals("./target/name", results.getDetails().get(0).contentFile);
 	}
 
 	private void addDetailAttributes(AttributesImpl attributes,
