@@ -134,7 +134,7 @@ public class NativePageCounts extends DefaultHandler {
 		public final int wrong;
 		public final int ignored;
 		public final int exceptions;
-		public String content; // TODO this useless field !
+		public String content; // TODO remove this useless field, use contentFile in tests
 		// stores the file-path where to find the actual fitnesse result (html)
 		public final String contentFile;
 
@@ -147,6 +147,9 @@ public class NativePageCounts extends DefaultHandler {
 			this.ignored = ignored;
 			this.exceptions = exceptions;
 			this.contentFile = contentFile;
+			if (contentFile != null) {
+				content = "";
+			}
 		}
 
 		public Date resultsDateAsDate() throws ParseException {

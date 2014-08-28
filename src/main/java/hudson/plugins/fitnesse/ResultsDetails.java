@@ -79,10 +79,12 @@ public class ResultsDetails extends TestResult {
 	 * small.
 	 */
 	public String getDetailsHtml() {
-		this.parentResults.getName();
 		StringBuffer ret = new StringBuffer();
 		// get the saved filename including its path
 		String fileName = parentResults.getPageCounts().contentFile;
+		if (fileName == null) {
+			return "error, content filename is null for page " + parentResults.getName();
+		}
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(fileName));
