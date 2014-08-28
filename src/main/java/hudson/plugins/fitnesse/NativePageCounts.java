@@ -187,7 +187,7 @@ public class NativePageCounts extends DefaultHandler {
 			// Just store the path to the filename.
 			return fileName;
 		} catch (IOException e) {
-			logger.println("Error while writing to out file" + fileName + "\n" + e.toString());
+			logger.println("Error while writing to out file: " + fileName + "\n" + e.toString());
 		} finally {
 			if (null != out) {
 				try {

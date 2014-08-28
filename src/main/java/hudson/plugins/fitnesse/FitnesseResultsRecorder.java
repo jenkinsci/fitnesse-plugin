@@ -142,7 +142,8 @@ public class FitnesseResultsRecorder extends Recorder {
 
 			logger.println("Parsing results... ");
 			NativePageCountsParser pageCountsParser = new NativePageCountsParser();
-			NativePageCounts pageCounts = pageCountsParser.parse(resultsInputStream, logger, rootDir.getAbsolutePath() + "/");
+			NativePageCounts pageCounts = pageCountsParser.parse(resultsInputStream, logger,
+			    rootDir.getAbsolutePath() + System.getProperty("file.separator"));
 			logger.println("resultsFile: " + getFitnessePathToXmlResultsIn());
 
 			logger.println("Got results: " + pageCounts.getSummary());
