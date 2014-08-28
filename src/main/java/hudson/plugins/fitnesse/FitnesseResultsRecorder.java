@@ -5,6 +5,7 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.Action;
 import hudson.model.BuildListener;
+import hudson.model.Describable;
 import hudson.model.ModelObject;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
@@ -36,7 +37,7 @@ import javax.xml.transform.TransformerException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-public class FitnesseResultsRecorder extends Recorder {
+public class FitnesseResultsRecorder extends Recorder implements Describable<Publisher> {
 
 	private final String fitnessePathToXmlResultsIn;
 
