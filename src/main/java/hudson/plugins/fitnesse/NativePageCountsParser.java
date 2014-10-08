@@ -2,6 +2,7 @@ package hudson.plugins.fitnesse;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -11,8 +12,9 @@ import javax.xml.transform.stream.StreamSource;
 
 public class NativePageCountsParser {
 
-	public NativePageCounts parse(InputStream inputStream) throws TransformerException, IOException {
-		NativePageCounts fitnessePageCounts = new NativePageCounts();
+	public NativePageCounts parse(InputStream inputStream, PrintStream logger, String rootDirName)
+	    throws TransformerException, IOException {
+		NativePageCounts fitnessePageCounts = new NativePageCounts(logger, rootDirName);
 		SAXResult intermediateResult = new SAXResult(fitnessePageCounts);
 		transformRawResults(inputStream, intermediateResult);
 		return fitnessePageCounts;

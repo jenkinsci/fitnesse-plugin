@@ -16,7 +16,6 @@ public class CompoundFitnesseResults extends FitnesseResults {
 		String page = "All Results";
 		String resultsDate = null;
 		int right = 0, wrong = 0, ignored = 0, exceptions = 0;
-		String content = null;
 		
 		for (FitnesseResults fitnesseResults : resultsList) {
 			if (resultsDate == null) {
@@ -28,7 +27,7 @@ public class CompoundFitnesseResults extends FitnesseResults {
 			exceptions += fitnesseResults.getExceptionCount();
 		}
 		
-		Counts counts = new Counts(page, resultsDate, right, wrong, ignored, exceptions, content);
+		Counts counts = new Counts(page, resultsDate, right, wrong, ignored, exceptions, null);
 		return new CompoundFitnesseResults(resultsList, counts);
 	}
 	

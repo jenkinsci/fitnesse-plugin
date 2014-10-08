@@ -14,14 +14,14 @@ public class NativePageCountsTest {
 	
 	@Test
 	public void countsShouldCollectValuesFromConstructor() {
-		String content = "<tr><td></td></tr>";
-		Counts actual = new Counts("name", "201003112307", 1, 2, 3, 4, content);
+		String contentFileName = "./fileName";
+		Counts actual = new Counts("name", "201003112307", 1, 2, 3, 4, contentFileName);
 		Assert.assertEquals("name", actual.page);
 		Assert.assertEquals(1, actual.right);
 		Assert.assertEquals(2, actual.wrong);
 		Assert.assertEquals(3, actual.ignored);
 		Assert.assertEquals(4, actual.exceptions);
-		Assert.assertEquals(content, actual.content);
+		Assert.assertEquals(contentFileName, actual.contentFile);
 	}
 
 	@Test
@@ -42,14 +42,14 @@ public class NativePageCountsTest {
 	
 	@Test
 	public void resultsDateOfShouldStripAnyTrailingGooFromApproxDate() {
-		NativePageCounts results = new NativePageCounts();
+		NativePageCounts results = new NativePageCounts(System.out, "./target/");
 		Assert.assertEquals("abc", results.resultsDateOf("abc&amp;"));
 		Assert.assertEquals("abc", results.resultsDateOf("abc"));
 	}
 	
 	@Test
 	public void resultsShouldCollectSummaryFromAttributes() {
-		NativePageCounts results = new NativePageCounts();
+		NativePageCounts results = new NativePageCounts(System.out, "./target/");
 		AttributesImpl attributes = new AttributesImpl();
 		addSummaryAttributes(attributes, "1", "2", "3", "4");
 		results.startElement("", "", NativePageCounts.SUMMARY, attributes);
@@ -75,7 +75,7 @@ public class NativePageCountsTest {
 	
 	@Test
 	public void resultsShouldCollectDetailFromAttributes() {
-		NativePageCounts results = new NativePageCounts();
+		NativePageCounts results = new NativePageCounts(System.out, "./target/");
 		AttributesImpl attributes = new AttributesImpl();
 		attributes.addAttribute("", "", NativePageCounts.PAGE, "String", "name");
 		String resultsDate = "20100311210804";
@@ -90,7 +90,7 @@ public class NativePageCountsTest {
 		Assert.assertEquals(6, results.getDetails().get(0).wrong);
 		Assert.assertEquals(7, results.getDetails().get(0).ignored);
 		Assert.assertEquals(8, results.getDetails().get(0).exceptions);
-		Assert.assertEquals("", results.getDetails().get(0).content);
+		Assert.assertEquals("./target/name", results.getDetails().get(0).contentFile);
 	}
 
 	private void addDetailAttributes(AttributesImpl attributes,
@@ -105,7 +105,7 @@ public class NativePageCountsTest {
 
 	@Test
 	public void resultsOfTestShouldCollectSummaryFromDetail() {
-		NativePageCounts results = new NativePageCounts();
+		NativePageCounts results = new NativePageCounts(System.out, "./target/");
 		AttributesImpl attributes = new AttributesImpl();
 		attributes.addAttribute("", "", NativePageCounts.PAGE, "String", "name");
 		String resultsDate = "20100311210804";
