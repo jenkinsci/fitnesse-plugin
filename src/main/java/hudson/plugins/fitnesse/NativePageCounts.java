@@ -57,6 +57,7 @@ public class NativePageCounts extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) {
+		if (COUNTABLE.contains(qName)) {
 			String page = attributes.getValue(PAGE);
 			String pseudoPage = attributes.getValue(PSEUDO_PAGE);
 			String targetPage = page == null || page.equals("") ? pseudoPage : page;
@@ -70,7 +71,6 @@ public class NativePageCounts extends DefaultHandler {
 					Integer.parseInt(attributes.getValue(EXCEPTIONS)), 
 					Integer.parseInt(attributes.getValue(DURATION)),
 					writeFitnesseResultFiles(targetPage, attributes.getValue(CONTENT))
-					// see above, do not put fitnesse-results into build.xml
 			);
 
 			if (qName.equals(SUMMARY))
