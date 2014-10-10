@@ -4,9 +4,9 @@
 	<table>
 	<j:if test="${it.hasChildren()}">
 		<tr><td><strong>Suites: ${it.getChildren().size()}</strong></td></tr>
-		<tr><th>Name</th><th>Pages</th><th>Right</th><th>Wrong</th><th>Ignored</th><th>Exceptions</th></tr>
+		<tr><th>Name</th><th>Pages</th><th>Right</th><th>Wrong</th><th>Ignored</th><th>Exceptions</th><th>Duration</th></tr>
 	    <j:forEach var="r" items="${it.getChildren()}">
-			<tr><td><a href="${r.name}">${r.name}</a></td><td>${r.totalCount}</td><td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td></tr>
+			<tr><td><a href="${r.name}">${r.name}</a></td><td>${r.totalCount}</td><td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td><td>${r.duration}</td></tr>
 	    </j:forEach>
 	</j:if>
 	</table>

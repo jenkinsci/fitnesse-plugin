@@ -9,6 +9,7 @@
       <ignores>0</ignores>
       <exceptions>0</exceptions>
     </counts>
+    <runTimeInMillis>1</runTimeInMillis>
     <content><![CDATA[<br/><div class="setup">
 	<div style="float: right;" class="meta"><a href="javascript:expandAll();">Expand All</a> | <a href="javascript:collapseAll();">Collapse All</a></div>
 	<a href="javascript:toggleCollapsable('1709010965588307365');">
@@ -1484,6 +1485,7 @@ Example of a Slim DecisionTable --<br/>based on <a href="http://fitnesse.org/Fit
     <ignores>0</ignores>
     <exceptions>0</exceptions>
   </finalCounts>
+  <totalRunTimeInMillis>4</totalRunTimeInMillis>
   
 </testResults>
 

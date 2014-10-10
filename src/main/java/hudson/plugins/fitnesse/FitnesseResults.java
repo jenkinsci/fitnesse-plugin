@@ -25,8 +25,6 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	private static final Logger log = Logger.getLogger("FitNesse");
 	
 	private static final long serialVersionUID = 1L;
-	private transient boolean durationCalculated;
-	private transient long durationInMillis;
 	private transient List<FitnesseResults> failed = null;
 	private transient List<FitnesseResults> skipped = null;
 	private transient List<FitnesseResults> passed = null;
@@ -178,26 +176,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	@Override
 	@Exported(visibility=2)
 	public float getDuration() {
-		if (!durationCalculated) calculateDurationInMillis();
-		return durationInMillis / 1000.0f;
-	}
-
-	private void calculateDurationInMillis() {
-		FitnesseResults earliest = null, latest = null;
-		for (FitnesseResults detail : details) {
-			if (earliest == null) {
-				earliest = detail;
-			} else if (detail.isEarlierThan(earliest)) {
-				earliest = detail;
-			}
-			if (latest == null) {
-				latest = detail;
-			} else if (detail.isLaterThan(latest)) {
-				latest = detail;
-			}
-		}
-		durationInMillis = latest == null? 0 : latest.millisAfter(earliest);
-		durationCalculated = true;
+		return pageCounts.duration / 1000.0f;
 	}
 
 	@Exported(visibility=1)

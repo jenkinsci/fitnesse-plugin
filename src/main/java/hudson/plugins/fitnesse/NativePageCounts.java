@@ -26,6 +26,7 @@ public class NativePageCounts extends DefaultHandler {
 	public static final String WRONG = "wrong";
 	public static final String IGNORED = "ignored";
 	public static final String EXCEPTIONS = "exceptions";
+	public static final String DURATION = "duration";
 	public static final String SUMMARY = "summary";
 	public static final String DETAIL = "detail";
 	private static final List<String> COUNTABLE = Arrays.asList(new String[] {
@@ -68,6 +69,7 @@ public class NativePageCounts extends DefaultHandler {
 					Integer.parseInt(attributes.getValue(WRONG)),
 					Integer.parseInt(attributes.getValue(IGNORED)),
 					Integer.parseInt(attributes.getValue(EXCEPTIONS)), 
+					Integer.parseInt(attributes.getValue(DURATION)),
 					writeFitnesseResultFiles(targetPage, attributes.getValue(CONTENT))
 			);
 
@@ -134,18 +136,22 @@ public class NativePageCounts extends DefaultHandler {
 		public final int wrong;
 		public final int ignored;
 		public final int exceptions;
+		public final int duration;
+
 		public String content; // TODO remove this useless field, use contentFile in tests
+
 		// stores the file-path where to find the actual fitnesse result (html)
 		public final String contentFile;
 
 		public Counts(String page, String resultsDate, int right, int wrong, int ignored,
-		    int exceptions, String contentFile) {
+		    int exceptions, int duration, String contentFile) {
 			this.page = page;
 			this.resultsDate = resultsDate;
 			this.right = right;
 			this.wrong = wrong;
 			this.ignored = ignored;
 			this.exceptions = exceptions;
+			this.duration = duration;
 			this.contentFile = contentFile;
 			if (contentFile != null) {
 				content = "";
@@ -158,9 +164,8 @@ public class NativePageCounts extends DefaultHandler {
 
 		@Override
 		public String toString() {
-			return String.format(
-					"%s (%s): %s right, %s wrong, %s ignored, %s exceptions",
-					page, resultsDate, right, wrong, ignored, exceptions);
+			return String.format("%s (%s): %s right, %s wrong, %s ignored, %s exceptions, in %s ms",
+			    page, resultsDate, right, wrong, ignored, exceptions, duration);
 		}
 
 	}
