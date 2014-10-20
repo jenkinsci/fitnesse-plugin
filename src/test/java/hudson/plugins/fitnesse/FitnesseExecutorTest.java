@@ -2,9 +2,6 @@ package hudson.plugins.fitnesse;
 
 import hudson.EnvVars;
 import hudson.FilePath;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -15,23 +12,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 public class FitnesseExecutorTest {
 
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
+	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	
 	private FitnesseExecutor executor;
 	private ByteArrayOutputStream output = new ByteArrayOutputStream();
+	private PrintStream logger = new PrintStream(output);
 
 	private void init(String[] keys, String[] values) {
 		Map<String, String> options = new HashMap<String, String>();
 		for (int i=0; i < keys.length; ++i) {
 			options.put(keys[i], values[i]);
 		}
-		output.reset();
-		executor = new FitnesseExecutor(new FitnesseBuilder(options), new PrintStream(output));
+		executor = new FitnesseExecutor(new FitnesseBuilder(options), logger);
 	}
 
+	@Before
+	public void setUp() 	{
+		output.reset();
+	}
+	
 	@Test
 	public void javaCmdShouldIncludeJarAndDirAndRootAndPort() throws IOException {
 		init(new String[] { FitnesseBuilder.JAVA_OPTS, FitnesseBuilder.PATH_TO_ROOT,
@@ -220,64 +227,33 @@ public class FitnesseExecutorTest {
 	}
 	
 	@Test
-	public void resultsFilePathShouldBeFileNameIfFileExists() throws Exception {
+	public void filepathShouldReturnFileAbsolutePathWhenPathIsAbsolute() throws Exception {
+		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
 		File tmpFile = File.createTempFile("results", ".out");
-		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
 		
-		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, tmpFile.getAbsolutePath());
-		Assert.assertEquals(tmpFile.getAbsolutePath(), resultsFilePath.getRemote());
+		FilePath filePath = FitnesseExecutor.getFilePath(logger, workingDirectory, tmpFile.getAbsolutePath());
+		Assert.assertEquals(tmpFile.getAbsolutePath(), filePath.getRemote());
+
+		//System.out.println(output);
 	}
 
 	@Test
-	public void resultsFilePathShouldBeFileNameIfParentFileExists() throws Exception {
-		File tmpFile = File.createTempFile("results", ".out");
-		File xmlFile = new File(tmpFile.getParentFile(), System.currentTimeMillis() + "results.xml");
-		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
-
-		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, xmlFile.getAbsolutePath());
-		Assert.assertEquals(xmlFile.getAbsolutePath(), resultsFilePath.getRemote());
-	}
-	
-	@Test
-	public void resultsFilePathShouldBeInWorkingDirIfFileNotExists() throws Exception {
-		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
-		String noSuchFileName = "noSuchFile" + System.currentTimeMillis();
-		
-		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, noSuchFileName);
-		Assert.assertEquals(workingDirectory.child(noSuchFileName).getRemote(), 
-							resultsFilePath.getRemote());
-	}
-
-	@Test
-	public void resultsFilePathShouldBeInWorkingDirIfParentFileNotExists() throws Exception {
-		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
-		File xmlFile = new File("noSuchDirectory" + System.currentTimeMillis(), "results.xml");
-		
-		FilePath resultsFilePath = FitnesseExecutor.getResultsFilePath(workingDirectory, xmlFile.getPath());
-		Assert.assertEquals(workingDirectory.child(xmlFile.getPath()).getRemote(), 
-				resultsFilePath.getRemote());
-	}
-	
-	@Test
-	public void absolutePathForFileThatExistsShouldBeFilePath() throws Exception {
-		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
-		File tmpFile = File.createTempFile("fitnesse", ".jar");
-		Assert.assertEquals(tmpFile.getAbsolutePath(), 
-				FitnesseExecutor.getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, tmpFile.getAbsolutePath()));
-	}
-	
-	@Test
-	public void absolutePathForFileThatDoesntExistShouldBeRelative() throws Exception {
+	public void filePathShouldReturnAbsolutePathInWorkingdirWhenPathIsRelative() throws Exception {
 		File localPath = new File(System.getProperty("user.home"));
 		FilePath workingDirectory = new FilePath(localPath);
+		
 		String relativePath = "fitnesse.jar";
-		Assert.assertEquals(new File(localPath, relativePath).getAbsolutePath(), 
-				FitnesseExecutor.getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, relativePath));
-		relativePath = "jars/fitnesse.jar";
-		Assert.assertEquals(new File(localPath, relativePath).getAbsolutePath(), 
-				FitnesseExecutor.getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, relativePath));
-		relativePath = "/jars/fitnesse.jar";
-		Assert.assertEquals(new File(localPath, relativePath).getAbsolutePath(), 
-				FitnesseExecutor.getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, relativePath));
+		Assert.assertEquals(new File(localPath, relativePath).getAbsolutePath(), //
+				FitnesseExecutor.getFilePath(logger, workingDirectory, relativePath).getRemote());
+
+		relativePath = "jars" + FILE_SEPARATOR + "fitnesse.jar";
+		Assert.assertEquals(new File(localPath, relativePath).getAbsolutePath(), //
+				FitnesseExecutor.getFilePath(logger, workingDirectory, relativePath).getRemote());
+		
+		relativePath = FILE_SEPARATOR + "jars" + FILE_SEPARATOR + "fitnesse.jar";
+		Assert.assertEquals(new File(localPath, relativePath).getAbsolutePath(), //
+				FitnesseExecutor.getFilePath(logger, workingDirectory, relativePath).getRemote());
+
+		//System.out.println(output);
 	}
 }

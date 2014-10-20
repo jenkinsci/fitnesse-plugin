@@ -45,14 +45,15 @@ public class FitnesseExecutor {
 		Proc fitnesseProc = null;
 		try {
 			build.addAction(getFitnesseBuildAction(build, environment));
+			FilePath workingDirectory = getWorkingDirectory(logger, build);
 			if (builder.getFitnesseStart()) {
-				fitnesseProc = startFitnesse(build, launcher, environment);
+				fitnesseProc = startFitnesse(workingDirectory, launcher, environment);
 				if (!fitnesseProc.isAlive() || !isFitnesseStarted(getFitnessePage(build, environment, false))) {
 					return false;
 				}
 			}
 
-			FilePath resultsFilePath = getResultsFilePath(getWorkingDirectory(build), builder.getFitnessePathToXmlResultsOut(environment));
+			FilePath resultsFilePath = getFilePath(logger, workingDirectory, builder.getFitnessePathToXmlResultsOut(environment));
 			readAndWriteFitnesseResults(getFitnessePage(build, environment, true), resultsFilePath, environment);
 			return true;
 		} catch (Throwable t) {
@@ -71,10 +72,10 @@ public class FitnesseExecutor {
 				builder.getFitnessePort());
 	}
 
-	private Proc startFitnesse(AbstractBuild<?, ?> build, Launcher launcher, EnvVars envVars) throws IOException {
+	private Proc startFitnesse(FilePath workingDirectory, Launcher launcher, EnvVars envVars) throws IOException {
 		logger.println("Starting new Fitnesse instance...");
-		ProcStarter procStarter = launcher.launch().cmds(getJavaCmd(getWorkingDirectory(build), envVars));
-		procStarter.pwd(new File(getAbsolutePathToFileThatMayBeRelativeToWorkspace(getWorkingDirectory(build), builder.getFitnesseJavaWorkingDirectory())));
+		ProcStarter procStarter = launcher.launch().cmds(getJavaCmd(workingDirectory, envVars));
+		procStarter.pwd(new File(getAbsolutePathToFile(workingDirectory, builder.getFitnesseJavaWorkingDirectory())));
 		procStarter.stdout(logger).stderr(logger);
 		return procStarter.start();
 	}
@@ -90,10 +91,10 @@ public class FitnesseExecutor {
 		String fitnesseJavaOpts = builder.getFitnesseJavaOpts(envVars);
 		String[] java_opts = ("".equals(fitnesseJavaOpts) ? new String[0] : fitnesseJavaOpts.split(" "));
 
-		String absolutePathToFitnesseJar = getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, builder.getFitnessePathToJar());
+		String absolutePathToFitnesseJar = getAbsolutePathToFile(workingDirectory, builder.getFitnessePathToJar());
 		String[] jar_opts = {"-jar", absolutePathToFitnesseJar};
 		
-		File fitNesseRoot = new File(getAbsolutePathToFileThatMayBeRelativeToWorkspace(workingDirectory, builder.getFitnessePathToRoot()));
+		File fitNesseRoot = new File(getAbsolutePathToFile(workingDirectory, builder.getFitnessePathToRoot()));
 		String[] fitnesse_opts = {"-d", fitNesseRoot.getParent(), 
 				"-r", fitNesseRoot.getName(), 
 				"-p", Integer.toString(builder.getFitnessePort())};
@@ -293,26 +294,32 @@ public class FitnesseExecutor {
 		}
 	}
 
-	static FilePath getWorkingDirectory(AbstractBuild<?, ?> build) {
-		FilePath workspace = build.getWorkspace();
-		if (workspace != null) return workspace;
-		return new FilePath(build.getRootDir());
+	String getAbsolutePathToFile(FilePath workingDirectory, String fileName) {
+		return getFilePath(logger, workingDirectory, fileName).getRemote();
 	}
-	
-	static FilePath getResultsFilePath(FilePath workingDirectory, String fileName) {
-		File fileNameFile = new File(fileName);
-		
-		if (fileNameFile.getParent() != null) {
-			if (fileNameFile.exists() || fileNameFile.getParentFile().exists()) {
-				return new FilePath(fileNameFile);
+
+	static FilePath getWorkingDirectory(PrintStream logger, AbstractBuild<?, ?> build) {
+		FilePath workspace = build.getWorkspace(); // null only is slave is disconnected
+		logger.println("Working directory is: " + workspace != null ? workspace.getRemote() : "null !!");
+		return workspace; 
+	}
+
+	static FilePath getFilePath(PrintStream logger, FilePath workingDirectory, String fileName) {
+		if (workingDirectory != null) {
+			FilePath fp = workingDirectory.child(fileName); // manage absolute and relative path
+			try {
+				if (!fp.exists()) {
+					logger.printf("Can't find target file: %s with working directory: %s%n", fileName, workingDirectory);
+				}
+			} catch (Exception e) {
+				logger.printf("Can't check if remote file exist: %s%n", e.getMessage());
 			}
+			logger.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getFilePath " + fp.getRemote());
+			return fp;
+		} else {
+			logger.println("Working directory is null.");
+			File fileNameFile = new File(fileName);
+			return new FilePath(fileNameFile);
 		}
-		
-		return workingDirectory.child(fileName);
-	}
-	
-	static String getAbsolutePathToFileThatMayBeRelativeToWorkspace(FilePath workingDirectory, String fileName) {
-		if (new File(fileName).exists()) return fileName;
-		return new File(workingDirectory.getRemote(), fileName).getAbsolutePath();
 	}
 }
