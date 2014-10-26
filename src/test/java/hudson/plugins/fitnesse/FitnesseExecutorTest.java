@@ -2,6 +2,8 @@ package hudson.plugins.fitnesse;
 
 import hudson.EnvVars;
 import hudson.FilePath;
+import hudson.model.BuildListener;
+import hudson.model.StreamBuildListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,11 +29,17 @@ public class FitnesseExecutorTest {
 	private PrintStream logger = new PrintStream(output);
 
 	private void init(String[] keys, String[] values) {
+		init(keys, values, new EnvVars());
+	}
+
+	private void init(String[] keys, String[] values, EnvVars envVars) {
 		Map<String, String> options = new HashMap<String, String>();
 		for (int i=0; i < keys.length; ++i) {
 			options.put(keys[i], values[i]);
 		}
-		executor = new FitnesseExecutor(new FitnesseBuilder(options), logger);
+
+		BuildListener listener = new StreamBuildListener(output);
+		executor = new FitnesseExecutor(new FitnesseBuilder(options), listener, envVars);
 	}
 
 	@Before
@@ -40,12 +48,12 @@ public class FitnesseExecutorTest {
 	}
 	
 	@Test
-	public void javaCmdShouldIncludeJarAndDirAndRootAndPort() throws IOException {
+	public void javaCmdShouldIncludeJarAndDirAndRootAndPort() throws IOException, InterruptedException {
 		init(new String[] { FitnesseBuilder.JAVA_OPTS, FitnesseBuilder.PATH_TO_ROOT,
 		    FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT }, new String[] { "",
 		    getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9999" });
 		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
-		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory, new EnvVars());
+		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory);
 		
 		Assert.assertEquals("java", cmd.get(0));
 		Assert.assertEquals("-jar", cmd.get(1));
@@ -69,13 +77,13 @@ public class FitnesseExecutorTest {
 	}
 
 	@Test
-	public void javaCmdShouldIncludeJavaOpts() throws IOException {
+	public void javaCmdShouldIncludeJavaOpts() throws IOException, InterruptedException {
 		init(new String[] { FitnesseBuilder.JAVA_OPTS, FitnesseBuilder.PATH_TO_ROOT,
 		    FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT }, new String[] { "-Da=b",
 		    getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9999" });
 
 		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
-		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory, new EnvVars());
+		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory);
 		
 		Assert.assertEquals("java", cmd.get(0));
 		Assert.assertEquals("-Da=b", cmd.get(1));
@@ -90,19 +98,18 @@ public class FitnesseExecutorTest {
 	}
 
 	@Test
-	public void javaCmdShouldReferenceJAVAHOME() throws IOException {
+	public void javaCmdShouldReferenceJAVAHOME() throws IOException, InterruptedException {
 		File javaHome = File.createTempFile("JavaHome", "");
-		init(new String[] { FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR,
-		    FitnesseBuilder.FITNESSE_PORT },
-				new String[] {getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9876"});
-		
 		EnvVars envVars = new EnvVars();
 		envVars.put("JAVA_HOME", javaHome.getAbsolutePath());
-		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
-		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory, envVars);
+		init(new String[] { FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT },
+		    new String[] { getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9876" }, 
+		    envVars);
 		
-		Assert.assertEquals(new File(new File(javaHome, "bin"), "java").getAbsolutePath(), 
-				cmd.get(0));
+		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
+		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory);
+		
+		Assert.assertEquals(new File(new File(javaHome, "bin"), "java").getAbsolutePath(), cmd.get(0));
 		Assert.assertEquals("-jar", cmd.get(1));
 		Assert.assertEquals(getTestResourceFitnesseJar(), cmd.get(2));
 		Assert.assertEquals("-d", cmd.get(3));
@@ -115,15 +122,13 @@ public class FitnesseExecutorTest {
 	
 	@Test
 	@Ignore
-	public void javaCmdShouldReferenceFitnesseSpecificJavaHome() throws IOException {
+	public void javaCmdShouldReferenceFitnesseSpecificJavaHome() throws IOException, InterruptedException {
 		File javaHome = File.createTempFile("JavaHome", "");
-		init(new String[] { FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR,
-				FitnesseBuilder.FITNESSE_PORT, FitnesseBuilder.FITNESSE_JDK },
+		init(new String[] { FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT, FitnesseBuilder.FITNESSE_JDK },
 				new String[] { getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9876", javaHome.getAbsolutePath() });
 
-		EnvVars envVars = new EnvVars();
 		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
-		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory, envVars);
+		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory);
 
 		Assert.assertEquals(new File(new File(javaHome, "bin"), "java").getAbsolutePath(), cmd.get(0));
 		Assert.assertEquals("-jar", cmd.get(1));
@@ -137,14 +142,13 @@ public class FitnesseExecutorTest {
 	}
 
 	@Test
-	public void javaCmdShouldHandleRelativePaths() throws IOException {
+	public void javaCmdShouldHandleRelativePaths() throws IOException, InterruptedException {
 		init(new String[] { FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR,
 		    FitnesseBuilder.FITNESSE_PORT },
 				new String[] {"FitNesseRoot", "fitnesse.jar", "9000"});
 		
-		EnvVars envVars = new EnvVars();
 		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
-		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory, envVars);
+		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory);
 
 		Assert.assertEquals("java", cmd.get(0));
 		Assert.assertEquals("-jar", cmd.get(1));
@@ -161,7 +165,7 @@ public class FitnesseExecutorTest {
 	public void fitnessePageBase() {
 		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE },
 				new String[] { "WikiPage", "true" });
-		Assert.assertEquals("/WikiPage", executor.getFitnessePageBase(null));
+		Assert.assertEquals("/WikiPage", executor.getFitnessePageBase());
 	}
 
 	@Test
@@ -169,7 +173,7 @@ public class FitnesseExecutorTest {
 		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE },
 				new String[] {"WikiPage", "false"});
 		Assert.assertEquals("/WikiPage?test&format=xml&includehtml",
-				executor.getFitnessePageCmd(null));
+				executor.getFitnessePageCmd());
 	}
 
 	@Test
@@ -177,7 +181,7 @@ public class FitnesseExecutorTest {
 		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE },
 			new String[] {"WikiPage", "true"});
 		Assert.assertEquals("/WikiPage?suite&format=xml&includehtml", 
-				executor.getFitnessePageCmd(null));
+				executor.getFitnessePageCmd());
 	}
 
 	@Test
@@ -185,12 +189,12 @@ public class FitnesseExecutorTest {
 		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE },
 				new String[] {"WikiPage?suite&suiteFilter=tag1,tag2", "true"});
 		Assert.assertEquals("/WikiPage?suite&suiteFilter=tag1,tag2&format=xml&includehtml", 
-				executor.getFitnessePageCmd(null));
+				executor.getFitnessePageCmd());
 
 		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE },
 				new String[] {"WikiPage&suiteFilter=tag1,tag2", "true"});
 		Assert.assertEquals("/WikiPage?suite&suiteFilter=tag1,tag2&format=xml&includehtml", 
-				executor.getFitnessePageCmd(null));
+				executor.getFitnessePageCmd());
 	}
 	
 	@Test
