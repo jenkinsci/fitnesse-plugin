@@ -247,15 +247,15 @@ public class FitnesseExecutorTest {
 		FilePath workingDirectory = new FilePath(localPath);
 		
 		String relativePath = "fitnesse.jar";
-		Assert.assertEquals(new File(localPath, relativePath).getAbsolutePath(), //
+		Assert.assertEquals(new File(localPath, relativePath).getCanonicalPath(), //
 				FitnesseExecutor.getFilePath(logger, workingDirectory, relativePath).getRemote());
 
 		relativePath = "jars" + FILE_SEPARATOR + "fitnesse.jar";
-		Assert.assertEquals(new File(localPath, relativePath).getAbsolutePath(), //
+		Assert.assertEquals(new File(localPath, relativePath).getCanonicalPath(), //
 				FitnesseExecutor.getFilePath(logger, workingDirectory, relativePath).getRemote());
 		
-		relativePath = FILE_SEPARATOR + "jars" + FILE_SEPARATOR + "fitnesse.jar";
-		Assert.assertEquals(new File(localPath, relativePath).getAbsolutePath(), //
+		relativePath = "." + FILE_SEPARATOR + "jars" + FILE_SEPARATOR + "fitnesse.jar";
+		Assert.assertEquals(new File(localPath, relativePath).getCanonicalPath(), //
 				FitnesseExecutor.getFilePath(logger, workingDirectory, relativePath).getRemote());
 
 		//System.out.println(output);
