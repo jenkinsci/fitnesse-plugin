@@ -122,7 +122,8 @@ public class FitnesseExecutorTest {
 	
 	@Test
 	@Ignore
-	public void javaCmdShouldReferenceFitnesseSpecificJavaHome() throws IOException, InterruptedException {
+	// Can't be test, use Jenkins static instance
+	public void javaCmdShouldReferenceFitnesseSpecificJDK() throws IOException, InterruptedException {
 		File javaHome = File.createTempFile("JavaHome", "");
 		init(new String[] { FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT, FitnesseBuilder.FITNESSE_JDK },
 				new String[] { getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9876", javaHome.getAbsolutePath() });
@@ -143,8 +144,7 @@ public class FitnesseExecutorTest {
 
 	@Test
 	public void javaCmdShouldHandleRelativePaths() throws IOException, InterruptedException {
-		init(new String[] { FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR,
-		    FitnesseBuilder.FITNESSE_PORT },
+		init(new String[] { FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT },
 				new String[] {"FitNesseRoot", "fitnesse.jar", "9000"});
 		
 		FilePath workingDirectory = new FilePath(new File(TMP_DIR));

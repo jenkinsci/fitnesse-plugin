@@ -194,7 +194,7 @@ public class FitnesseExecutor {
 		}
 
 		logger.printf(launched // --
-				? "%nFitnesse server started in %sms.%n" // --
+		    ? "%nFitnesse server started in %sms.%n" // --
 		    : "%nFitnesse server NOT started in %sms on URL: %s%n", waitedAlready, fitnessePageURL);
 
 		return launched;
@@ -276,7 +276,7 @@ public class FitnesseExecutor {
 	/* package for test */URL getFitnessePage(AbstractBuild<?, ?> build, boolean withCommand) throws IOException {
 		return new URL("http", //
 		    builder.getFitnesseHost(build, envVars), //
-				builder.getFitnessePort(), //
+		    builder.getFitnessePort(), //
 		    withCommand ? getFitnessePageCmd() : getFitnessePageBase());
 	}
 
