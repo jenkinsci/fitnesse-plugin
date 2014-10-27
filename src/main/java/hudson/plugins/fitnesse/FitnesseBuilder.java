@@ -1,22 +1,21 @@
 package hudson.plugins.fitnesse;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.model.BuildListener;
+import hudson.model.ModelObject;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
 import hudson.model.Descriptor;
-import hudson.model.ModelObject;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
-import hudson.EnvVars;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -264,10 +263,9 @@ public class FitnesseBuilder extends Builder {
     @Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
     throws IOException, InterruptedException {
-		PrintStream logger = listener.getLogger();
-		logger.println(getClass().getName() + ": " + options);
-		FitnesseExecutor fitnesseExecutor = new FitnesseExecutor(this, logger);
-		return fitnesseExecutor.execute(build, launcher, build.getEnvironment(listener));
+		listener.getLogger().println(getClass().getName() + ": " + options);
+		FitnesseExecutor fitnesseExecutor = new FitnesseExecutor(this, listener, build.getEnvironment(listener));
+		return fitnesseExecutor.execute(launcher, build);
 	}
 
     /**
@@ -438,12 +436,13 @@ public class FitnesseBuilder extends Builder {
 		private Map<String, String> collectFormData(JSONObject formData, String[] keys) {
 			Map<String, String> targetElements = new HashMap<String, String>();
 			for (String key: keys) {
+				String value = "";
 				if (formData.has(key)) {
-					targetElements.put(key, formData.getString(key));
-				} else {
-					targetElements.put(key,
-						formData.getJSONObject(START_FITNESSE).getString(key));
+					value = formData.getString(key);
+				} else if (formData.getJSONObject(START_FITNESSE).get(key) != null) {
+					value = formData.getJSONObject(START_FITNESSE).getString(key);
 				}
+				targetElements.put(key, value);
 			}
 			return targetElements;
 		}

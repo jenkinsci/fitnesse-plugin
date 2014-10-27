@@ -70,10 +70,10 @@ public class FitnesseResultsRecorder extends Recorder {
 	@Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
 			BuildListener listener) throws InterruptedException, IOException {
+		PrintStream logger = listener.getLogger();
 		try {
-			FilePath[] resultFiles = getResultFiles(build);
-			FitnesseResults results = getResults(listener.getLogger(),
-					resultFiles, build.getRootDir());
+			FilePath[] resultFiles = getResultFiles(logger, build);
+			FitnesseResults results = getResults(logger, resultFiles, build.getRootDir());
 			if (results == null)
 				return true; // no Fitnesse results found at all
 
@@ -84,7 +84,7 @@ public class FitnesseResultsRecorder extends Recorder {
 			build.addAction(action);
 			return true;
 		} catch (Throwable t) {
-			t.printStackTrace(listener.getLogger());
+			t.printStackTrace(logger);
 			if (t instanceof InterruptedException)
 				throw (InterruptedException) t;
 			build.setResult(Result.FAILURE);
@@ -92,16 +92,15 @@ public class FitnesseResultsRecorder extends Recorder {
 		}
 	}
 
-	private FilePath[] getResultFiles(AbstractBuild<?, ?> build)
+	private FilePath[] getResultFiles(PrintStream logger, AbstractBuild<?, ?> build)
 			throws IOException, InterruptedException {
-		FilePath workingDirectory = FitnesseExecutor.getWorkingDirectory(build);
-		return getResultFiles(workingDirectory);
+		FilePath workingDirectory = FitnesseExecutor.getWorkingDirectory(logger, build);
+		return getResultFiles(logger, workingDirectory);
 	}
 
-	public FilePath[] getResultFiles(FilePath workingDirectory)
+	public FilePath[] getResultFiles(PrintStream logger, FilePath workingDirectory)
 			throws IOException, InterruptedException {
-		FilePath resultsFile = FitnesseExecutor.getResultsFilePath(
-				workingDirectory, fitnessePathToXmlResultsIn);
+		FilePath resultsFile = FitnesseExecutor.getFilePath(logger,  workingDirectory, fitnessePathToXmlResultsIn);
 
 		if (resultsFile.exists()) {
 			// directly configured single file
@@ -164,9 +163,10 @@ public class FitnesseResultsRecorder extends Recorder {
 	 */
 	@Override
 	public DescriptorImpl getDescriptor() {
-		return (DescriptorImpl) super.getDescriptor();
+		return DESCRIPTOR;
 	}
 
+	private static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 	/**
 	 * See
 	 * <tt>src/main/resources/hudson/plugins/fitnesse/FitnesseResultsRecorder/config.jelly</tt>
