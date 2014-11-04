@@ -1,60 +1,66 @@
 /**
  * css for displaying fitnesse test results
 */
+#fitnesse_results table, #fitnesse_results  td {
+	border-color: rgb(119, 119, 119);
+	border-style: solid;
+	border-width: thin;
+	border-collapse:collapse;
+}
 
-.header a:link {
+#fitnesse_results .header a:link {
   font-weight: bold;
 }
 
-.centered {
+#fitnesse_results .centered {
   margin: 5px;
   text-align: center;
 }
 
-.right {
+#fitnesse_results .right {
   float: right;
 }
 
-.left {
+#fitnesse_results .left {
   float: left;
 }
 
-.strike {
+#fitnesse_results .strike {
   text-decoration: line-through;
 }
 
-.code {
+#fitnesse_results .code {
   font-family: courier, 'Lucida Sans Typewriter', monospace;
   font-size: 16px;
   color: #004000;
   font-weight: bold;
 }
 
-.pass {
+#fitnesse_results .pass {
   background-color: #AAFFAA;
 }
 
-.fail {
+#fitnesse_results .fail {
   background-color: #FFAAAA;
 }
 
-.error {
+#fitnesse_results .error {
   background-color: #FFFFAA;
 }
 
-.ignore {
+#fitnesse_results .ignore {
   background-color: #CCCCCC;
 }
 
-.fit_stacktrace {
+#fitnesse_results .fit_stacktrace {
   font-size: 0.7em;
 }
 
-.fit_label {
+#fitnesse_results .fit_label {
   font-style: italic;
   color: #C08080;
 }
 
-.fit_grey {
+#fitnesse_results .fit_grey {
   color: #808080;
 }

@@ -3,43 +3,69 @@
 	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
 	<j:if test="${it.failCount > 0}">
 		<div class="result-failed"><strong>Wrong and Exceptions: ${it.failCount}</strong>
-
 		<table class="pane bigtable">
 			<tr>
-		    <td class="pane-header"><a class="sortheader" href="#">Name<span class="sortarrow"></span></a></td>
-		    <td class="pane-header"><a class="sortheader" href="#">Right<span class="sortarrow"></span></a></td>
-		    <th>Wrong</th><th>Ignored</th><th>Exceptions</th><th>Duration</th><th>Details-Captured</th><th>Details-Remote</th></tr>
-	    <j:forEach var="r" items="${it.failedTests}">
-		    <tr><td>${it.toHtml(r)}</td><td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td><td>${r.duration}</td><td>${r.getDetailsLink()}</td><td>${r.getDetailRemoteLink()}</td></tr>
-	    </j:forEach>
+				<td class="pane-header">Name</td>
+				<td class="pane-header">Right</td>
+				<td class="pane-header">Wrong</td>
+				<td class="pane-header">Ignored</td>
+				<td class="pane-header">Exceptions</td>
+				<td class="pane-header">Duration</td>
+				<td class="pane-header">Details-Captured</td>
+				<td class="pane-header">Details-Remote</td>
+			</tr>
+		<j:forEach var="r" items="${it.failedTests}">
+			<tr>
+				<td>${it.toHtml(r)}</td>
+				<td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td>
+				<td>${r.duration}</td>
+				<td>${r.getDetailsLink()}</td><td>${r.getDetailRemoteLink()}</td>
+			</tr>
+		</j:forEach>
 		</table>
 		</div>
 	</j:if>
 	<j:if test="${it.skipCount > 0}">
 		<div class="result-skipped"><strong>Ignored: ${it.skipCount}</strong>
-
 		<table class="pane bigtable">
 			<tr>
-		    <td class="pane-header"><a class="sortheader" href="#">Name<span class="sortarrow"></span></a></td>
-		    <td class="pane-header"><a class="sortheader" href="#">Right<span class="sortarrow"></span></a></td>
-		    <th>Wrong</th><th>Ignored</th><th>Exceptions</th><th>Duration</th><th>Details-Captured</th><th>Details-Remote</th></tr>
-	    <j:forEach var="r" items="${it.skippedTests}">
-		    <tr><td>${it.toHtml(r)}</td><td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td><td>${r.duration}</td><td>${r.getDetailsLink()}</td><td>${r.getDetailRemoteLink()}</td></tr>
-	    </j:forEach>
+				<td class="pane-header">Name</td>
+				<td class="pane-header">Ignored</td>
+				<td class="pane-header">Duration</td>
+				<td class="pane-header">Details-Captured</td>
+				<td class="pane-header">Details-Remote</td>
+			</tr>
+			<j:forEach var="r" items="${it.skippedTests}">
+			<tr>
+				<td>${it.toHtml(r)}</td>
+				<td>${r.ignoredCount}</td>
+				<td>${r.duration}</td>
+				<td>${r.getDetailsLink()}</td><td>${r.getDetailRemoteLink()}</td>
+			</tr>
+			</j:forEach>
 		</table>
 		</div>
 	</j:if>
 	<j:if test="${it.passCount > 0}">
 		<div class="result-passed"><strong>Right: ${it.passCount}</strong>
-
 		<table class="pane bigtable">
 			<tr>
-		    <td class="pane-header"><a class="sortheader" href="#">Name<span class="sortarrow"></span></a></td>
-		    <td class="pane-header"><a class="sortheader" href="#">Right<span class="sortarrow"></span></a></td>
-		    <th>Wrong</th><th>Ignored</th><th>Exceptions</th><th>Duration</th><th>Details-Captured</th><th>Details-Remote</th></tr>
-	    <j:forEach var="r" items="${it.passedTests}">
-		    <tr><td>${it.toHtml(r)}</td><td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td><td>${r.duration}</td><td>${r.getDetailsLink()}</td><td>${r.getDetailRemoteLink()}</td></tr>
-	    </j:forEach>
+				<td class="pane-header">Name</td>
+				<td class="pane-header">Right</td>
+				<td class="pane-header">Ignored</td>
+				<td class="pane-header">Duration</td>
+				<td class="pane-header">Details-Captured</td>
+				<td class="pane-header">Details-Remote</td>
+			</tr>
+			<j:forEach var="r" items="${it.passedTests}">
+			<tr>
+				<td>${it.toHtml(r)}</td>
+				<td>${r.passCount}</td>
+				<td>${r.ignoredCount}</td>
+				<td>${r.duration}</td>
+				<td>${r.getDetailsLink()}</td><td>${r.getDetailRemoteLink()}</td>
+			</tr>
+			</j:forEach>
 		</table>
 		</div>
 	</j:if>
