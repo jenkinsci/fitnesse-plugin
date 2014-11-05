@@ -1,28 +1,28 @@
 package hudson.plugins.fitnesse;
 
-import hudson.model.AbstractBuild;
-import hudson.model.Hudson;
 import hudson.model.ModelObject;
 import hudson.model.Result;
+import hudson.model.AbstractBuild;
+import hudson.model.Hudson;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.test.TabulatedResult;
 import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResult;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-import org.kohsuke.stapler.export.Exported;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.Exported;
 
 public class FitnesseResults extends TabulatedResult implements Comparable<FitnesseResults>{
 	private static final String DETAILS = "Details";
 
-	private static final Logger log = Logger.getLogger("FitNesse");
+	// private static final Logger log = Logger.getLogger("FitNesse");
 	
 	private static final long serialVersionUID = 1L;
 	private transient List<FitnesseResults> failed = null;
@@ -163,7 +163,6 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 
 	public boolean isSkippedOverall() {
 		if (isFailedOverall()) return false;
-		if (getExceptionCount() > 0) return true;
 		return getPassCount() == 0;
 	}
 
