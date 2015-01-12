@@ -29,6 +29,9 @@ public class NativePageCounts extends DefaultHandler {
 	public static final String DURATION = "duration";
 	public static final String SUMMARY = "summary";
 	public static final String DETAIL = "detail";
+	// testResults/rootPath required for fitnesse-tests where the pageHistoryLink is not given 
+	public static final String ROOT_PATH = "rootPath";
+	
 	private static final List<String> COUNTABLE = Arrays.asList(new String[] {
 			SUMMARY, DETAIL });
 
@@ -61,6 +64,8 @@ public class NativePageCounts extends DefaultHandler {
 			String page = attributes.getValue(PAGE);
 			String pseudoPage = attributes.getValue(PSEUDO_PAGE);
 			String targetPage = page == null || page.equals("") ? pseudoPage : page;
+			// see JENKINS-26387 -> for fitnesse-tests the page name may be empty
+			String fitnessePage = (page == null || page.equals("") ? attributes.getValue(ROOT_PATH) : page);
 
 			Counts counts = new Counts(
 					targetPage,
@@ -70,7 +75,8 @@ public class NativePageCounts extends DefaultHandler {
 					Integer.parseInt(attributes.getValue(IGNORED)),
 					Integer.parseInt(attributes.getValue(EXCEPTIONS)), 
 					Integer.parseInt(attributes.getValue(DURATION)),
-					writeFitnesseResultFiles(targetPage, attributes.getValue(CONTENT))
+					writeFitnesseResultFiles(fitnessePage, attributes.getValue(CONTENT)), 
+					fitnessePage
 			);
 
 			if (qName.equals(SUMMARY))
@@ -142,9 +148,13 @@ public class NativePageCounts extends DefaultHandler {
 
 		// stores the file-path where to find the actual fitnesse result (html)
 		public final String contentFile;
+		
+		// points to the actual fitnesse page on the fitnesse server. Required for the links to the fitnesse server
+		// see JENKINS-26387
+		public final String fitnessePage; 
 
 		public Counts(String page, String resultsDate, int right, int wrong, int ignored,
-		    int exceptions, int duration, String contentFile) {
+		    int exceptions, int duration, String contentFile, String fitnessePage) {
 			this.page = page;
 			this.resultsDate = resultsDate;
 			this.right = right;
@@ -156,6 +166,7 @@ public class NativePageCounts extends DefaultHandler {
 			if (contentFile != null) {
 				content = "";
 			}
+			this.fitnessePage = fitnessePage;
 		}
 
 		public Date resultsDateAsDate() throws ParseException {

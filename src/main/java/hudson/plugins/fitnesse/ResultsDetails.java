@@ -82,17 +82,21 @@ public class ResultsDetails extends TestResult {
 		StringBuffer ret = new StringBuffer();
 		// get the saved filename including its path
 		String fileName = parentResults.getPageCounts().contentFile;
+		log.info("getDetailsHtml-> filename: " + fileName);
 		if (fileName == null) {
 			return "error, content filename is null for page " + parentResults.getName();
 		}
 		BufferedReader br = null;
 		try {
+			log.info("getDetailsHtml-> start reading");
 			br = new BufferedReader(new FileReader(fileName));
 			String strLine;
 			while ((strLine = br.readLine()) != null) {
 				ret.append(strLine);
 			}
+			log.info("getDetailsHtml-> finished reading");
 		} catch (IOException e) {
+			log.info("error while reading: "+ e.toString());
 			return "exception while reading file: " + fileName + "\n"
 					+ e.toString();
 		} finally {
