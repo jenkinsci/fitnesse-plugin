@@ -48,6 +48,9 @@
 		<xsl:attribute name="name">
 			<xsl:value-of select="relativePageName"/>
 		</xsl:attribute>
+		<xsl:attribute name="rootPath">
+			<xsl:value-of select="../rootPath"/>
+		</xsl:attribute>				
 		<xsl:attribute name="right">
 			<xsl:value-of select="counts/right"/>
 		</xsl:attribute>

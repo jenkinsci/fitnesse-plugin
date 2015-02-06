@@ -297,14 +297,15 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	}
 	
 	/**
-	 * referenced in body.jelly
+	 * referenced in body.jelly. Forward to the test page on fitnesse server.
 	 */
 	public String toHtml(FitnesseResults results) {
 		FitnesseBuildAction buildAction = getOwner().getAction(FitnesseBuildAction.class);
 		if (buildAction == null) {
 			buildAction = FitnesseBuildAction.NULL_ACTION;
 		}
-		return buildAction.getLinkFor(results.getName(), Hudson.getInstance().getRootUrl());
+//		return buildAction.getLinkFor(results.getName(), Hudson.getInstance().getRootUrl());
+		return buildAction.getLinkFor(results.getFitnessePage(), Hudson.getInstance().getRootUrl());
 	}
 
 	/**
@@ -323,6 +324,13 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	}
 	
 	/**
+	 * Get the page name as used by fitnesse server.
+	 */
+	public String getFitnessePage(){
+		return pageCounts.fitnessePage;
+	}
+	
+	/**
 	 * referenced in body.jelly. 
 	 * The link points to the history of the fitnesse server. Note the history may not always be available.
 	 */
@@ -331,7 +339,13 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 		if (buildAction == null) {
 			buildAction = FitnesseBuildAction.NULL_ACTION;
 		}
-		return buildAction.getLinkFor(getName() + "?pageHistory&resultDate="+getResultsDate(), null, "Details");
+//		return buildAction.getLinkFor(getName() + "?pageHistory&resultDate="+getResultsDate(), null, "Details");
+		if( null == getResultsDate() || getResultsDate().equals("")) {
+			// if no history date is given, just forward to the history page
+			return buildAction.getLinkFor(getFitnessePage() + "?testHistory", null, "Details");
+		} else {
+			return buildAction.getLinkFor(getFitnessePage() + "?pageHistory&resultDate="+getResultsDate(), null, "Details");
+		}
 	}
 
 	@Override

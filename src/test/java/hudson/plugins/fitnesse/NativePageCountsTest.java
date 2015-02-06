@@ -15,7 +15,7 @@ public class NativePageCountsTest {
 	@Test
 	public void countsShouldCollectValuesFromConstructor() {
 		String contentFileName = "./fileName";
-		Counts actual = new Counts("name", "201003112307", 1, 2, 3, 4, 5, contentFileName);
+		Counts actual = new Counts("name", "201003112307", 1, 2, 3, 4, 5, contentFileName, "name");
 		Assert.assertEquals("name", actual.page);
 		Assert.assertEquals(1, actual.right);
 		Assert.assertEquals(2, actual.wrong);
@@ -27,7 +27,7 @@ public class NativePageCountsTest {
 
 	@Test
 	public void countsToStringShouldSpellOutValues() {
-		Counts actual = new Counts("name", "2010xxxx", 11, 10, 9, 8, 7, null);
+		Counts actual = new Counts("name", "2010xxxx", 11, 10, 9, 8, 7, null, "name");
 		Assert.assertEquals("name (2010xxxx): 11 right, 10 wrong, 9 ignored, 8 exceptions, in 7 ms",
 				actual.toString());
 	}
@@ -38,7 +38,7 @@ public class NativePageCountsTest {
 		calendar.clear(Calendar.MILLISECOND);
 		Date aDate = calendar.getTime();
 		Counts actual = new Counts("name", Counts.RESULTS_DATE_FORMAT.format(aDate), 11, 10, 9, 8, 7,
-		    null);
+		    null, "name");
 		Assert.assertEquals(aDate, actual.resultsDateAsDate());
 	}
 	
@@ -97,6 +97,7 @@ public class NativePageCountsTest {
 		Assert.assertEquals(8, results.getDetails().get(0).exceptions);
 		Assert.assertEquals(9, results.getDetails().get(0).duration);
 		Assert.assertEquals("./target/name", results.getDetails().get(0).contentFile);
+		Assert.assertNotNull(results.getDetails().get(0).fitnessePage);
 	}
 
 	private void addDetailAttributes(AttributesImpl attributes,
@@ -125,5 +126,6 @@ public class NativePageCountsTest {
 		Assert.assertEquals(2, results.size());
 		Assert.assertEquals(1, results.getDetails().size());
 		Assert.assertSame(results.getSummary(), results.getDetails().get(0));
+		Assert.assertNotNull(results.getDetails().get(0).fitnessePage);
 	}
 }

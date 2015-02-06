@@ -28,7 +28,7 @@ public class CompoundFitnesseResults extends FitnesseResults {
 			duration += fitnesseResults.getDuration();
 		}
 		
-		Counts counts = new Counts(page, resultsDate, right, wrong, ignored, exceptions, duration, null);
+		Counts counts = new Counts(page, resultsDate, right, wrong, ignored, exceptions, duration, null, page);
 		return new CompoundFitnesseResults(resultsList, counts);
 	}
 	
