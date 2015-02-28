@@ -1,6 +1,7 @@
 package hudson.plugins.fitnesse;
 
 import static java.util.Collections.emptyList;
+import jenkins.model.Jenkins;
 import hudson.model.AbstractBuild;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.test.AbstractTestResultAction;
@@ -71,6 +72,13 @@ public class ResultsDetails extends TestResult {
 			return this;
 
 		return null;
+	}
+
+	/**
+	 * referenced from body.jelly Returns Jenkins root URL to form correct paths to static resources
+	 */
+	public String getRootUrlFromRequest() {
+		return Jenkins.getInstance().getRootUrlFromRequest();
 	}
 
 	/**
