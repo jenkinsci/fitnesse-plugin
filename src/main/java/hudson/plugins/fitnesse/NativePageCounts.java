@@ -57,11 +57,16 @@ public class NativePageCounts extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) {
-		if (COUNTABLE.contains(qName)) {
-			String page = attributes.getValue(PAGE);
-			String pseudoPage = attributes.getValue(PSEUDO_PAGE);
-			String targetPage = page == null || page.equals("") ? pseudoPage : page;
 
+		if (COUNTABLE.contains(qName)) {
+			String targetPage;
+			if (qName.equals(SUMMARY)) {
+				targetPage = "Summary";
+			} else {
+				String page = attributes.getValue(PAGE);
+				String pseudoPage = attributes.getValue(PSEUDO_PAGE);
+				targetPage = page == null || page.equals("") ? pseudoPage : page;
+			}
 			Counts counts = new Counts(
 					targetPage,
 					qName.equals(SUMMARY) ? "" : resultsDateOf(attributes.getValue(APPROX_RESULT_DATE)),
@@ -73,9 +78,11 @@ public class NativePageCounts extends DefaultHandler {
 					writeFitnesseResultFiles(targetPage, attributes.getValue(CONTENT))
 			);
 
-			if (qName.equals(SUMMARY))
-				summary = counts;
 			allCounts.put(counts.page, counts);
+
+			if (qName.equals(SUMMARY)) {
+				summary = counts;
+			}
 		}
 	}
 
