@@ -101,16 +101,6 @@ public class NativePageCounts extends DefaultHandler {
 		return summary;
 	}
 
-	public List<String> getDetailsContents() {
-		ArrayList<String> contents = new ArrayList<String>();
-		for (String key : allCounts.keySet()) {
-			Counts counts = allCounts.get(key);
-			if (counts != summary)
-				contents.add(counts.content);
-		}
-		return contents;
-	}
-
 	public Collection<Counts> getAllCounts() {
 		return allCounts.values();
 	}
@@ -126,7 +116,6 @@ public class NativePageCounts extends DefaultHandler {
 	}
 
 	static final class Counts {
-		private static final long serialVersionUID = 1L;
 		static final SimpleDateFormat RESULTS_DATE_FORMAT = new SimpleDateFormat(
 				"yyyyMMddHHmmss");
 
@@ -138,7 +127,7 @@ public class NativePageCounts extends DefaultHandler {
 		public final int exceptions;
 		public final int duration;
 
-		public String content; // TODO remove this useless field, use contentFile in tests
+		public String content; // not used, keep for backward compatibility
 
 		// stores the file-path where to find the actual fitnesse result (html)
 		public final String contentFile;
@@ -153,9 +142,6 @@ public class NativePageCounts extends DefaultHandler {
 			this.exceptions = exceptions;
 			this.duration = duration;
 			this.contentFile = contentFile;
-			if (contentFile != null) {
-				content = "";
-			}
 		}
 
 		public Date resultsDateAsDate() throws ParseException {

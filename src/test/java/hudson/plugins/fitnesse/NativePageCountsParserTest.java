@@ -79,7 +79,7 @@ public class NativePageCountsParserTest {
 		    "./target/");
 		Assert.assertEquals(2, testResults.size());
 		Assert.assertEquals("SuiteBlah", testResults.getSummary().page);
-		Assert.assertEquals(1, testResults.getDetailsContents().size());
+		Assert.assertEquals(1, testResults.getDetails().size());
 	}
 	
 	@Test
