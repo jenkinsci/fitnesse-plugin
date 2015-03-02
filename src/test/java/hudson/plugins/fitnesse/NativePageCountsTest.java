@@ -58,7 +58,7 @@ public class NativePageCountsTest {
 		Assert.assertEquals(1, results.size());
 		Assert.assertNotNull(results.getSummary());
 		Assert.assertEquals(0, results.getDetails().size());
-		Assert.assertEquals("pseudo-name", results.getSummary().page);
+		Assert.assertEquals("Summary", results.getSummary().page);
 		Assert.assertEquals("", results.getSummary().resultsDate);
 		Assert.assertEquals(1, results.getSummary().right);
 		Assert.assertEquals(2, results.getSummary().wrong);

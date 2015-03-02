@@ -66,7 +66,7 @@ public class NativePageCountsParserTest {
 		NativePageCounts testResults = fitnesseParser.parse(toInputStream(RESULTS), System.out,
 		    "./target/");
 		Assert.assertEquals(2, testResults.size());
-		Assert.assertEquals("SuiteBlah", testResults.getSummary().page);
+		Assert.assertEquals("Summary", testResults.getSummary().page);
 		Assert.assertEquals(5, testResults.getSummary().right);
 		Assert.assertEquals(4, testResults.getSummary().wrong);
 		Assert.assertEquals(3, testResults.getSummary().ignored);
@@ -78,7 +78,7 @@ public class NativePageCountsParserTest {
 		NativePageCounts testResults = fitnesseParser.parse(toInputStream(RESULTS), System.out,
 		    "./target/");
 		Assert.assertEquals(2, testResults.size());
-		Assert.assertEquals("SuiteBlah", testResults.getSummary().page);
+		Assert.assertEquals("Summary", testResults.getSummary().page);
 		Assert.assertEquals(1, testResults.getDetails().size());
 	}
 	
@@ -87,7 +87,7 @@ public class NativePageCountsParserTest {
 		InputStream sampleXml = getClass().getResourceAsStream("fitnesse-suite-results.xml");
 		NativePageCounts testResults = fitnesseParser.parse(sampleXml, System.out, "./target/");
 		Assert.assertEquals(15, testResults.size());
-		Assert.assertEquals("SuiteBranchMain", testResults.getSummary().page);
+		Assert.assertEquals("Summary", testResults.getSummary().page);
 		Assert.assertEquals(6, testResults.getSummary().right);
 		Assert.assertEquals(5, testResults.getSummary().wrong);
 		Assert.assertEquals(1, testResults.getSummary().ignored);
@@ -99,7 +99,7 @@ public class NativePageCountsParserTest {
 	public void parserShouldCollectAllCountsFromSingleTestFile() throws Exception {
 		InputStream sampleXml = getClass().getResourceAsStream("fitnesse-test-results.xml");
 		NativePageCounts testResults = fitnesseParser.parse(sampleXml, System.out, "./target/");
-		Assert.assertEquals(1, testResults.size());
+		Assert.assertEquals(2, testResults.size());
 		Assert.assertEquals("TestDecisionTable", testResults.getSummary().page);
 		Assert.assertEquals(16, testResults.getSummary().right);
 		Assert.assertEquals(2, testResults.getSummary().wrong);
