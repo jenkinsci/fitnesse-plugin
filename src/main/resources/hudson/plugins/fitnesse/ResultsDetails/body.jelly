@@ -1,6 +1,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
 	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
 	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-	<link rel="stylesheet" href="/plugin/fitnesse/css/fitnesse_results.css" type="text/css"/>
+	<link rel="stylesheet" href="${it.getRootUrlFromRequest()}/plugin/fitnesse/css/fitnesse_results.css" type="text/css"/>
 	<div id="fitnesse_results">${it.getDetailsHtml()}</div>	
 </j:jelly>
