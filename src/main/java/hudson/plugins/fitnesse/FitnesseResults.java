@@ -22,12 +22,12 @@ import org.kohsuke.stapler.export.Exported;
 public class FitnesseResults extends TabulatedResult implements Comparable<FitnesseResults>{
 	private static final String DETAILS = "Details";
 
-	// private static final Logger log = Logger.getLogger("FitNesse");
+	//private static final Logger log = Logger.getLogger(FitnesseResults.class.getName());
 	
 	private static final long serialVersionUID = 1L;
-	private transient List<FitnesseResults> failed = null;
-	private transient List<FitnesseResults> skipped = null;
-	private transient List<FitnesseResults> passed = null;
+	private transient List<FitnesseResults> failed;
+	private transient List<FitnesseResults> skipped;
+	private transient List<FitnesseResults> passed;
 	
 	private Counts pageCounts;
 	private TestObject parent;
@@ -334,14 +334,6 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 		return buildAction.getLinkFor(getName() + "?pageHistory&resultDate="+getResultsDate(), null, "Details");
 	}
 
-	@Override
-	public String getErrorDetails() {
-		if (pageCounts.content != null) {
-			return pageCounts.content;
-		}
-		return "";
-	}
-	
 	
 	/**
 	 * called from links embedded in history/trend graphs 
@@ -356,6 +348,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 		return findChildByName(token);
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends TestResult> T findChildByName(String aName) {
 		Collection<? extends TestResult> children = getChildren();
 		for (TestResult child : children) {
@@ -415,24 +408,9 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	 * that is available via {@link #getHtmlContent()}
 	 */
 	protected boolean hasHtmlContent() {
-		return pageCounts != null && pageCounts.content != null;
+		return pageCounts != null && pageCounts.contentFile != null;
 	}
-	
-	/**
-	 * Returns the html content of this result.
-	 */
-	protected String getHtmlContent() {
-		if (hasHtmlContent()) {
-			return pageCounts.content;
-		}
-		return "";
-	}
-	
-	@Override
-	public String getStdout() {
-		return getHtmlContent();
-	}
-	
+
 	/**
 	 * Make page counts accessible to ResultsDetails
 	 */
