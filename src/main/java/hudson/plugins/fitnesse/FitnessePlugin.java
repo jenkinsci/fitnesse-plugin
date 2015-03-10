@@ -20,7 +20,7 @@ public class FitnessePlugin extends Plugin {
 		StreamSource xslSource = new StreamSource(getXslAsInputStream());
 		templates = transformerFactory.newTemplates(xslSource);
 	}
-	
+
 	public InputStream getXslAsInputStream() throws IOException {
 		return InputStreamDeBOMer.deBOM(getClass().getResourceAsStream("fitnesse-results.xsl"));
 	}

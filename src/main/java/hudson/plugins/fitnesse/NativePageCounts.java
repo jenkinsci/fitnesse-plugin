@@ -29,8 +29,7 @@ public class NativePageCounts extends DefaultHandler {
 	public static final String DURATION = "duration";
 	public static final String SUMMARY = "summary";
 	public static final String DETAIL = "detail";
-	private static final List<String> COUNTABLE = Arrays.asList(new String[] {
-			SUMMARY, DETAIL });
+	private static final List<String> COUNTABLE = Arrays.asList(new String[] { SUMMARY, DETAIL });
 
 	private Counts summary;
 	private final Map<String, Counts> allCounts = new HashMap<String, Counts>();
@@ -55,8 +54,7 @@ public class NativePageCounts extends DefaultHandler {
 	 * files.
 	 */
 	@Override
-	public void startElement(String uri, String localName, String qName,
-			Attributes attributes) {
+	public void startElement(String uri, String localName, String qName, Attributes attributes) {
 
 		if (COUNTABLE.contains(qName)) {
 			String targetPage;
@@ -67,16 +65,11 @@ public class NativePageCounts extends DefaultHandler {
 				String pseudoPage = attributes.getValue(PSEUDO_PAGE);
 				targetPage = page == null || page.equals("") ? pseudoPage : page;
 			}
-			Counts counts = new Counts(
-					targetPage,
-					qName.equals(SUMMARY) ? "" : resultsDateOf(attributes.getValue(APPROX_RESULT_DATE)),
-					Integer.parseInt(attributes.getValue(RIGHT)),
-					Integer.parseInt(attributes.getValue(WRONG)),
-					Integer.parseInt(attributes.getValue(IGNORED)),
-					Integer.parseInt(attributes.getValue(EXCEPTIONS)), 
-					Integer.parseInt(attributes.getValue(DURATION)),
-					writeFitnesseResultFiles(targetPage, attributes.getValue(CONTENT))
-			);
+			Counts counts = new Counts(targetPage, qName.equals(SUMMARY) ? ""
+					: resultsDateOf(attributes.getValue(APPROX_RESULT_DATE)), Integer.parseInt(attributes.getValue(RIGHT)),
+					Integer.parseInt(attributes.getValue(WRONG)), Integer.parseInt(attributes.getValue(IGNORED)),
+					Integer.parseInt(attributes.getValue(EXCEPTIONS)), Integer.parseInt(attributes.getValue(DURATION)),
+					writeFitnesseResultFiles(targetPage, attributes.getValue(CONTENT)));
 
 			allCounts.put(counts.page, counts);
 
@@ -98,8 +91,7 @@ public class NativePageCounts extends DefaultHandler {
 	}
 
 	public Counts getSummary() {
-		if (summary != null && summary.right == 0 && summary.wrong == 0
-				&& summary.ignored == 0 && summary.exceptions == 0) {
+		if (summary != null && summary.right == 0 && summary.wrong == 0 && summary.ignored == 0 && summary.exceptions == 0) {
 			List<Counts> details = getDetails();
 			if (details.size() == 1) {
 				return details.get(0);
@@ -123,8 +115,7 @@ public class NativePageCounts extends DefaultHandler {
 	}
 
 	static final class Counts {
-		static final SimpleDateFormat RESULTS_DATE_FORMAT = new SimpleDateFormat(
-				"yyyyMMddHHmmss");
+		static final SimpleDateFormat RESULTS_DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 
 		public final String page;
 		public final String resultsDate;
@@ -139,8 +130,8 @@ public class NativePageCounts extends DefaultHandler {
 		// stores the file-path where to find the actual fitnesse result (html)
 		public final String contentFile;
 
-		public Counts(String page, String resultsDate, int right, int wrong, int ignored,
-		    int exceptions, int duration, String contentFile) {
+		public Counts(String page, String resultsDate, int right, int wrong, int ignored, int exceptions, int duration,
+				String contentFile) {
 			this.page = page;
 			this.resultsDate = resultsDate;
 			this.right = right;
@@ -157,8 +148,8 @@ public class NativePageCounts extends DefaultHandler {
 
 		@Override
 		public String toString() {
-			return String.format("%s (%s): %s right, %s wrong, %s ignored, %s exceptions, in %s ms",
-			    page, resultsDate, right, wrong, ignored, exceptions, duration);
+			return String.format("%s (%s): %s right, %s wrong, %s ignored, %s exceptions, in %s ms", page, resultsDate,
+					right, wrong, ignored, exceptions, duration);
 		}
 
 	}
@@ -194,7 +185,7 @@ public class NativePageCounts extends DefaultHandler {
 				try {
 					out.close();
 				} catch (IOException e) {
-					logger.println("Could not close out stream: " + fileName + "\n" +  e.toString());
+					logger.println("Could not close out stream: " + fileName + "\n" + e.toString());
 				}
 			}
 		}

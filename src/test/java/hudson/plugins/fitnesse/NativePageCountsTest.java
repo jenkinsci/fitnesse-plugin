@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class NativePageCountsTest {
-	
+
 	@Test
 	public void countsShouldCollectValuesFromConstructor() {
 		String contentFileName = "./fileName";
@@ -28,27 +28,25 @@ public class NativePageCountsTest {
 	@Test
 	public void countsToStringShouldSpellOutValues() {
 		Counts actual = new Counts("name", "2010xxxx", 11, 10, 9, 8, 7, null);
-		Assert.assertEquals("name (2010xxxx): 11 right, 10 wrong, 9 ignored, 8 exceptions, in 7 ms",
-				actual.toString());
+		Assert.assertEquals("name (2010xxxx): 11 right, 10 wrong, 9 ignored, 8 exceptions, in 7 ms", actual.toString());
 	}
-	
+
 	@Test
 	public void resultsDateShouldParseStringToDate() throws ParseException {
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear(Calendar.MILLISECOND);
 		Date aDate = calendar.getTime();
-		Counts actual = new Counts("name", Counts.RESULTS_DATE_FORMAT.format(aDate), 11, 10, 9, 8, 7,
-		    null);
+		Counts actual = new Counts("name", Counts.RESULTS_DATE_FORMAT.format(aDate), 11, 10, 9, 8, 7, null);
 		Assert.assertEquals(aDate, actual.resultsDateAsDate());
 	}
-	
+
 	@Test
 	public void resultsDateOfShouldStripAnyTrailingGooFromApproxDate() {
 		NativePageCounts results = new NativePageCounts(System.out, "./target/");
 		Assert.assertEquals("abc", results.resultsDateOf("abc&amp;"));
 		Assert.assertEquals("abc", results.resultsDateOf("abc"));
 	}
-	
+
 	@Test
 	public void resultsShouldCollectSummaryFromAttributes() {
 		NativePageCounts results = new NativePageCounts(System.out, "./target/");
@@ -67,8 +65,8 @@ public class NativePageCountsTest {
 		Assert.assertEquals(5, results.getSummary().duration);
 	}
 
-	private void addSummaryAttributes(AttributesImpl attributes, String right, String wrong,
-	    String ignored, String exceptions, String duration) {
+	private void addSummaryAttributes(AttributesImpl attributes, String right, String wrong, String ignored,
+			String exceptions, String duration) {
 		attributes.addAttribute("", "", NativePageCounts.PSEUDO_PAGE, "String", "pseudo-name");
 		attributes.addAttribute("", "", NativePageCounts.APPROX_RESULT_DATE, "String", "20100311210804&amp;format=xml");
 		attributes.addAttribute("", "", NativePageCounts.RIGHT, "String", right);
@@ -77,7 +75,7 @@ public class NativePageCountsTest {
 		attributes.addAttribute("", "", NativePageCounts.EXCEPTIONS, "String", exceptions);
 		attributes.addAttribute("", "", NativePageCounts.DURATION, "String", duration);
 	}
-	
+
 	@Test
 	public void resultsShouldCollectDetailFromAttributes() {
 		NativePageCounts results = new NativePageCounts(System.out, "./target/");
@@ -99,8 +97,7 @@ public class NativePageCountsTest {
 		Assert.assertEquals("./target/name", results.getDetails().get(0).contentFile);
 	}
 
-	private void addDetailAttributes(AttributesImpl attributes,
-			String resultsDate) {
+	private void addDetailAttributes(AttributesImpl attributes, String resultsDate) {
 		attributes.addAttribute("", "", NativePageCounts.APPROX_RESULT_DATE, "String", resultsDate);
 		attributes.addAttribute("", "", NativePageCounts.RIGHT, "String", "5");
 		attributes.addAttribute("", "", NativePageCounts.WRONG, "String", "6");

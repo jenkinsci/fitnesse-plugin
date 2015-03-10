@@ -16,10 +16,8 @@ public class FitnesseResultsRecorderTest {
 	public void getResultsShouldReadFromFilePath() throws Exception {
 		startPlugin();
 		String resultsFile = "src/test/resources/hudson/plugins/fitnesse/fitnesse-test-results.xml";
-		FitnesseResultsRecorder recorder = new FitnesseResultsRecorder(
-				resultsFile);
-		FilePath resultFile = new FilePath(new File(
-				System.getProperty("user.dir"))).child(resultsFile);
+		FitnesseResultsRecorder recorder = new FitnesseResultsRecorder(resultsFile);
+		FilePath resultFile = new FilePath(new File(System.getProperty("user.dir"))).child(resultsFile);
 		Assert.assertNotNull(recorder.getResults(System.out, resultFile, new File("./target")));
 	}
 
@@ -29,7 +27,8 @@ public class FitnesseResultsRecorderTest {
 		String resultsFile = "src/test/resources/hudson/plugins/fitnesse/fitnesse-*-results.xml";
 
 		FitnesseResultsRecorder recorder = new FitnesseResultsRecorder(resultsFile);
-		FilePath[] resultFiles = recorder.getResultFiles(System.out, new FilePath(new File(System.getProperty("user.dir"))));
+		FilePath[] resultFiles = recorder
+				.getResultFiles(System.out, new FilePath(new File(System.getProperty("user.dir"))));
 		Assert.assertNotNull(resultFiles);
 		Assert.assertEquals(2, resultFiles.length);
 

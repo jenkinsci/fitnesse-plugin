@@ -18,37 +18,22 @@ import org.junit.Test;
  * - else: page is right
  */
 public class FitnesseResultsTest {
-	private static final FitnesseResults[] WRONG = new FitnesseResults[] { 
-		resultsForCounts(0, 1, 0, 0),
-		resultsForCounts(1, 1, 0, 0),
-		resultsForCounts(0, 1, 1, 0),
-		resultsForCounts(0, 1, 0, 1),
-		resultsForCounts(1, 1, 1, 0),
-		resultsForCounts(1, 1, 0, 1),
-		resultsForCounts(0, 1, 1, 1),
-		resultsForCounts(1, 1, 1, 1)
-	};
-	
-	private static final FitnesseResults[] EXCEPTION = new FitnesseResults[] {
-		resultsForCounts(0, 0, 0, 1),
-		resultsForCounts(0, 0, 1, 1),
-		resultsForCounts(1, 0, 0, 1),
-		resultsForCounts(1, 0, 1, 1),
-	};
-	private static final FitnesseResults[] IGNORED = new FitnesseResults[] {
-		resultsForCounts(0, 0, 1, 0),
-		resultsForCounts(0, 0, 0, 0)
-	};
-	private static final FitnesseResults[] RIGHT = new FitnesseResults[] {
-		resultsForCounts(1, 0, 0, 0),
-		resultsForCounts(1, 0, 1, 0)
-	};
+	private static final FitnesseResults[] WRONG = new FitnesseResults[] { resultsForCounts(0, 1, 0, 0),
+			resultsForCounts(1, 1, 0, 0), resultsForCounts(0, 1, 1, 0), resultsForCounts(0, 1, 0, 1),
+			resultsForCounts(1, 1, 1, 0), resultsForCounts(1, 1, 0, 1), resultsForCounts(0, 1, 1, 1),
+			resultsForCounts(1, 1, 1, 1) };
+
+	private static final FitnesseResults[] EXCEPTION = new FitnesseResults[] { resultsForCounts(0, 0, 0, 1),
+			resultsForCounts(0, 0, 1, 1), resultsForCounts(1, 0, 0, 1), resultsForCounts(1, 0, 1, 1), };
+	private static final FitnesseResults[] IGNORED = new FitnesseResults[] { resultsForCounts(0, 0, 1, 0),
+			resultsForCounts(0, 0, 0, 0) };
+	private static final FitnesseResults[] RIGHT = new FitnesseResults[] { resultsForCounts(1, 0, 0, 0),
+			resultsForCounts(1, 0, 1, 0) };
 
 	private static FitnesseResults resultsForCounts(int right, int wrong, int ignored, int exceptions) {
-		return new FitnesseResults(new Counts("", "20100320184439", right, wrong, ignored, exceptions,
-		    0, null));
+		return new FitnesseResults(new Counts("", "20100320184439", right, wrong, ignored, exceptions, 0, null));
 	}
-	
+
 	@Test
 	public void wrongCountsShouldBeFailedOverall() {
 		for (FitnesseResults results : WRONG) {
@@ -66,7 +51,7 @@ public class FitnesseResultsTest {
 			Assert.assertFalse(results.getHeadlineText(), results.isPassedOverall());
 		}
 	}
-	
+
 	@Test
 	public void ignoredCountsShouldBeSkipped() {
 		for (FitnesseResults results : IGNORED) {
@@ -75,7 +60,7 @@ public class FitnesseResultsTest {
 			Assert.assertFalse(results.getHeadlineText(), results.isPassedOverall());
 		}
 	}
-	
+
 	@Test
 	public void rightCountsShouldBePassed() {
 		for (FitnesseResults results : RIGHT) {
@@ -84,7 +69,7 @@ public class FitnesseResultsTest {
 			Assert.assertTrue(results.getHeadlineText(), results.isPassedOverall());
 		}
 	}
-	
+
 	@Test
 	public void failedTestsShouldIncludeCountsWrongAndExceptions() {
 		FitnesseResults summary = setUpSummaryResults();
@@ -116,7 +101,7 @@ public class FitnesseResultsTest {
 	}
 
 	private FitnesseResults setUpSummaryResults() {
-		FitnesseResults summary = new FitnesseResults((Counts)null);
+		FitnesseResults summary = new FitnesseResults((Counts) null);
 		for (FitnesseResults results : RIGHT) {
 			summary.addChild(results);
 		}
@@ -134,7 +119,7 @@ public class FitnesseResultsTest {
 
 	private static final Counts BEFORE = new Counts("", "20100313174438", 1, 2, 3, 4, 0, null);
 	private static final Counts AFTER = new Counts("", "20100313174439", 1, 2, 3, 4, 0, null);
-	
+
 	@Test
 	public void isEarlierThanShouldDependOnCounts() {
 		FitnesseResults first = new FitnesseResults(BEFORE);
@@ -143,7 +128,7 @@ public class FitnesseResultsTest {
 		Assert.assertFalse(second.isEarlierThan(first));
 		Assert.assertFalse(second.isEarlierThan(second));
 	}
-	
+
 	@Test
 	public void isLaterThanShouldDependOnCounts() {
 		FitnesseResults first = new FitnesseResults(BEFORE);
@@ -161,5 +146,5 @@ public class FitnesseResultsTest {
 		Assert.assertEquals(-1000, first.millisAfter(second));
 		Assert.assertEquals(0, second.millisAfter(second));
 	}
-	
+
 }
