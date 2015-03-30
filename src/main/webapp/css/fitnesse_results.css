@@ -1,7 +1,7 @@
 /**
  * css for displaying fitnesse test results
 */
-#fitnesse_results table, #fitnesse_results  td {
+#fitnesse_results table, #fitnesse_results  td, #fitnesse_results  th {
 	border-color: rgb(119, 119, 119);
 	border-style: solid;
 	border-width: thin;
