@@ -322,8 +322,6 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 		}
 
 		return String.format("<a href=\"%s/%s\">%s</a>", getName(), DETAILS, "Details");
-		//		return String.format("<a href=\"%s/%s\">%s</a>", 
-		//					getUrl(), "Details", "Details");
 	}
 
 	/**
