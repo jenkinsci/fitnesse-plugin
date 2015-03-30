@@ -19,25 +19,25 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 
-public class FitnesseResults extends TabulatedResult implements Comparable<FitnesseResults>{
+public class FitnesseResults extends TabulatedResult implements Comparable<FitnesseResults> {
 	private static final String DETAILS = "Details";
 
 	//private static final Logger log = Logger.getLogger(FitnesseResults.class.getName());
-	
+
 	private static final long serialVersionUID = 1L;
 	private transient List<FitnesseResults> failed;
 	private transient List<FitnesseResults> skipped;
 	private transient List<FitnesseResults> passed;
-	
+
 	private Counts pageCounts;
 	private TestObject parent;
 	private List<FitnesseResults> details = new ArrayList<FitnesseResults>();
 	private AbstractBuild<?, ?> owner;
-	
+
 	public FitnesseResults(Counts pageCounts) {
 		this.pageCounts = pageCounts;
 	}
-	
+
 	FitnesseResults(NativePageCounts allCounts) {
 		this(allCounts.getSummary());
 		for (Counts detail : allCounts.getDetails()) {
@@ -53,18 +53,19 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 		}
 		return this;
 	}
-	
+
 	void addChild(FitnesseResults fitnesseResults) {
 		details.add(fitnesseResults);
 		fitnesseResults.setParent(this);
 	}
-	
+
 	/**
 	 * {@link TestObject} Required to compare builds with one another e.g. show history graph
 	 */
 	@Override
 	public TestResult findCorrespondingResult(final String id) {
-		if (id.equals(getId())) return this;
+		if (id.equals(getId()))
+			return this;
 		List<FitnesseResults> match = filteredCopyOfDetails(new ResultsFilter() {
 			public boolean include(FitnesseResults fitnesseResults) {
 				return id.equals(fitnesseResults.getId());
@@ -76,11 +77,13 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	public void setOwner(AbstractBuild<?, ?> build) {
 		this.owner = build;
 	}
-	
+
 	@Override
 	public AbstractBuild<?, ?> getOwner() {
-		if (owner != null) return owner;
-		if (parent != null) return parent.getOwner();
+		if (owner != null)
+			return owner;
+		if (parent != null)
+			return parent.getOwner();
 		return null;
 	}
 
@@ -98,7 +101,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	 * Required for {@link TestObject#getId}
 	 */
 	@Override
-	@Exported(visibility=2)
+	@Exported(visibility = 2)
 	public String getName() {
 		return pageCounts.page;
 	}
@@ -111,18 +114,18 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	}
 
 	@Override
-	@Exported(visibility=2)
+	@Exported(visibility = 2)
 	public int getFailCount() {
 		return pageCounts.wrong + getExceptionCount();
 	}
 
-	@Exported(visibility=2)
+	@Exported(visibility = 2)
 	public int getFailOnlyCount() {
 		return pageCounts.wrong;
 	}
 
 	@Override
-	@Exported(visibility=2)
+	@Exported(visibility = 2)
 	public int getPassCount() {
 		return pageCounts.right;
 	}
@@ -131,11 +134,11 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	public int getSkipCount() {
 		return getIgnoredCount();
 	}
-	
+
 	/**
 	 * referenced in summary.jelly
 	 */
-	@Exported(visibility=2)
+	@Exported(visibility = 2)
 	public int getIgnoredCount() {
 		return pageCounts.ignored;
 	}
@@ -143,7 +146,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	/**
 	 * referenced in summary.jelly
 	 */
-	@Exported(visibility=2)
+	@Exported(visibility = 2)
 	public int getExceptionCount() {
 		return pageCounts.exceptions;
 	}
@@ -155,30 +158,32 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	public boolean isPassedOverall() {
 		return isPassed();
 	}
-	
+
 	@Override
 	public boolean isPassed() {
 		return !isFailedOverall() && !isSkippedOverall();
 	}
 
 	public boolean isSkippedOverall() {
-		if (isFailedOverall()) return false;
+		if (isFailedOverall())
+			return false;
 		return getPassCount() == 0;
 	}
 
 	@Override
 	public Result getBuildResult() {
-		if (getFailCount() > 0) return Result.UNSTABLE;
+		if (getFailCount() > 0)
+			return Result.UNSTABLE;
 		return null;
 	}
 
 	@Override
-	@Exported(visibility=2)
+	@Exported(visibility = 2)
 	public float getDuration() {
 		return pageCounts.duration / 1000.0f;
 	}
 
-	@Exported(visibility=1)
+	@Exported(visibility = 1)
 	public String getResultsDate() {
 		return pageCounts.resultsDate;
 	}
@@ -201,8 +206,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 
 	public long millisAfter(FitnesseResults other) {
 		try {
-			return pageCounts.resultsDateAsDate().getTime() - 
-				other.pageCounts.resultsDateAsDate().getTime();
+			return pageCounts.resultsDateAsDate().getTime() - other.pageCounts.resultsDateAsDate().getTime();
 		} catch (ParseException e) {
 			return 0;
 		}
@@ -235,7 +239,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 		FitnesseResultsAction action = getOwner().getAction(FitnesseResultsAction.class);
 		return action;
 	}
-		
+
 	/**
 	 * {@link Comparable}
 	 */
@@ -244,7 +248,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	}
 
 	@Override
-	@Exported(visibility=1)
+	@Exported(visibility = 1)
 	public Collection<FitnesseResults> getFailedTests() {
 		if (failed == null) {
 			failed = filteredCopyOfDetails(new ResultsFilter() {
@@ -255,8 +259,9 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 		}
 		return failed;
 	}
+
 	@Override
-	@Exported(visibility=1)
+	@Exported(visibility = 1)
 	public Collection<FitnesseResults> getPassedTests() {
 		if (passed == null) {
 			passed = filteredCopyOfDetails(new ResultsFilter() {
@@ -269,7 +274,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	}
 
 	@Override
-	@Exported(visibility=1)
+	@Exported(visibility = 1)
 	public Collection<FitnesseResults> getSkippedTests() {
 		if (skipped == null) {
 			skipped = filteredCopyOfDetails(new ResultsFilter() {
@@ -280,9 +285,9 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 		}
 		return skipped;
 	}
-	
+
 	private List<FitnesseResults> filteredCopyOfDetails(ResultsFilter countsFilter) {
-		List<FitnesseResults> filteredCopy = new ArrayList<FitnesseResults>(); 
+		List<FitnesseResults> filteredCopy = new ArrayList<FitnesseResults>();
 		for (FitnesseResults result : details) {
 			if (countsFilter.include(result)) {
 				filteredCopy.add(result);
@@ -291,11 +296,11 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 		Collections.sort(filteredCopy);
 		return filteredCopy;
 	}
-	
+
 	interface ResultsFilter {
 		public boolean include(FitnesseResults fitnesseResults);
 	}
-	
+
 	/**
 	 * referenced in body.jelly
 	 */
@@ -316,12 +321,9 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 			return "&nbsp;";
 		}
 
-		return String.format("<a href=\"%s/%s\">%s</a>", 
-				getName(), DETAILS, "Details");
-//		return String.format("<a href=\"%s/%s\">%s</a>", 
-//					getUrl(), "Details", "Details");
+		return String.format("<a href=\"%s/%s\">%s</a>", getName(), DETAILS, "Details");
 	}
-	
+
 	/**
 	 * referenced in body.jelly. 
 	 * The link points to the history of the fitnesse server. Note the history may not always be available.
@@ -331,10 +333,9 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 		if (buildAction == null) {
 			buildAction = FitnesseBuildAction.NULL_ACTION;
 		}
-		return buildAction.getLinkFor(getName() + "?pageHistory&resultDate="+getResultsDate(), null, "Details");
+		return buildAction.getLinkFor(getName() + "?pageHistory&resultDate=" + getResultsDate(), null, "Details");
 	}
 
-	
 	/**
 	 * called from links embedded in history/trend graphs 
 	 * TODO: Expose sub-suites as separate elements of the fitnesse report.
@@ -356,10 +357,10 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 				return (T) child;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if there are child results available.
 	 * So far, only returns <code>true</code> if there is {@link #getHtmlContent()}
@@ -376,7 +377,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	 * @return the details and html content results, or an empty Collection
 	 */
 	@Override
-	@Exported(visibility=1)
+	@Exported(visibility = 1)
 	public Collection<? extends TestResult> getChildren() {
 		if (!hasChildren()) {
 			return Collections.emptyList();
@@ -395,7 +396,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	protected boolean hasChildResults() {
 		return !getChildResults().isEmpty();
 	}
-	
+
 	/**
 	 * Returns the children FitNesse results that were added with {@link #addChild(FitnesseResults)}
 	 */

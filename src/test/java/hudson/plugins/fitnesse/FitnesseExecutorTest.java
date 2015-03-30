@@ -23,7 +23,7 @@ public class FitnesseExecutorTest {
 
 	private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
 	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
-	
+
 	private FitnesseExecutor executor;
 	private ByteArrayOutputStream output = new ByteArrayOutputStream();
 	private PrintStream logger = new PrintStream(output);
@@ -34,7 +34,7 @@ public class FitnesseExecutorTest {
 
 	private void init(String[] keys, String[] values, EnvVars envVars) {
 		Map<String, String> options = new HashMap<String, String>();
-		for (int i=0; i < keys.length; ++i) {
+		for (int i = 0; i < keys.length; ++i) {
 			options.put(keys[i], values[i]);
 		}
 
@@ -43,18 +43,18 @@ public class FitnesseExecutorTest {
 	}
 
 	@Before
-	public void setUp() 	{
+	public void setUp() {
 		output.reset();
 	}
-	
+
 	@Test
 	public void javaCmdShouldIncludeJarAndDirAndRootAndPort() throws IOException, InterruptedException {
-		init(new String[] { FitnesseBuilder.JAVA_OPTS, FitnesseBuilder.PATH_TO_ROOT,
-		    FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT }, new String[] { "",
-		    getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9999" });
+		init(new String[] { FitnesseBuilder.JAVA_OPTS, FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR,
+				FitnesseBuilder.FITNESSE_PORT }, new String[] { "", getTestResourceFitNesseRoot(),
+				getTestResourceFitnesseJar(), "9999" });
 		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
 		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory);
-		
+
 		Assert.assertEquals("java", cmd.get(0));
 		Assert.assertEquals("-jar", cmd.get(1));
 		Assert.assertEquals(getTestResourceFitnesseJar(), cmd.get(2));
@@ -67,24 +67,22 @@ public class FitnesseExecutorTest {
 	}
 
 	private static String getTestResourceFitnesseJar() {
-		return new File(new File(System.getProperty("user.dir")), 
-				"target/test-classes/fitnesse.jar").getAbsolutePath();
+		return new File(new File(System.getProperty("user.dir")), "target/test-classes/fitnesse.jar").getAbsolutePath();
 	}
-	
+
 	private static String getTestResourceFitNesseRoot() {
-		return new File(new File(System.getProperty("user.dir")), 
-		"target/test-classes/FitNesseRoot").getAbsolutePath();
+		return new File(new File(System.getProperty("user.dir")), "target/test-classes/FitNesseRoot").getAbsolutePath();
 	}
 
 	@Test
 	public void javaCmdShouldIncludeJavaOpts() throws IOException, InterruptedException {
-		init(new String[] { FitnesseBuilder.JAVA_OPTS, FitnesseBuilder.PATH_TO_ROOT,
-		    FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT }, new String[] { "-Da=b",
-		    getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9999" });
+		init(new String[] { FitnesseBuilder.JAVA_OPTS, FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR,
+				FitnesseBuilder.FITNESSE_PORT }, new String[] { "-Da=b", getTestResourceFitNesseRoot(),
+				getTestResourceFitnesseJar(), "9999" });
 
 		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
 		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory);
-		
+
 		Assert.assertEquals("java", cmd.get(0));
 		Assert.assertEquals("-Da=b", cmd.get(1));
 		Assert.assertEquals("-jar", cmd.get(2));
@@ -103,12 +101,11 @@ public class FitnesseExecutorTest {
 		EnvVars envVars = new EnvVars();
 		envVars.put("JAVA_HOME", javaHome.getAbsolutePath());
 		init(new String[] { FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT },
-		    new String[] { getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9876" }, 
-		    envVars);
-		
+				new String[] { getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9876" }, envVars);
+
 		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
 		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory);
-		
+
 		Assert.assertEquals(new File(new File(javaHome, "bin"), "java").getAbsolutePath(), cmd.get(0));
 		Assert.assertEquals("-jar", cmd.get(1));
 		Assert.assertEquals(getTestResourceFitnesseJar(), cmd.get(2));
@@ -119,14 +116,15 @@ public class FitnesseExecutorTest {
 		Assert.assertEquals("-p", cmd.get(7));
 		Assert.assertEquals("9876", cmd.get(8));
 	}
-	
+
 	@Test
 	@Ignore
 	// Can't be test, use Jenkins static instance
 	public void javaCmdShouldReferenceFitnesseSpecificJDK() throws IOException, InterruptedException {
 		File javaHome = File.createTempFile("JavaHome", "");
-		init(new String[] { FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT, FitnesseBuilder.FITNESSE_JDK },
-				new String[] { getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(), "9876", javaHome.getAbsolutePath() });
+		init(new String[] { FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT,
+				FitnesseBuilder.FITNESSE_JDK }, new String[] { getTestResourceFitNesseRoot(), getTestResourceFitnesseJar(),
+				"9876", javaHome.getAbsolutePath() });
 
 		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
 		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory);
@@ -145,8 +143,8 @@ public class FitnesseExecutorTest {
 	@Test
 	public void javaCmdShouldHandleRelativePaths() throws IOException, InterruptedException {
 		init(new String[] { FitnesseBuilder.PATH_TO_ROOT, FitnesseBuilder.PATH_TO_JAR, FitnesseBuilder.FITNESSE_PORT },
-				new String[] {"FitNesseRoot", "fitnesse.jar", "9000"});
-		
+				new String[] { "FitNesseRoot", "fitnesse.jar", "9000" });
+
 		FilePath workingDirectory = new FilePath(new File(TMP_DIR));
 		ArrayList<String> cmd = executor.getJavaCmd(workingDirectory);
 
@@ -163,44 +161,40 @@ public class FitnesseExecutorTest {
 
 	@Test
 	public void fitnessePageBase() {
-		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE },
-				new String[] { "WikiPage", "true" });
+		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE }, new String[] { "WikiPage",
+				"true" });
 		Assert.assertEquals("/WikiPage", executor.getFitnessePageBase());
 	}
 
 	@Test
 	public void fitnessePageCmdShouldBeTestIfPageIsNotSuite() {
-		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE },
-				new String[] {"WikiPage", "false"});
-		Assert.assertEquals("/WikiPage?test&format=xml&includehtml",
-				executor.getFitnessePageCmd());
+		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE }, new String[] { "WikiPage",
+				"false" });
+		Assert.assertEquals("/WikiPage?test&format=xml&includehtml", executor.getFitnessePageCmd());
 	}
 
 	@Test
 	public void fitnessePageCmdShouldBeSuiteIfPageIsSuite() {
-		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE },
-			new String[] {"WikiPage", "true"});
-		Assert.assertEquals("/WikiPage?suite&format=xml&includehtml", 
-				executor.getFitnessePageCmd());
+		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE }, new String[] { "WikiPage",
+				"true" });
+		Assert.assertEquals("/WikiPage?suite&format=xml&includehtml", executor.getFitnessePageCmd());
 	}
 
 	@Test
 	public void fitnessePageCmdShouldReorderQueryStringIfSpecifiedInPageName() {
-		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE },
-				new String[] {"WikiPage?suite&suiteFilter=tag1,tag2", "true"});
-		Assert.assertEquals("/WikiPage?suite&suiteFilter=tag1,tag2&format=xml&includehtml", 
-				executor.getFitnessePageCmd());
+		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE }, new String[] {
+				"WikiPage?suite&suiteFilter=tag1,tag2", "true" });
+		Assert.assertEquals("/WikiPage?suite&suiteFilter=tag1,tag2&format=xml&includehtml", executor.getFitnessePageCmd());
 
-		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE },
-				new String[] {"WikiPage&suiteFilter=tag1,tag2", "true"});
-		Assert.assertEquals("/WikiPage?suite&suiteFilter=tag1,tag2&format=xml&includehtml", 
-				executor.getFitnessePageCmd());
+		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE }, new String[] {
+				"WikiPage&suiteFilter=tag1,tag2", "true" });
+		Assert.assertEquals("/WikiPage?suite&suiteFilter=tag1,tag2&format=xml&includehtml", executor.getFitnessePageCmd());
 	}
-	
+
 	@Test
 	public void fitnesseStartedShouldBeTrue() throws Exception {
 		init(new String[] {}, new String[] {});
-		
+
 		Assert.assertTrue(executor.isFitnesseStarted(new URL("http://hudson-ci.org/")));
 		Assert.assertTrue(output.toString().contains("Fitnesse server started "));
 	}
@@ -214,12 +208,15 @@ public class FitnesseExecutorTest {
 	}
 
 	private boolean resetWasCalled;
+
 	@Test
 	public void getHttpBytesShouldReturnContentFromUrlWriteToLogAndCallReset() throws Exception {
 		init(new String[] {}, new String[] {});
 		resetWasCalled = false;
 		Resettable resettable = new Resettable() {
-			public void reset() { resetWasCalled = true; }
+			public void reset() {
+				resetWasCalled = true;
+			}
 		};
 		byte[] bytes = executor.getHttpBytes(new URL("http://hudson-ci.org/"), resettable, 60 * 1000);
 		Assert.assertTrue(bytes.length > 0);
@@ -229,12 +226,12 @@ public class FitnesseExecutorTest {
 		Assert.assertTrue(output.toString().contains("Connected: 200/OK"));
 		Assert.assertTrue(resetWasCalled);
 	}
-	
+
 	@Test
 	public void filepathShouldReturnFileAbsolutePathWhenPathIsAbsolute() throws Exception {
 		FilePath workingDirectory = new FilePath(new File(System.getProperty("user.home")));
 		File tmpFile = File.createTempFile("results", ".out");
-		
+
 		FilePath filePath = FitnesseExecutor.getFilePath(logger, workingDirectory, tmpFile.getAbsolutePath());
 		Assert.assertEquals(tmpFile.getAbsolutePath(), filePath.getRemote());
 
@@ -245,7 +242,7 @@ public class FitnesseExecutorTest {
 	public void filePathShouldReturnAbsolutePathInWorkingdirWhenPathIsRelative() throws Exception {
 		File localPath = new File(System.getProperty("user.home"));
 		FilePath workingDirectory = new FilePath(localPath);
-		
+
 		String relativePath = "fitnesse.jar";
 		Assert.assertEquals(new File(localPath, relativePath).getCanonicalPath(), //
 				FitnesseExecutor.getFilePath(logger, workingDirectory, relativePath).getRemote());
@@ -253,7 +250,7 @@ public class FitnesseExecutorTest {
 		relativePath = "jars" + FILE_SEPARATOR + "fitnesse.jar";
 		Assert.assertEquals(new File(localPath, relativePath).getCanonicalPath(), //
 				FitnesseExecutor.getFilePath(logger, workingDirectory, relativePath).getRemote());
-		
+
 		relativePath = "." + FILE_SEPARATOR + "jars" + FILE_SEPARATOR + "fitnesse.jar";
 		Assert.assertEquals(new File(localPath, relativePath).getCanonicalPath(), //
 				FitnesseExecutor.getFilePath(logger, workingDirectory, relativePath).getRemote());

@@ -23,7 +23,6 @@ import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -53,8 +52,10 @@ public class FitnesseResultsRecorder extends Recorder {
 	 */
 	@Override
 	public Collection<Action> getProjectActions(AbstractProject<?, ?> project) {
-		return Collections
-				.<Action> singleton(new FitnesseProjectAction(project));
+		final Collection<Action> list = new ArrayList<Action>();
+		list.add(new FitnesseProjectAction(project));
+		list.add(new FitnesseHistoryAction(project));
+		return list;
 	}
 
 	/**
@@ -68,8 +69,8 @@ public class FitnesseResultsRecorder extends Recorder {
 	 * {@link BuildStep}
 	 */
 	@Override
-	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher,
-			BuildListener listener) throws InterruptedException, IOException {
+	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
+			throws InterruptedException, IOException {
 		PrintStream logger = listener.getLogger();
 		try {
 			FilePath[] resultFiles = getResultFiles(logger, build);
@@ -77,8 +78,7 @@ public class FitnesseResultsRecorder extends Recorder {
 			if (results == null)
 				return true; // no Fitnesse results found at all
 
-			FitnesseResultsAction action = new FitnesseResultsAction(build,
-					results);
+			FitnesseResultsAction action = new FitnesseResultsAction(build, results);
 			if (results.getBuildResult() != null)
 				build.setResult(results.getBuildResult());
 			build.addAction(action);
@@ -92,15 +92,15 @@ public class FitnesseResultsRecorder extends Recorder {
 		}
 	}
 
-	private FilePath[] getResultFiles(PrintStream logger, AbstractBuild<?, ?> build)
-			throws IOException, InterruptedException {
+	private FilePath[] getResultFiles(PrintStream logger, AbstractBuild<?, ?> build) throws IOException,
+			InterruptedException {
 		FilePath workingDirectory = FitnesseExecutor.getWorkingDirectory(logger, build);
 		return getResultFiles(logger, workingDirectory);
 	}
 
-	public FilePath[] getResultFiles(PrintStream logger, FilePath workingDirectory)
-			throws IOException, InterruptedException {
-		FilePath resultsFile = FitnesseExecutor.getFilePath(logger,  workingDirectory, fitnessePathToXmlResultsIn);
+	public FilePath[] getResultFiles(PrintStream logger, FilePath workingDirectory) throws IOException,
+			InterruptedException {
+		FilePath resultsFile = FitnesseExecutor.getFilePath(logger, workingDirectory, fitnessePathToXmlResultsIn);
 
 		if (resultsFile.exists()) {
 			// directly configured single file
@@ -111,9 +111,8 @@ public class FitnesseResultsRecorder extends Recorder {
 		}
 	}
 
-	public FitnesseResults getResults(PrintStream logger,
-			FilePath[] resultsFiles, File rootDir)
-			throws IOException, TransformerException {
+	public FitnesseResults getResults(PrintStream logger, FilePath[] resultsFiles, File rootDir) throws IOException,
+			TransformerException {
 		List<FitnesseResults> resultsList = new ArrayList<FitnesseResults>();
 
 		for (FilePath filePath : resultsFiles) {
@@ -130,19 +129,18 @@ public class FitnesseResultsRecorder extends Recorder {
 		return CompoundFitnesseResults.createFor(resultsList);
 	}
 
-	public FitnesseResults getResults(PrintStream logger, FilePath resultsFile,
-			File rootDir) throws IOException, TransformerException {
+	public FitnesseResults getResults(PrintStream logger, FilePath resultsFile, File rootDir) throws IOException,
+			TransformerException {
 		InputStream resultsInputStream = null;
 		try {
-			logger.println("Reading results as "
-					+ Charset.defaultCharset().displayName() + " from "
+			logger.println("Reading results as " + Charset.defaultCharset().displayName() + " from "
 					+ resultsFile.getRemote());
 			resultsInputStream = resultsFile.read();
 
 			logger.println("Parsing results... ");
 			NativePageCountsParser pageCountsParser = new NativePageCountsParser();
-			NativePageCounts pageCounts = pageCountsParser.parse(resultsInputStream, logger,
-			    rootDir.getAbsolutePath() + System.getProperty("file.separator"));
+			NativePageCounts pageCounts = pageCountsParser.parse(resultsInputStream, logger, rootDir.getAbsolutePath()
+					+ System.getProperty("file.separator"));
 			logger.println("resultsFile: " + getFitnessePathToXmlResultsIn());
 
 			logger.println("Got results: " + pageCounts.getSummary());
@@ -167,23 +165,20 @@ public class FitnesseResultsRecorder extends Recorder {
 	}
 
 	private static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
 	/**
 	 * See
 	 * <tt>src/main/resources/hudson/plugins/fitnesse/FitnesseResultsRecorder/config.jelly</tt>
 	 */
 	@Extension
-	public static final class DescriptorImpl extends
-			BuildStepDescriptor<Publisher> {
+	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
-		public FormValidation doCheckFitnessePathToXmlResultsIn(
-				@QueryParameter String value) throws IOException,
+		public FormValidation doCheckFitnessePathToXmlResultsIn(@QueryParameter String value) throws IOException,
 				ServletException {
 			if (value.length() == 0)
-				return FormValidation
-						.error("Please specify where to read fitnesse results from.");
+				return FormValidation.error("Please specify where to read FitNesse results from.");
 			if (!value.endsWith("xml"))
-				return FormValidation
-						.warning("File does not end with 'xml': is that correct?");
+				return FormValidation.warning("File does not end with 'xml': is that correct?");
 			return FormValidation.ok();
 		}
 

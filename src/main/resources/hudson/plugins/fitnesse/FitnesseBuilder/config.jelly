@@ -4,18 +4,18 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 <f:block><em>Fitnesse instance</em></f:block>
   
   <f:radioBlock name="fitnesseStart" value="False" 
-  title="Fitnesse instance is already running" 
+  title="FitNesse instance is already running"
   help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/fitnesseStartFalse" 
   checked="${instance.fitnesseStart==false}">
     
-      <f:entry title="Fitnesse Host" 
+      <f:entry title="FitNesse Host"
 	  help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/fitnesseHost">
         <f:textbox name="fitnesseHost"
         checkUrl="'descriptorByName/hudson.plugins.fitnesse.FitnesseBuilder/checkFitnesseHost?value='+toValue(this)" 
         value="${instance.fitnesseHost}" />
       </f:entry>
 	  
-	  <f:entry title="Fitnesse Port" 
+	  <f:entry title="FitNesse Port"
 	  help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/fitnessePort"> 
 	    <f:textbox name="fitnessePortRemote" 
         checkUrl="'descriptorByName/hudson.plugins.fitnesse.FitnesseBuilder/checkFitnessePort?value='+toValue(this)" 
@@ -32,7 +32,7 @@ xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <j:set var="jdks" value="${app.JDKs}" />
     <j:if test="${jdks.size() gt 0}">
     <!-- if there's only one JDK configured, always use that. -->
-    	<f:entry title="Fitnesse JDK"
+    	<f:entry title="FitNesse JDK"
              description="JDK to be used for Fitnesse">
       		<select class="setting-input validated" name="fitnesseJdk" checkUrl="'${rootURL}/defaultJDKCheck?value='+this.value">
         		<j:forEach var="inst" items="${jdks}">

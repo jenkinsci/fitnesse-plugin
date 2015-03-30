@@ -7,6 +7,7 @@ public class RunnerWithTimeOutTest {
 	private RunnerWithTimeOut runner;
 
 	private boolean wasRun;
+
 	@Test
 	public void startedRunnerShouldRunRunnable() throws Exception {
 		wasRun = false;
@@ -20,7 +21,7 @@ public class RunnerWithTimeOutTest {
 		Assert.assertTrue(wasRun);
 	}
 
-	@Test(expected=InterruptedException.class)
+	@Test(expected = InterruptedException.class)
 	public void startedRunnerShouldThrowExceptionAfterTimeout() throws Exception {
 		runner = new RunnerWithTimeOut(100);
 		runner.run(new Runnable() {

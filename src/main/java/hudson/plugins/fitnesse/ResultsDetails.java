@@ -1,7 +1,5 @@
 package hudson.plugins.fitnesse;
 
-import static java.util.Collections.emptyList;
-import jenkins.model.Jenkins;
 import hudson.model.AbstractBuild;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.test.AbstractTestResultAction;
@@ -13,17 +11,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.logging.Logger;
 
 import org.kohsuke.stapler.export.Exported;
 
+import static java.util.Collections.*;
+
 /**
- * Represents the details of a FitNesseResults instance, i.e. the FitNesse html
- * output.
+ * Represents the details of a FitNesseResults instance, i.e. the FitNesse html output.
  */
 public class ResultsDetails extends TestResult {
-	private static final Logger log = Logger.getLogger(ResultsDetails.class
-			.getName());
+	//private static final Logger log = Logger.getLogger(ResultsDetails.class.getName());
 
 	private static final long serialVersionUID = 3169974791899027186L;
 
@@ -75,13 +72,6 @@ public class ResultsDetails extends TestResult {
 	}
 
 	/**
-	 * referenced from body.jelly Returns Jenkins root URL to form correct paths to static resources
-	 */
-	public String getRootUrlFromRequest() {
-		return Jenkins.getInstance().getRootUrlFromRequest();
-	}
-
-	/**
 	 * referenced from body.jelly Reads the fitnesse-result from file. The
 	 * result is stored on user request in order to keep the memory footprint
 	 * small.
@@ -101,8 +91,7 @@ public class ResultsDetails extends TestResult {
 				ret.append(strLine);
 			}
 		} catch (IOException e) {
-			return "exception while reading file: " + fileName + "\n"
-					+ e.toString();
+			return "exception while reading file: " + fileName + "\n" + e.toString();
 		} finally {
 			if (null != br) {
 				try {
@@ -166,8 +155,7 @@ public class ResultsDetails extends TestResult {
 		return singletonListOrEmpty(isSkipped());
 	}
 
-	private Collection<? extends hudson.tasks.test.TestResult> singletonListOrEmpty(
-			boolean f) {
+	private Collection<? extends hudson.tasks.test.TestResult> singletonListOrEmpty(boolean f) {
 		if (f)
 			return Collections.singletonList(this);
 		else
@@ -191,8 +179,7 @@ public class ResultsDetails extends TestResult {
 	 */
 	@Exported(visibility = 9)
 	public boolean isSkipped() {
-		return getPageCounts().ignored > 0
-				&& getPageCounts().ignored == getNumberOfTestCases();
+		return getPageCounts().ignored > 0 && getPageCounts().ignored == getNumberOfTestCases();
 	}
 
 	/**
@@ -200,7 +187,6 @@ public class ResultsDetails extends TestResult {
 	 * exceptions and ignored.
 	 */
 	private int getNumberOfTestCases() {
-		return getPageCounts().ignored + getPageCounts().exceptions
-				+ getPageCounts().right + getPageCounts().wrong;
+		return getPageCounts().ignored + getPageCounts().exceptions + getPageCounts().right + getPageCounts().wrong;
 	}
 }

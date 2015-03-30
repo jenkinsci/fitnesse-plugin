@@ -1,0 +1,31 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+  <l:layout title="FitNesse History">
+
+    <link rel="stylesheet" href="${resURL}/plugin/fitnesse/css/jenkins_fitnesse.css" type="text/css"/>
+    <st:include it="${it.owner}" page="sidepanel.jelly" />
+
+    <l:main-panel>
+      <h1>FitNesse History</h1>
+
+      <table id="fitnesse_results" class="pane bigtable">
+        <tr>
+          <th>Page</th>
+          <j:forEach var="build" items="${it.builds}">
+            <th><a href="../${build.owner.number}/fitnesseReport">#${build.owner.number}</a></th>
+          </j:forEach>
+        </tr>
+        <j:forEach var="page" items="${it.pages}">
+          <tr>
+            <td>${page}</td>
+            <j:forEach var="build" items="${it.builds}">
+              <td class="${it.getResult(page, build)}"><a href="../${build.owner.number}/fitnesseReport/${page}/Details">${it.getResult(page, build)}</a></td>
+            </j:forEach>
+          </tr>
+        </j:forEach>
+      </table>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

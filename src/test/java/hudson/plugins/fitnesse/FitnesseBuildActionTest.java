@@ -45,8 +45,7 @@ public class FitnesseBuildActionTest {
 	@Test
 	public void getLinkForPageShouldNotSubsitituteNullHostNameForLocalHost() {
 		FitnesseBuildAction action = new FitnesseBuildAction(false, "localhost", 8900);
-		Assert.assertEquals("<a href=\"http://localhost:8900/pagename\">pagename</a>", 
-				action.getLinkFor("pagename", null));
+		Assert.assertEquals("<a href=\"http://localhost:8900/pagename\">pagename</a>", action.getLinkFor("pagename", null));
 	}
 
 }

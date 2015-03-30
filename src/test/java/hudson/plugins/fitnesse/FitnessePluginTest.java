@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class FitnessePluginTest {
-	
+
 	private FitnessePlugin plugin;
 
 	public FitnessePluginTest() throws Exception {
@@ -20,7 +20,7 @@ public class FitnessePluginTest {
 		Assert.assertNotNull(FitnessePlugin.templates);
 		Assert.assertNotNull(FitnessePlugin.newRawResultsTransformer());
 	}
-	
+
 	@Test
 	public void pluginShouldFindXslThroughClassLoader() throws Exception {
 		InputStream xslAsInputStream = plugin.getXslAsInputStream();

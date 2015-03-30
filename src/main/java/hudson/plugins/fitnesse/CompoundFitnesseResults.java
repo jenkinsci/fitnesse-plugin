@@ -16,7 +16,7 @@ public class CompoundFitnesseResults extends FitnesseResults {
 		String page = "All Results";
 		String resultsDate = null;
 		int right = 0, wrong = 0, ignored = 0, exceptions = 0, duration = 0;
-		
+
 		for (FitnesseResults fitnesseResults : resultsList) {
 			if (resultsDate == null) {
 				resultsDate = fitnesseResults.getResultsDate();
@@ -27,13 +27,12 @@ public class CompoundFitnesseResults extends FitnesseResults {
 			exceptions += fitnesseResults.getExceptionCount();
 			duration += fitnesseResults.getDuration();
 		}
-		
+
 		Counts counts = new Counts(page, resultsDate, right, wrong, ignored, exceptions, duration, null);
 		return new CompoundFitnesseResults(resultsList, counts);
 	}
-	
-	public CompoundFitnesseResults(List<FitnesseResults> resultsList,
-			Counts counts) {
+
+	public CompoundFitnesseResults(List<FitnesseResults> resultsList, Counts counts) {
 		super(counts);
 		for (FitnesseResults fitnesseResults : resultsList) {
 			addChild(fitnesseResults);
