@@ -70,7 +70,7 @@ public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResu
 	 * Referenced in summary.jelly and FitnesseProjectAction/jobMain.jelly
 	 */
 	public String getSummary() {
-		return String.format("(%s, %d pages: %d wrong or with exceptions, %d ignored)", getResult().getName(),
-				getTotalCount(), getFailCount(), getSkipCount());
+		return String.format("(%d pages: %d wrong or with exceptions, %d ignored)", getTotalCount(), getFailCount(),
+				getSkipCount());
 	}
 }
