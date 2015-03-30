@@ -4,7 +4,7 @@
 	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
   <l:layout title="FitNesse History">
 
-    <link rel="stylesheet" href="${resURL}/plugin/fitnesse/css/fitnesse_results.css" type="text/css"/>
+    <link rel="stylesheet" href="${resURL}/plugin/fitnesse/css/jenkins_fitnesse.css" type="text/css"/>
     <st:include it="${it.owner}" page="sidepanel.jelly" />
 
     <l:main-panel>

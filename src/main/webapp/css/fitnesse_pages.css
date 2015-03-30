@@ -1,0 +1,292 @@
+#fitnesse_results fieldset   {
+	border: none;
+	padding: 0;
+    margin: 0 0 0.5em 0;
+}
+#fitnesse_results label   {
+    display: inline-block;
+    text-align: right;
+    width: 140px;
+}
+#fitnesse_results .validationerror   {
+    color: maroon;
+    margin: -6px 0 8px 140px;
+    font-size: 0.9em
+}
+#fitnesse_results .buttons   {
+    margin-left: 145px; /* 140 + input field padding/border/margin */
+}
+
+/** Wiki pages (wiki, test, suite, report) **/
+#fitnesse_results .wikiPage td,
+#fitnesse_results .testPage td,
+#fitnesse_results .testExecutionReport td,
+#fitnesse_results .compareHistory td   {
+  white-space: pre-line;
+}
+
+/** Edit page **/
+#fitnesse_results .editPage article   {
+    margin: 0;
+}
+
+#fitnesse_results .editPage #editor label   {
+	width: auto;
+}
+#fitnesse_results .editPage .edit_options label   {
+	width: auto;
+}
+
+#fitnesse_results .editPage #pagename,
+#fitnesse_results .editPage #helptext   {
+	width: 55em;
+}
+#fitnesse_results .editPage #pagetypes label   {
+	display: inline;
+	float: none;
+}
+#fitnesse_results .editPage #pagetypes label:first-child   {
+    margin-left: 145px;
+}
+#fitnesse_results .editPage textarea   {
+	display: block;
+	width: 100%;
+	height: 32em;
+    font-family: monospace;
+}
+#fitnesse_results .editPage textarea.no_wrap   {
+    overflow: scroll;
+}
+#fitnesse_results .editPage .edit_options   {
+	float: right;
+}
+#fitnesse_results .editPage #save_buttons   {
+    bottom: 0;
+    margin-top: 9px;
+    position: fixed;
+}
+
+#fitnesse_results .tagsinput   {
+    display: inline;
+}
+#fitnesse_results .tag   {
+    background-color: #F9F9F9;
+    border: 1px dotted #BF8660;
+    color: #BF8660;
+    margin-right: 4px;
+    padding: 2px;
+    text-decoration: none;
+}
+#fitnesse_results .tag a   {
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: 4px;
+}
+
+
+/** Properties page / Search form / Directory page**/
+#fitnesse_results .propertiesPage .properties,
+#fitnesse_results .searchForm .properties   {
+    margin-left: 145px;
+}
+#fitnesse_results .propertiesPage .properties fieldset,
+#fitnesse_results .searchForm .properties fieldset   {
+    display: inline-block;
+    vertical-align: top;
+	border: none;
+}
+#fitnesse_results .propertiesPage .properties label,
+#fitnesse_results .searchForm .properties label   {
+	display: block;
+    text-align: left;
+}
+#fitnesse_results legend   {
+	font-weight: bold;
+	margin-bottom: 0.5em;
+	padding: 0;
+}
+#fitnesse_results label.checkbox   {
+	margin-left: 145px;
+	width: auto;
+    text-align: left;
+}
+#fitnesse_results #virtual-wiki-properties   {
+	margin-top: 1em;
+}
+#fitnesse_results #create-dir   {
+	width: 140PX;
+}
+
+/** Merge page **/
+#fitnesse_results .mergePage #merge-new,
+#fitnesse_results .mergePage #merge-old   {
+	float: left;
+	width: 47%;
+	margin-right: 1em;
+}
+#fitnesse_results .mergePage textarea   {
+	width: 100%;
+	height: 32em;
+}
+#fitnesse_results .mergePage #merge-old textarea  {
+	background-color: #efefef;
+}
+
+/** Delete page confirmation dialog **/
+#fitnesse_results .warning   {
+	color: maroon;
+}
+
+/** Test history **/
+#fitnesse_results .testHistory td   {
+    white-space: pre;
+}
+#fitnesse_results .testHistory td a   {
+	text-decoration: none;
+}
+
+/** Test result **/
+#fitnesse_results tr.scenario > td:first-child,
+#fitnesse_results tr.exception > td:first-child   {
+	padding-left: 16px;
+	background-image: url("../images/collapsibleOpen.png");
+	background-position: 2px;
+	background-repeat: no-repeat;
+}
+#fitnesse_results tr.scenario.closed > td:first-child,
+#fitnesse_results tr.exception.closed > td:first-child   {
+	background-image: url("../images/collapsibleClosed.png");
+}
+#fitnesse_results tr.closed-detail   {
+	display: none;
+}
+#fitnesse_results tr.exception-detail   {
+    background-color: #ffffaa;
+}
+
+#fitnesse_results #progressBar,
+#fitnesse_results #test-summary.pass,
+#fitnesse_results #test-summary.fail,
+#fitnesse_results #test-summary.error   {
+    padding: 0.5em;
+    white-space: nowrap;
+}
+#fitnesse_results #test-summary.pass,
+#fitnesse_results #test-summary.fail,
+#fitnesse_results #test-summary.error   {
+    padding-left: 1.5em;
+}
+
+#fitnesse_results #test-summaries ul   {
+	list-style: none;
+	padding-left: 0;
+}
+#fitnesse_results #test_summaries h2, #test-summaries h3   {
+	text-align: center;
+}
+#fitnesse_results #test-summaries .pass,
+#fitnesse_results #test-summaries .fail,
+#fitnesse_results #test-summaries .error,
+#fitnesse_results span.error   {
+    padding: 0px 0px 0px 20px;
+}
+
+#fitnesse_results #test-summary.pass,
+#fitnesse_results #test-summary.fail,
+#fitnesse_results #test-summary.error,
+#fitnesse_results #test-summaries .pass,
+#fitnesse_results #test-summaries .fail,
+#fitnesse_results #test-summaries .error,
+#fitnesse_results span.error   {
+  background-repeat: no-repeat;
+  background-position: 0 center;
+}
+
+#fitnesse_results #test-summary.pass,
+#fitnesse_results #test-summaries .pass   {
+  background-image: url("../images/checkmark.png");
+}
+#fitnesse_results #test-summary.fail,
+#fitnesse_results #test-summaries .fail   {
+  background-image: url("../images/wrong.png");
+}
+#fitnesse_results #test-summary.error,
+#fitnesse_results #test-summaries .error,
+#fitnesse_results span.error   {
+  background-image: url("../images/exception.png");
+}
+#fitnesse_results #test-action .stop   {
+	background-color: red;
+	color: white;
+	font-weight: bold;
+}
+#fitnesse_results #test-action .error   {
+	background-color: red;
+}
+#fitnesse_results .test_output_name h3   {
+	display: inline;
+}
+
+/** Suite overview */
+#fitnesse_results .overview_results table   {
+    border: none;
+}
+#fitnesse_results .overview_bar   {
+    border: 1px solid black;
+    height: 1.4em;
+    margin: 0 -0.5px;
+}
+#fitnesse_results .overview_part  {
+    float: left;
+    height: 1.4em;
+    margin: 0;
+    padding: 0;
+}
+#fitnesse_results .unrun  {
+    background-color: #FFF3B4;
+}
+
+#fitnesse_results .passed_tests, .unrun_tests, .failed_tests  {
+    background-repeat: no-repeat;
+    margin: 0 4px;
+    padding-left: 22px;
+}
+#fitnesse_results .passed_tests  {
+    background-image: url("../images/checkmark.png");
+}
+#fitnesse_results .unrun_tests  {
+    background-image: url("../images/exception.png");
+}
+#fitnesse_results .failed_tests  {
+    background-image: url("../images/wrong.png");
+}
+
+/** Imported pages */
+#fitnesse_results .imported header  {
+	background-image: url("../images/importedPage.jpg");
+	background-position: center top;
+	background-repeat: no-repeat;
+}
+
+/** Test Execution report, backwards compatibility */
+#fitnesse_results .collapse_rim  {
+  background: #F9F9F9;
+  border: 1px dotted #909090;
+}
+#fitnesse_results .collapse_rim > a  {
+  padding-left: 16px;
+  background: url(../images/collapsibleClosed.png) no-repeat scroll 0 2px transparent;
+}
+#fitnesse_results .collapse_rim.open > a  {
+  background: url(../images/collapsibleOpen.png) no-repeat scroll 0 2px transparent;
+}
+
+#fitnesse_results div.contents li > a.pruned  {
+  text-decoration: line-through;
+}
+#fitnesse_results div.contents li > a.suite  {
+  font-weight:bold;
+}
+#fitnesse_results div.contents li > a.static  {
+  font-style:italic;
+}

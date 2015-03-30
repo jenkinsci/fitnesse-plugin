@@ -1,0 +1,9 @@
+/**
+ * CSS from FitNesse project (fitnesse_results.css)
+ * Modification done: 
+ *   - add div container id in selectors to avoid side effect on jenkins page
+*/
+@import url( "fitnesse_pages.css" );
+@import url( "fitnesse_wiki.css" );
+
+@import url( "fitnesse_straight.css" );
