@@ -10,18 +10,18 @@
     <l:main-panel>
       <h1>FitNesse History</h1>
 
-      <table>
+      <table id="fitnesse_results" class="pane bigtable">
         <tr>
           <th>Page</th>
           <j:forEach var="build" items="${it.builds}">
-            <th><a href="${build.owner.absoluteUrl}/fitnesseReport">#${build.owner.number}</a></th>
+            <th><a href="../${build.owner.number}/fitnesseReport">#${build.owner.number}</a></th>
           </j:forEach>
         </tr>
         <j:forEach var="page" items="${it.pages}">
           <tr>
             <td>${page}</td>
             <j:forEach var="build" items="${it.builds}">
-              <td class="${it.getResult(page, build)}"><a href="${build.owner.absoluteUrl}/fitnesseReport/${page}/Details">${it.getResult(page, build)}</a></td>
+              <td class="${it.getResult(page, build)}"><a href="../${build.owner.number}/fitnesseReport/${page}/Details">${it.getResult(page, build)}</a></td>
             </j:forEach>
           </tr>
         </j:forEach>
