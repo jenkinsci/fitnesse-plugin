@@ -35,7 +35,7 @@
 	</profiles>
 
 	<artifactId>fitnesse</artifactId>
-	<version>1.12</version>
+	<version>1.13-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	<name>Hudson FitNesse plugin</name>
 	<url>http://wiki.jenkins-ci.org/display/HUDSON/Fitnesse+Plugin</url>
@@ -59,7 +59,7 @@
 		<connection>scm:git:ssh://git@github.com/jenkinsci/fitnesse-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/fitnesse-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/fitnesse-plugin</url>
-	  <tag>fitnesse-1.12</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<build>
