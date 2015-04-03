@@ -1,8 +1,9 @@
 package hudson.plugins.fitnesse;
 
+import hudson.model.AbstractProject;
+
 import java.util.List;
 
-import hudson.model.AbstractProject;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
@@ -14,8 +15,7 @@ public class FitnesseHistory {
 	public final List<String> pages;
 
 	/**
-	 * History builds (containing details for each individual page in that build),
-	 * in chronological order.
+	 * History builds (containing details for each individual page in that build)
 	 */
 	public final List<FitnesseResults> builds;
 

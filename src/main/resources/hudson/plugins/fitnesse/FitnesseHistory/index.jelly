@@ -10,7 +10,7 @@
     <l:main-panel>
       <h1>FitNesse History</h1>
 
-      <table id="fitnesse_results" class="pane bigtable">
+      <table id="fitnesse_results" class="pane bigtable sortable">
         <tr>
           <th>Page</th>
           <j:forEach var="build" items="${it.builds}">
