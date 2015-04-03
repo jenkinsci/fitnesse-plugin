@@ -83,10 +83,10 @@ public class FitnesseResultsRecorder extends Recorder {
 				build.setResult(results.getBuildResult());
 			build.addAction(action);
 			return true;
+		} catch (InterruptedException e) { //aborted
+			throw e;
 		} catch (Throwable t) {
 			t.printStackTrace(logger);
-			if (t instanceof InterruptedException)
-				throw (InterruptedException) t;
 			build.setResult(Result.FAILURE);
 			return false;
 		}
