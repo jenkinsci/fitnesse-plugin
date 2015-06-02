@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -65,12 +66,22 @@ public class NativePageCounts extends DefaultHandler {
 				String pseudoPage = attributes.getValue(PSEUDO_PAGE);
 				targetPage = page == null || page.equals("") ? pseudoPage : page;
 			}
-			Counts counts = new Counts(targetPage, qName.equals(SUMMARY) ? ""
-					: resultsDateOf(attributes.getValue(APPROX_RESULT_DATE)), Integer.parseInt(attributes.getValue(RIGHT)),
-					Integer.parseInt(attributes.getValue(WRONG)), Integer.parseInt(attributes.getValue(IGNORED)),
-					Integer.parseInt(attributes.getValue(EXCEPTIONS)), Integer.parseInt(attributes.getValue(DURATION)),
-					writeFitnesseResultFiles(targetPage, attributes.getValue(CONTENT)));
 
+			String rightStr = attributes.getValue(RIGHT);
+			String wrongStr = attributes.getValue(WRONG);
+			String ignoredStr = attributes.getValue(IGNORED);
+			String exceptionsStr = attributes.getValue(EXCEPTIONS);
+			String durationStr = attributes.getValue(DURATION);
+			int right = Integer.parseInt(rightStr);
+			int wrong = Integer.parseInt(wrongStr);
+			int ignored = Integer.parseInt(ignoredStr);
+			int exceptions = Integer.parseInt(exceptionsStr);
+			int duration = StringUtils.isEmpty(durationStr) ? 0 : Integer.parseInt(durationStr); //to manage previous version of FitNesse
+			String resultsDate = qName.equals(SUMMARY) ? "" : resultsDateOf(attributes.getValue(APPROX_RESULT_DATE));
+
+			String contentFileName = writeFitnesseResultFiles(targetPage, attributes.getValue(CONTENT));
+
+			Counts counts = new Counts(targetPage, resultsDate, right, wrong, ignored, exceptions, duration, contentFileName);
 			allCounts.put(counts.page, counts);
 
 			if (qName.equals(SUMMARY)) {
