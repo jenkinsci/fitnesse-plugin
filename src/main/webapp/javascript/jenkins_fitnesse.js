@@ -1,12 +1,23 @@
 /**
  * JS from FitNesse project (fitnesse.js)
  * Modification done: 
- * - keep only js on collapsible section
+ * - keep only js on "Collapsible" and "Scenario's and Exceptions" section
  * - change article by container id in selectors (#fitnesse_results)
  */
 
 $(function(){
 
+/**
+ *  Scenario's and Exceptions (after test execution)
+ */
+$(document)
+	.on("click", "#fitnesse_results tr.scenario td, #fitnesse_results tr.exception td", function () {
+		$(this).parent().toggleClass('closed').nextUntil(":not(.exception-detail, .scenario-detail)").toggleClass("closed-detail");
+	});
+
+/**
+ * Collapsible section
+ */
 $(document)
 	
 	.on("touchstart click", "#fitnesse_results .collapsible > p.title", function () {
