@@ -59,8 +59,8 @@
 		<connection>scm:git:ssh://git@github.com/jenkinsci/fitnesse-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/fitnesse-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/fitnesse-plugin</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<build>
 		<plugins>
@@ -71,8 +71,13 @@
 					<goals>deploy</goals>
 				</configuration>
 			</plugin>
-		</plugins>
-	</build>
+			<plugin> 
+				<groupId>org.jenkins-ci.tools</groupId> 
+				<artifactId>maven-hpi-plugin</artifactId> 
+				<version>1.113</version> 
+			</plugin> 
+		</plugins> 
+	</build> 
 
 	<distributionManagement>
 		<repository>
