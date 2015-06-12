@@ -112,7 +112,7 @@ public class FitnesseResultsRecorder extends Recorder {
 	}
 
 	public FitnesseResults getResults(PrintStream logger, FilePath[] resultsFiles, File rootDir) throws IOException,
-			TransformerException {
+			TransformerException, InterruptedException {
 		List<FitnesseResults> resultsList = new ArrayList<FitnesseResults>();
 
 		for (FilePath filePath : resultsFiles) {
@@ -130,7 +130,7 @@ public class FitnesseResultsRecorder extends Recorder {
 	}
 
 	public FitnesseResults getResults(PrintStream logger, FilePath resultsFile, File rootDir) throws IOException,
-			TransformerException {
+			TransformerException, InterruptedException {
 		InputStream resultsInputStream = null;
 		try {
 			logger.println("Reading results as " + Charset.defaultCharset().displayName() + " from "
