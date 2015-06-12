@@ -36,10 +36,12 @@ public class NativePageCounts extends DefaultHandler {
 
 	private final String rootDirName;
 	private final PrintStream logger;
+	private final String resultFileName;
 
-	public NativePageCounts(PrintStream logger, String rootDirName) {
+	public NativePageCounts(PrintStream logger, String resultFileName, String rootDirName) {
 		this.logger = logger;
 		this.rootDirName = rootDirName;
+		this.resultFileName = resultFileName;
 		logger.println("Write fitnesse results to: " + rootDirName);
 	}
 
@@ -59,7 +61,7 @@ public class NativePageCounts extends DefaultHandler {
 		if (COUNTABLE.contains(qName)) {
 			String targetPage;
 			if (qName.equals(SUMMARY)) {
-				targetPage = "Summary";
+				targetPage = resultFileName;
 			} else {
 				String page = attributes.getValue(PAGE);
 				String pseudoPage = attributes.getValue(PSEUDO_PAGE);
