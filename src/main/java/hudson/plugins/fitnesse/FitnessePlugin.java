@@ -16,16 +16,21 @@ public class FitnessePlugin extends Plugin {
 
 	@Override
 	public void start() throws Exception {
+	}
+
+	public static InputStream getXslAsInputStream() throws IOException {
+        InputStream inputstream = FitnessePlugin.class.getResourceAsStream("fitnesse-results.xsl");
+        if (inputstream == null) throw new IOException("Cannot get access to fitnesse-results.xsl");
+        return InputStreamDeBOMer.deBOM(inputstream);
+	}
+
+	public static Transformer newRawResultsTransformer() throws TransformerException, IOException {
+		if (templates != null)
+			return templates.newTransformer();
+
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		StreamSource xslSource = new StreamSource(getXslAsInputStream());
 		templates = transformerFactory.newTemplates(xslSource);
-	}
-
-	public InputStream getXslAsInputStream() throws IOException {
-		return InputStreamDeBOMer.deBOM(getClass().getResourceAsStream("fitnesse-results.xsl"));
-	}
-
-	public static Transformer newRawResultsTransformer() throws TransformerException {
 		return templates.newTransformer();
 	}
 
