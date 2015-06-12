@@ -1,6 +1,13 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
-	xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
-	xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+<?jelly escape-by-default='true'?>
+<j:jelly 
+  xmlns:j="jelly:core"  
+  xmlns:st="jelly:stapler" 
+  xmlns:d="jelly:define" 
+  xmlns:l="/lib/layout" 
+  xmlns:t="/lib/hudson" 
+  xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt">
+
 	<j:if test="${it.failCount > 0}">
 		<div class="result-failed"><strong>Wrong and Exceptions: ${it.failCount}</strong>
 		<table class="pane bigtable">
@@ -16,10 +23,10 @@
 			</tr>
 		<j:forEach var="r" items="${it.failedTests}">
 			<tr>
-				<td>${it.toHtml(r)}</td>
+				<td><j:out value="${it.toHtml(r)}"/></td>
 				<td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td>
 				<td>${r.duration}</td>
-				<td>${r.getDetailsLink()}</td><td>${r.getDetailRemoteLink()}</td>
+				<td><j:out value="${r.getDetailsLink()}"/></td><td><j:out value="${r.getDetailRemoteLink()}"/></td>
 			</tr>
 		</j:forEach>
 		</table>
@@ -37,10 +44,10 @@
 			</tr>
 			<j:forEach var="r" items="${it.skippedTests}">
 			<tr>
-				<td>${it.toHtml(r)}</td>
+				<td><j:out value="${it.toHtml(r)}"/></td>
 				<td>${r.ignoredCount}</td>
 				<td>${r.duration}</td>
-				<td>${r.getDetailsLink()}</td><td>${r.getDetailRemoteLink()}</td>
+				<td><j:out value="${r.getDetailsLink()}"/></td><td><j:out value="${r.getDetailRemoteLink()}"/></td>
 			</tr>
 			</j:forEach>
 		</table>
@@ -59,11 +66,11 @@
 			</tr>
 			<j:forEach var="r" items="${it.passedTests}">
 			<tr>
-				<td>${it.toHtml(r)}</td>
+				<td><j:out value="${it.toHtml(r)}"/></td>
 				<td>${r.passCount}</td>
 				<td>${r.ignoredCount}</td>
 				<td>${r.duration}</td>
-				<td>${r.getDetailsLink()}</td><td>${r.getDetailRemoteLink()}</td>
+				<td><j:out value="${r.getDetailsLink()}"/></td><td><j:out value="${r.getDetailRemoteLink()}"/></td>
 			</tr>
 			</j:forEach>
 		</table>
