@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -139,12 +137,9 @@ public class FitnesseResultsRecorder extends Recorder {
 					+ resultsFile.getRemote());
 			resultsInputStream = resultsFile.read();
 
-			Path p = Paths.get(resultsFile.getRemote());
-			String resultFileName = p.getFileName().toString();
-			
 			logger.println("Parsing results... ");
 			NativePageCountsParser pageCountsParser = new NativePageCountsParser();
-			NativePageCounts pageCounts = pageCountsParser.parse(resultsInputStream, resultFileName, logger, rootDir.getAbsolutePath()
+			NativePageCounts pageCounts = pageCountsParser.parse(resultsInputStream, logger, rootDir.getAbsolutePath()
 					+ System.getProperty("file.separator"));
 			logger.println("resultsFile: " + getFitnessePathToXmlResultsIn());
 

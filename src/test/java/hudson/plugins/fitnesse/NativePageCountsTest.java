@@ -42,21 +42,21 @@ public class NativePageCountsTest {
 
 	@Test
 	public void resultsDateOfShouldStripAnyTrailingGooFromApproxDate() {
-		NativePageCounts results = new NativePageCounts(System.out, "testResult.xml", "./target/");
+		NativePageCounts results = new NativePageCounts(System.out, "./target/");
 		Assert.assertEquals("abc", results.resultsDateOf("abc&amp;"));
 		Assert.assertEquals("abc", results.resultsDateOf("abc"));
 	}
 
 	@Test
 	public void resultsShouldCollectSummaryFromAttributes() {
-		NativePageCounts results = new NativePageCounts(System.out, "testResult.xml", "./target/");
+		NativePageCounts results = new NativePageCounts(System.out, "./target/");
 		AttributesImpl attributes = new AttributesImpl();
 		addSummaryAttributes(attributes, "1", "2", "3", "4", "5");
 		results.startElement("", "", NativePageCounts.SUMMARY, attributes);
 		Assert.assertEquals(1, results.size());
 		Assert.assertNotNull(results.getSummary());
 		Assert.assertEquals(0, results.getDetails().size());
-		Assert.assertEquals("testResult.xml", results.getSummary().page);
+		Assert.assertEquals("Summary", results.getSummary().page);
 		Assert.assertEquals("", results.getSummary().resultsDate);
 		Assert.assertEquals(1, results.getSummary().right);
 		Assert.assertEquals(2, results.getSummary().wrong);
@@ -78,7 +78,7 @@ public class NativePageCountsTest {
 
 	@Test
 	public void resultsShouldCollectDetailFromAttributes() {
-		NativePageCounts results = new NativePageCounts(System.out, "testResult.xml", "./target/");
+		NativePageCounts results = new NativePageCounts(System.out, "./target/");
 		AttributesImpl attributes = new AttributesImpl();
 		attributes.addAttribute("", "", NativePageCounts.PAGE, "String", "name");
 		String resultsDate = "20100311210804";
@@ -109,7 +109,7 @@ public class NativePageCountsTest {
 
 	@Test
 	public void resultsOfTestShouldCollectSummaryFromDetail() {
-		NativePageCounts results = new NativePageCounts(System.out, "testResult.xml", "./target/");
+		NativePageCounts results = new NativePageCounts(System.out, "./target/");
 		AttributesImpl attributes = new AttributesImpl();
 		attributes.addAttribute("", "", NativePageCounts.PAGE, "String", "name");
 		String resultsDate = "20100311210804";

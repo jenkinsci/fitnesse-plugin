@@ -12,9 +12,9 @@ import javax.xml.transform.stream.StreamSource;
 
 public class NativePageCountsParser {
 
-	public NativePageCounts parse(InputStream inputStream, String resultFileName, PrintStream logger, String rootDirName)
+	public NativePageCounts parse(InputStream inputStream, PrintStream logger, String rootDirName)
 			throws TransformerException, IOException {
-		NativePageCounts fitnessePageCounts = new NativePageCounts(logger, resultFileName, rootDirName);
+		NativePageCounts fitnessePageCounts = new NativePageCounts(logger, rootDirName);
 		SAXResult intermediateResult = new SAXResult(fitnessePageCounts);
 		transformRawResults(inputStream, intermediateResult);
 		return fitnessePageCounts;
