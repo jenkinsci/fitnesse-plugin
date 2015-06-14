@@ -1,8 +1,15 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
-xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<?jelly escape-by-default='true'?>
+<j:jelly 
+  xmlns:j="jelly:core"  
+  xmlns:st="jelly:stapler" 
+  xmlns:d="jelly:define" 
+  xmlns:l="/lib/layout" 
+  xmlns:t="/lib/hudson" 
+  xmlns:f="/lib/form"
+  xmlns:i="jelly:fmt">
   
   <f:entry title="Path to fitnesse xml results file" field="fitnessePathToXmlResultsIn"
-  help="/descriptor/hudson.plugins.fitnesse.FitnesseResultsRecorder/help/pathToXmlResults">
+    help="/descriptor/hudson.plugins.fitnesse.FitnesseResultsRecorder/help/pathToXmlResults">
       <f:textbox name="fitnessePathToXmlResultsIn" />
   </f:entry>
 

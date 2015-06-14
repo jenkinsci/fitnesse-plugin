@@ -23,7 +23,6 @@ import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
-import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -58,7 +57,8 @@ public class FitnesseBuilder extends Builder {
 
 	private Map<String, String> options;
 
-	@DataBoundConstructor
+	//@DataBoundConstructor
+	//TODO: implement the constructor the correct way as intended by newer plugins
 	public FitnesseBuilder(Map<String, String> options) {
 		// Use n,v pairs to ease future extension
 		this.options = options;

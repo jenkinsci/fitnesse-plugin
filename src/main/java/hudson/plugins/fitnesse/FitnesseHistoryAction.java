@@ -1,14 +1,20 @@
 package hudson.plugins.fitnesse;
 
-import java.util.*;
+import hudson.model.Action;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.kohsuke.stapler.StaplerProxy;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
-import org.kohsuke.stapler.StaplerProxy;
 
 import static java.util.Collections.*;
 
@@ -53,8 +59,7 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 		for (AbstractBuild<?, ?> build : project.getBuilds()) {
 			FitnesseResultsAction action = build.getAction(FitnesseResultsAction.class);
 			if (action != null) {
-				// Builds are iterated in reverse-chronological order, so we append to the front of the list of results.
-				result.add(0, action.getResult());
+				result.add(action.getResult());
 			}
 		}
 

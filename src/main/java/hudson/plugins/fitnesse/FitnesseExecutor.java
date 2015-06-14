@@ -118,8 +118,7 @@ public class FitnesseExecutor {
 				"-r", absolutePathToFitNesseRoot.getName(), // --
 				"-p", Integer.toString(builder.getFitnessePort()) };
 
-		// split additional fitness options and add them to those explicitly
-		// configured ones
+		// split additional fitness options and add them to those explicitly configured ones
 		String[] addOps = splitOptions(builder.getAdditionalFitnesseOptions());
 
 		String[] fitnesse_opts2 = new String[fitnesse_opts.length + addOps.length];
@@ -261,8 +260,7 @@ public class FitnesseExecutor {
 				}
 			}
 		} catch (IOException e) {
-			// this may be a "premature EOF" caused by e.g. incorrect content-length
-			// HTTP header
+			// this may be a "premature EOF" caused by e.g. incorrect content-length HTTP header
 			// so it may be non-fatal -- try to recover
 			e.printStackTrace(logger);
 		} finally {
@@ -338,16 +336,14 @@ public class FitnesseExecutor {
 	}
 
 	static FilePath getWorkingDirectory(PrintStream logger, AbstractBuild<?, ?> build) {
-		FilePath workspace = build.getWorkspace(); // null only is slave is
-																								// disconnected
+		FilePath workspace = build.getWorkspace(); // null only is slave is disconnected
 		logger.println("Working directory is: " + workspace != null ? workspace.getRemote() : "null !!");
 		return workspace;
 	}
 
 	static FilePath getFilePath(PrintStream logger, FilePath workingDirectory, String fileName) {
 		if (workingDirectory != null) {
-			FilePath fp = workingDirectory.child(fileName); // manage absolute and
-																											// relative path
+			FilePath fp = workingDirectory.child(fileName); // manage absolute and relative path
 			try {
 				if (!fp.exists()) {
 					logger.printf("Can't find target file: %s with working directory: %s%n", fileName, workingDirectory);
@@ -358,8 +354,7 @@ public class FitnesseExecutor {
 			return fp;
 		} else { // possible ?
 			logger.println("Warning: working directory is null.");
-			File fileNameFile = new File(fileName); // should not work on slave is OS
-																							// is different than masters' OS
+			File fileNameFile = new File(fileName); // should not work on slave if OS is different than masters' one
 			return new FilePath(fileNameFile);
 		}
 	}
