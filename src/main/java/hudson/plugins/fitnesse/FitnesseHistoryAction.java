@@ -3,12 +3,16 @@ package hudson.plugins.fitnesse;
 import hudson.model.Action;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.util.RunList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.kohsuke.stapler.StaplerProxy;
 
@@ -16,73 +20,92 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
-import static java.util.Collections.*;
-
 public class FitnesseHistoryAction implements StaplerProxy, Action {
 	private final AbstractProject<?, ?> project;
+
+	private List<FitnesseResults> builds;
+	private Set<String> files;
+	Map<String, List<String>> pages;
 
 	public FitnesseHistoryAction(AbstractProject<?, ?> project) {
 		this.project = project;
 	}
 
-	public List<String> getPages(List<FitnesseResults> builds) {
-		Map<String, PageInfo> pages = new HashMap<String, PageInfo>();
+	@Override
+	@SuppressWarnings("unchecked")
+	public Object getTarget() {
+		extractValues((RunList<AbstractBuild<?, ?>>) project.getBuilds());
+		return new FitnesseHistory(project, files, pages, builds);
+	}
 
-		for (FitnesseResults results : builds) {
-			for (FitnesseResults result : results.getChildResults()) {
-				PageInfo info = pages.get(result.getName());
+	@Override
+	public String getIconFileName() {
+		return "/plugin/fitnesse/icons/fitnesselogo-32x32.gif";
+	}
+
+	@Override
+	public String getDisplayName() {
+		return "FitNesse History";
+	}
+
+	@Override
+	public String getUrlName() {
+		return "fitnesseHistory";
+	}
+
+	public void extractValues(List<AbstractBuild<?, ?>> projectBuilds) {
+		builds = new ArrayList<FitnesseResults>();
+
+		for (AbstractBuild<?, ?> build : projectBuilds) {
+			FitnesseResultsAction action = build.getAction(FitnesseResultsAction.class);
+			if (action != null) {
+				FitnesseResults result = action.getResult();
+				builds.add(result);
+
+				List<FitnesseResults> childResults = result.getChildResults();
+				extractfiles(childResults);
+				extractPages(childResults);
+			}
+		}
+	}
+
+	private void extractfiles(List<FitnesseResults> results) {
+		files = new HashSet<String>();
+		for (FitnesseResults resultFile : results) {
+			files.add(resultFile.getName());
+		}
+	}
+
+	void extractPages(List<FitnesseResults> results) {
+		pages = new HashMap<String, List<String>>();
+
+		for (FitnesseResults resultFile : results) {
+			Map<String, PageInfo> pagesInfo = new HashMap<String, PageInfo>();
+			for (FitnesseResults result : resultFile.getChildResults()) {
+				PageInfo info = pagesInfo.get(result.getName());
 				if (info == null) {
 					info = new PageInfo(result.getName());
-					pages.put(result.getName(), info);
+					pagesInfo.put(result.getName(), info);
 				}
 				info.recordResult(result);
 			}
-		}
 
-		return sorted(pages);
+			pages.put(resultFile.getName(), sorted(pagesInfo));
+		}
 	}
 
+	/*
+	 * SORT PAGES
+	 */
 	private List<String> sorted(Map<String, PageInfo> map) {
 		List<PageInfo> pages = new ArrayList<PageInfo>(map.values());
-		sort(pages, PageInfo.defaultOrdering());
+		Collections.sort(pages, PageInfo.defaultOrdering());
 		return Lists.transform(pages, new Function<PageInfo, String>() {
 
 			public String apply(PageInfo input) {
 				return input == null ? null : input.page;
 			}
 		});
-	}
-
-	private List<FitnesseResults> getBuilds(AbstractProject<?, ?> project) {
-		List<FitnesseResults> result = new ArrayList<FitnesseResults>();
-
-		for (AbstractBuild<?, ?> build : project.getBuilds()) {
-			FitnesseResultsAction action = build.getAction(FitnesseResultsAction.class);
-			if (action != null) {
-				result.add(action.getResult());
-			}
-		}
-
-		return result;
-	}
-
-	public Object getTarget() {
-		List<FitnesseResults> builds = getBuilds(project);
-		List<String> pages = getPages(builds);
-
-		return new FitnesseHistory(project, pages, builds);
-	}
-
-	public String getIconFileName() {
-		return "/plugin/fitnesse/icons/fitnesselogo-32x32.gif";
-	}
-
-	public String getDisplayName() {
-		return "FitNesse History";
-	}
-
-	public String getUrlName() {
-		return "fitnesseHistory";
 	}
 
 	private static class PageInfo {

@@ -24,9 +24,10 @@ public class FitnesseHistoryActionTest {
 		addErraticTest("Erratic", builds);
 
 		FitnesseHistoryAction fitnesseHistoryAction = new FitnesseHistoryAction(null);
-		List<String> pages = fitnesseHistoryAction.getPages(builds);
+		fitnesseHistoryAction.extractPages(builds);
 
-		assertThat(pages, contains("Erratic", "FailAllTheTime", "PassAllTheTime"));
+		assertThat(fitnesseHistoryAction.pages.get(NULL_FITNESSE_RESULT_NAME),
+				contains("FailAllTheTime", "Erratic", "PassAllTheTime"));
 	}
 
 	@Test
@@ -39,13 +40,25 @@ public class FitnesseHistoryActionTest {
 		}
 
 		FitnesseHistoryAction fitnesseHistoryAction = new FitnesseHistoryAction(null);
-		List<String> pages = fitnesseHistoryAction.getPages(builds);
-		assertThat(pages, containsInAnyOrder("Suite", "OtherSuite"));
+		fitnesseHistoryAction.extractPages(builds);
+		
+		assertThat(fitnesseHistoryAction.pages.get(NULL_FITNESSE_RESULT_NAME), containsInAnyOrder("Suite", "OtherSuite"));
 	}
 
-	private ArrayList<FitnesseResults> builds() {
-		return Lists.newArrayList(new FitnesseResults((Counts) null), new FitnesseResults((Counts) null),
-				new FitnesseResults((Counts) null), new FitnesseResults((Counts) null), new FitnesseResults((Counts) null));
+	/*
+	 * PRIVATE
+	 */
+
+	private static final String NULL_FITNESSE_RESULT_NAME = "null";
+
+	private static FitnesseResults getNewFitnesseResult() {
+		return new FitnesseResults( //
+				new Counts(NULL_FITNESSE_RESULT_NAME, "", 0, 0, 0, 0, 0, ""));
+	}
+
+	private static ArrayList<FitnesseResults> builds() {
+		return Lists.newArrayList(getNewFitnesseResult(), getNewFitnesseResult(), getNewFitnesseResult(),
+				getNewFitnesseResult(), getNewFitnesseResult());
 	}
 
 	private void addErraticTest(String page, List<FitnesseResults> builds) {
@@ -60,13 +73,13 @@ public class FitnesseHistoryActionTest {
 		}
 	}
 
-	private void addFailingTest(String page, List<FitnesseResults> builds) {
+	private static void addFailingTest(String page, List<FitnesseResults> builds) {
 		for (FitnesseResults build : builds) {
 			build.addChild(new FitnesseResults(new Counts(page, "", 3, 5, 0, 0, 0, page)));
 		}
 	}
 
-	private void addPassingTest(String page, List<FitnesseResults> builds) {
+	private static void addPassingTest(String page, List<FitnesseResults> builds) {
 		for (FitnesseResults build : builds) {
 			build.addChild(new FitnesseResults(new Counts(page, "", 3, 0, 0, 0, 0, page)));
 		}
