@@ -75,7 +75,7 @@ public class FitnesseExecutor {
 
 	private FitnesseBuildAction getFitnesseBuildAction(AbstractBuild<?, ?> build) throws IOException {
 		return new FitnesseBuildAction(builder.getFitnesseStart(), builder.getFitnesseHost(build, envVars),
-				builder.getFitnessePort());
+				builder.getFitnessePort(envVars));
 	}
 
 	private Proc startFitnesse(FilePath workingDirectory, Launcher launcher) throws IOException, InterruptedException {
@@ -116,7 +116,7 @@ public class FitnesseExecutor {
 		String[] fitnesse_opts = { // --
 		"-d", absolutePathToFitNesseRoot.getParent().getRemote(), // --
 				"-r", absolutePathToFitNesseRoot.getName(), // --
-				"-p", Integer.toString(builder.getFitnessePort()) };
+				"-p", Integer.toString(builder.getFitnessePort(envVars)) };
 
 		// split additional fitness options and add them to those explicitly configured ones
 		String[] addOps = splitOptions(builder.getAdditionalFitnesseOptions());
@@ -280,7 +280,7 @@ public class FitnesseExecutor {
 	/* package for test */URL getFitnessePage(AbstractBuild<?, ?> build, boolean withCommand) throws IOException {
 		return new URL("http", //
 				builder.getFitnesseHost(build, envVars), //
-				builder.getFitnessePort(), //
+				builder.getFitnessePort(envVars), //
 				withCommand ? getFitnessePageCmd() : getFitnessePageBase());
 	}
 

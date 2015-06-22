@@ -168,9 +168,13 @@ public class FitnesseBuilder extends Builder {
 	/**
 	 * referenced in config.jelly
 	 */
-	public int getFitnessePort() {
+	public String getFitnessePort() {
+		return getOption(FITNESSE_PORT_REMOTE, getOption(FITNESSE_PORT_LOCAL, getOption(FITNESSE_PORT, "-1")));
+	}
+
+	public int getFitnessePort(EnvVars environment) {
 		return Integer.parseInt(getOption(FITNESSE_PORT_REMOTE,
-				getOption(FITNESSE_PORT_LOCAL, getOption(FITNESSE_PORT, "-1"))));
+				getOption(FITNESSE_PORT_LOCAL, getOption(FITNESSE_PORT, "-1", environment), environment), environment));
 	}
 
 	/**
@@ -236,8 +240,8 @@ public class FitnesseBuilder extends Builder {
 	/**
 	 * referenced in config.jelly
 	 */
-	public int getFitnesseHttpTimeout() {
-		return Integer.parseInt(getOption(HTTP_TIMEOUT, String.valueOf(_URL_READ_TIMEOUT_MILLIS)));
+	public String getFitnesseHttpTimeout() {
+		return getOption(HTTP_TIMEOUT, String.valueOf(_URL_READ_TIMEOUT_MILLIS));
 	}
 
 	public int getFitnesseHttpTimeout(EnvVars environment) {
@@ -296,7 +300,8 @@ public class FitnesseBuilder extends Builder {
 				if (intValue < 1)
 					return FormValidation.error("Port must be a positive integer.");
 			} catch (NumberFormatException e) {
-				return FormValidation.error("Port must be a number.");
+				if (!value.startsWith("$"))
+					return FormValidation.error("Port must be a number.");
 			}
 			return FormValidation.ok();
 		}
