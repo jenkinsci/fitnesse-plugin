@@ -3,6 +3,7 @@ package hudson.plugins.fitnesse;
 import hudson.model.Action;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.util.RunList;
 
 import java.util.ArrayList;
@@ -61,6 +62,13 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 			FitnesseResultsAction action = build.getAction(FitnesseResultsAction.class);
 			if (action != null) {
 				FitnesseResults result = action.getResult();
+
+				if(!(result instanceof CompoundFitnesseResults)) 
+				{
+					FitnesseResults fakeResult = new FitnesseResults(new Counts("ALL", "", 0, 0, 0, 0, 0, "ALL"));
+					fakeResult.addChild(result);
+					result = fakeResult;
+				}
 				builds.add(result);
 
 				List<FitnesseResults> childResults = result.getChildResults();
