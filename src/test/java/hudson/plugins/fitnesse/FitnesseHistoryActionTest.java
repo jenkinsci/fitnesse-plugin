@@ -4,6 +4,7 @@ import hudson.plugins.fitnesse.NativePageCounts.Counts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -16,17 +17,15 @@ public class FitnesseHistoryActionTest {
 
 	@Test
 	public void pagesShouldBeOrderedByErraticness() {
-
 		List<FitnesseResults> builds = builds();
 
 		addFailingTest("FailAllTheTime", builds);
 		addPassingTest("PassAllTheTime", builds);
 		addErraticTest("Erratic", builds);
 
-		FitnesseHistoryAction fitnesseHistoryAction = new FitnesseHistoryAction(null);
-		fitnesseHistoryAction.extractPages(builds);
+		Map<String, List<String>> pages = FitnesseHistoryAction.extractPages(builds);
 
-		assertThat(fitnesseHistoryAction.pages.get(NULL_FITNESSE_RESULT_NAME),
+		assertThat(pages.get(NULL_FITNESSE_RESULT_NAME),
 				contains("FailAllTheTime", "Erratic", "PassAllTheTime"));
 	}
 
@@ -39,10 +38,9 @@ public class FitnesseHistoryActionTest {
 			build.addChild(new FitnesseResults(new Counts("OtherSuite", "", 0, 0, 0, 0, 0, "OtherContent")));
 		}
 
-		FitnesseHistoryAction fitnesseHistoryAction = new FitnesseHistoryAction(null);
-		fitnesseHistoryAction.extractPages(builds);
+		Map<String, List<String>> pages = FitnesseHistoryAction.extractPages(builds);
 		
-		assertThat(fitnesseHistoryAction.pages.get(NULL_FITNESSE_RESULT_NAME), containsInAnyOrder("Suite", "OtherSuite"));
+		assertThat(pages.get(NULL_FITNESSE_RESULT_NAME), containsInAnyOrder("Suite", "OtherSuite"));
 	}
 
 	/*

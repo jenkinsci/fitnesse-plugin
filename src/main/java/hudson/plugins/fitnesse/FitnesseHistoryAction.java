@@ -12,20 +12,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.kohsuke.stapler.StaplerProxy;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
 public class FitnesseHistoryAction implements StaplerProxy, Action {
 	private final AbstractProject<?, ?> project;
 
 	private List<FitnesseResults> builds;
-	private Set<String> files;
-	Map<String, List<String>> pages;
+	private Map<String, List<String>> allPages;
+	private Set<String> allFiles;
 
 	public FitnesseHistoryAction(AbstractProject<?, ?> project) {
 		this.project = project;
@@ -35,7 +34,7 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 	@SuppressWarnings("unchecked")
 	public Object getTarget() {
 		extractValues((RunList<AbstractBuild<?, ?>>) project.getBuilds());
-		return new FitnesseHistory(project, files, pages, builds);
+		return new FitnesseHistory(project, allFiles, allPages, builds);
 	}
 
 	@Override
@@ -55,6 +54,8 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 
 	public void extractValues(List<AbstractBuild<?, ?>> projectBuilds) {
 		builds = new ArrayList<FitnesseResults>();
+		allFiles = new HashSet<String>();
+		allPages = new HashMap<String, List<String>>();
 
 		for (AbstractBuild<?, ?> build : projectBuilds) {
 			FitnesseResultsAction action = build.getAction(FitnesseResultsAction.class);
@@ -63,21 +64,38 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 				builds.add(result);
 
 				List<FitnesseResults> childResults = result.getChildResults();
-				extractfiles(childResults);
-				extractPages(childResults);
+
+				Set<String> files = extractfiles(childResults);
+				allFiles.addAll(files);
+
+				Map<String, List<String>> pages = extractPages(childResults);
+				for (Entry<String, List<String>> entry : pages.entrySet()) {
+					String newFile = entry.getKey();
+					List<String> newPages = entry.getValue();
+					List<String> existentPages = allPages.get(newFile);
+					if (existentPages != null) {
+						for (String newPage : newPages) {
+							if (!existentPages.contains(newPage))
+								existentPages.add(newPage);
+						}
+					} else {
+						allPages.put(newFile, newPages);
+					}
+				}
 			}
 		}
 	}
 
-	private void extractfiles(List<FitnesseResults> results) {
-		files = new HashSet<String>();
+	private static Set<String> extractfiles(List<FitnesseResults> results) {
+		HashSet<String> files = new HashSet<String>();
 		for (FitnesseResults resultFile : results) {
 			files.add(resultFile.getName());
 		}
+		return files;
 	}
 
-	void extractPages(List<FitnesseResults> results) {
-		pages = new HashMap<String, List<String>>();
+	static Map<String, List<String>> extractPages(List<FitnesseResults> results) {
+		Map<String, List<String>> pages = new HashMap<String, List<String>>();
 
 		for (FitnesseResults resultFile : results) {
 			Map<String, PageInfo> pagesInfo = new HashMap<String, PageInfo>();
@@ -92,20 +110,21 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 
 			pages.put(resultFile.getName(), sorted(pagesInfo));
 		}
+		return pages;
 	}
 
 	/*
 	 * SORT PAGES
 	 */
-	private List<String> sorted(Map<String, PageInfo> map) {
+	private static List<String> sorted(Map<String, PageInfo> map) {
 		List<PageInfo> pages = new ArrayList<PageInfo>(map.values());
 		Collections.sort(pages, PageInfo.defaultOrdering());
-		return Lists.transform(pages, new Function<PageInfo, String>() {
 
-			public String apply(PageInfo input) {
-				return input == null ? null : input.page;
-			}
-		});
+		List<String> pagesList = new ArrayList<String>();
+		for (PageInfo pageInfo : pages) {
+			pagesList.add(pageInfo.page);
+		}
+		return pagesList;
 	}
 
 	private static class PageInfo {
