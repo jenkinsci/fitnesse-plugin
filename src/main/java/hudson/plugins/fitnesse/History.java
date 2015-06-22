@@ -24,10 +24,7 @@
 package hudson.plugins.fitnesse;
 
 import hudson.model.AbstractBuild;
-import hudson.model.Hudson;
 import hudson.tasks.test.Messages;
-import hudson.tasks.test.TestObject;
-import hudson.tasks.test.TestResult;
 import hudson.util.ChartUtil;
 import hudson.util.ColorPalette;
 import hudson.util.DataSetBuilder;
@@ -40,6 +37,8 @@ import java.awt.Paint;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import jenkins.model.Jenkins;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -58,22 +57,18 @@ import org.jfree.ui.RectangleInsets;
  * @since 1.320
  */
 public class History {
-	private final TestObject testObject;
+	private final FitnesseResults testObject;
 	private final int graphWidth;
 	private final int graphHeight;
 
-	public History(TestObject testObject, int graphWidth, int graphHeight) {
+	public History(FitnesseResults testObject, int graphWidth, int graphHeight) {
 		this.testObject = testObject;
 		this.graphWidth = graphWidth;
 		this.graphHeight = graphHeight;
 	}
 
-	public History(TestObject testObject) {
+	public History(FitnesseResults testObject) {
 		this(testObject, 600, 300);
-	}
-
-	public TestObject getTestObject() {
-		return testObject;
 	}
 
 	public boolean historyAvailable() {
@@ -86,12 +81,12 @@ public class History {
 		}
 	}
 
-	public List<TestResult> getList() {
-		List<TestResult> list = new ArrayList<TestResult>();
+	public List<FitnesseResults> getList() {
+		List<FitnesseResults> list = new ArrayList<FitnesseResults>();
 		for (AbstractBuild<?, ?> b : testObject.getOwner().getParent().getBuilds()) {
 			if (b.isBuilding())
 				continue;
-			TestResult o = testObject.getResultInBuild(b);
+			FitnesseResults o = (FitnesseResults) testObject.getResultInRun(b);
 			if (o != null) {
 				list.add(o);
 			}
@@ -106,7 +101,7 @@ public class History {
 		return new GraphImpl("seconds") {
 			protected DataSetBuilder<String, ChartLabel> createDataSet() {
 				DataSetBuilder<String, ChartLabel> data = new DataSetBuilder<String, ChartLabel>();
-				for (hudson.tasks.test.TestResult o : getList()) {
+				for (FitnesseResults o : getList()) {
 					data.add(((double) o.getDuration()) / (1000), "", new ChartLabel(o) {
 						@Override
 						public Color getColor() {
@@ -136,7 +131,7 @@ public class History {
 			protected DataSetBuilder<String, ChartLabel> createDataSet() {
 				DataSetBuilder<String, ChartLabel> data = new DataSetBuilder<String, ChartLabel>();
 
-				for (TestResult o : getList()) {
+				for (FitnesseResults o : getList()) {
 					data.add(o.getPassCount(), "2Passed", new ChartLabel(o));
 					data.add(o.getFailCount(), "1Failed", new ChartLabel(o));
 					data.add(o.getSkipCount(), "0Skipped", new ChartLabel(o));
@@ -244,10 +239,10 @@ public class History {
 	}
 
 	class ChartLabel implements Comparable<ChartLabel> {
-		TestResult o;
+		FitnesseResults o;
 		String url;
 
-		public ChartLabel(TestResult o) {
+		public ChartLabel(FitnesseResults o) {
 			this.o = o;
 			this.url = null;
 		}
@@ -262,7 +257,7 @@ public class History {
 			AbstractBuild<?, ?> build = o.getOwner();
 			String buildLink = build.getUrl();
 			String actionUrl = o.getTestResultAction().getUrlName();
-			this.url = Hudson.getInstance().getRootUrlFromRequest() + buildLink + actionUrl + o.getUrl();
+			this.url = Jenkins.getInstance().getRootUrlFromRequest() + buildLink + actionUrl + o.getUrl();
 		}
 
 		public int compareTo(ChartLabel that) {

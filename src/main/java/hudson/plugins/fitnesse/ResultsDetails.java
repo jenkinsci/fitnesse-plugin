@@ -45,7 +45,7 @@ public class ResultsDetails extends TestResult {
 	}
 
 	public String getDisplayName() {
-		return parentResults.getDisplayName() + " Details";
+		return "Details";
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class ResultsDetails extends TestResult {
 	}
 
 	@Override
-	public AbstractTestResultAction getTestResultAction() {
+	public AbstractTestResultAction<?> getTestResultAction() {
 		return parentResults.getTestResultAction();
 	}
 

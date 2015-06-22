@@ -141,7 +141,7 @@ public class FitnesseResultsRecorder extends Recorder {
 
 			Path p = Paths.get(resultsFile.getRemote());
 			String resultFileName = p.getFileName().toString();
-			
+
 			logger.println("Parsing results... ");
 			NativePageCountsParser pageCountsParser = new NativePageCountsParser();
 			NativePageCounts pageCounts = pageCountsParser.parse(resultsInputStream, resultFileName, logger, rootDir.getAbsolutePath()
@@ -166,14 +166,11 @@ public class FitnesseResultsRecorder extends Recorder {
 	 */
 	@Override
 	public DescriptorImpl getDescriptor() {
-		return DESCRIPTOR;
+		return (DescriptorImpl) super.getDescriptor();
 	}
 
-	private static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-
 	/**
-	 * See
-	 * <tt>src/main/resources/hudson/plugins/fitnesse/FitnesseResultsRecorder/config.jelly</tt>
+	 * See <tt>src/main/resources/hudson/plugins/fitnesse/FitnesseResultsRecorder/config.jelly</tt>
 	 */
 	@Extension
 	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
@@ -191,6 +188,7 @@ public class FitnesseResultsRecorder extends Recorder {
 		 * {@link BuildStepDescriptor}
 		 */
 		@Override
+		@SuppressWarnings("rawtypes")
 		public boolean isApplicable(Class<? extends AbstractProject> jobType) {
 			// works with any kind of project
 			return true;

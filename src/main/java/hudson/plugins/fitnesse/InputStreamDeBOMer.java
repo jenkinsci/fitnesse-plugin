@@ -1,11 +1,10 @@
 package hudson.plugins.fitnesse;
 
-import hudson.util.IOUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 /**

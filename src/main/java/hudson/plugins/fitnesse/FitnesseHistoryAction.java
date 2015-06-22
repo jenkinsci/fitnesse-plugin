@@ -72,11 +72,11 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 				for (Entry<String, List<String>> entry : pages.entrySet()) {
 					String newFile = entry.getKey();
 					List<String> newPages = entry.getValue();
-					List<String> existentPages = allPages.get(newFile);
-					if (existentPages != null) {
+					List<String> existingPages = allPages.get(newFile);
+					if (existingPages != null) {
 						for (String newPage : newPages) {
-							if (!existentPages.contains(newPage))
-								existentPages.add(newPage);
+							if (!existingPages.contains(newPage))
+								existingPages.add(newPage);
 						}
 					} else {
 						allPages.put(newFile, newPages);

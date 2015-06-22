@@ -24,12 +24,18 @@ public class FitnessePlugin extends Plugin {
 	private static void initTemplate() throws TransformerFactoryConfigurationError, IOException,
 			TransformerConfigurationException {
 
-		InputStream is = FitnessePlugin.class.getResourceAsStream("fitnesse-results.xsl");
-		InputStream isDeBom = InputStreamDeBOMer.deBOM(is);
+		InputStream is = null;
+		try {
+			is = FitnessePlugin.class.getResourceAsStream("fitnesse-results.xsl");
+			InputStream isDeBom = InputStreamDeBOMer.deBOM(is);
 
-		StreamSource xslSource = new StreamSource(isDeBom);
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		templates = transformerFactory.newTemplates(xslSource);
+			StreamSource xslSource = new StreamSource(isDeBom);
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			templates = transformerFactory.newTemplates(xslSource);
+		} finally {
+			if (is != null)
+				is.close();
+		}
 	}
 
 	public static Transformer newRawResultsTransformer() throws TransformerException {

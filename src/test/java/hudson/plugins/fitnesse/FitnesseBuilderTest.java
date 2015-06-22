@@ -1,12 +1,10 @@
 package hudson.plugins.fitnesse;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import hudson.EnvVars;
 import hudson.model.AbstractBuild;
 import hudson.model.Node;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.util.DescribableList;
-import hudson.EnvVars;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +13,9 @@ import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class FitnesseBuilderTest {
 	@Test
@@ -70,10 +71,10 @@ public class FitnesseBuilderTest {
 		FitnesseBuilder builder = new FitnesseBuilder(options);
 
 		Assert.assertTrue(builder.getFitnesseStart());
-		//		Assert.assertEquals("localhost", builder.getFitnesseHost());
-		//		
-		//		options.put(FitnesseBuilder.FITNESSE_HOST, "abracadabra");
-		//		Assert.assertEquals("localhost", builder.getFitnesseHost());
+		Assert.assertEquals("localhost", builder.getFitnesseHost());
+
+		options.put(FitnesseBuilder.FITNESSE_HOST, "abracadabra");
+		Assert.assertEquals("localhost", builder.getFitnesseHost());
 	}
 
 	@Test
@@ -83,11 +84,11 @@ public class FitnesseBuilderTest {
 		options.put(FitnesseBuilder.FITNESSE_HOST, "hudson.local");
 		FitnesseBuilder builder = new FitnesseBuilder(options);
 
-		//		Assert.assertFalse(builder.getFitnesseStart());
-		//		Assert.assertEquals("hudson.local", builder.getFitnesseHost());
-		//		
-		//		options.put(FitnesseBuilder.FITNESSE_HOST, "abracadabra");
-		//		Assert.assertEquals("abracadabra", builder.getFitnesseHost());
+		Assert.assertFalse(builder.getFitnesseStart());
+		Assert.assertEquals("hudson.local", builder.getFitnesseHost());
+
+		options.put(FitnesseBuilder.FITNESSE_HOST, "abracadabra");
+		Assert.assertEquals("abracadabra", builder.getFitnesseHost());
 	}
 
 	@Test

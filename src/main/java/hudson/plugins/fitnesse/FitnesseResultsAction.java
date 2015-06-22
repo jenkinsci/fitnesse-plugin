@@ -10,9 +10,8 @@ public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResu
 	private FitnesseResults results;
 
 	protected FitnesseResultsAction(AbstractBuild<?, ?> owner, FitnesseResults results) {
-		super(owner);
 		this.results = results;
-		results.setOwner(owner);
+		this.results.setOwner(owner);
 	}
 
 	@Override

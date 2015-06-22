@@ -3,7 +3,6 @@ package hudson.plugins.fitnesse;
 import hudson.model.ModelObject;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
-import hudson.model.Hudson;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.test.TabulatedResult;
 import hudson.tasks.test.TestObject;
@@ -15,6 +14,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import jenkins.model.Jenkins;
+
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
@@ -23,8 +24,7 @@ public class FitnesseResults extends TabulatedResult implements
 		Comparable<FitnesseResults> {
 	private static final String DETAILS = "Details";
 
-	// private static final Logger log =
-	// Logger.getLogger(FitnesseResults.class.getName());
+	// private static final Logger log = Logger.getLogger(FitnesseResults.class.getName());
 
 	private static final long serialVersionUID = 1L;
 	private transient List<FitnesseResults> failed;
@@ -32,7 +32,7 @@ public class FitnesseResults extends TabulatedResult implements
 	private transient List<FitnesseResults> passed;
 
 	private Counts pageCounts;
-	private TestObject parent;
+	private FitnesseResults parent;
 	private List<FitnesseResults> details = new ArrayList<FitnesseResults>();
 	private AbstractBuild<?, ?> owner;
 
@@ -92,7 +92,7 @@ public class FitnesseResults extends TabulatedResult implements
 
 	@Override
 	public void setParent(TestObject parentObject) {
-		this.parent = parentObject;
+		this.parent = (FitnesseResults) parentObject;
 	}
 
 	@Override
@@ -318,8 +318,7 @@ public class FitnesseResults extends TabulatedResult implements
 		if (buildAction == null) {
 			buildAction = FitnesseBuildAction.NULL_ACTION;
 		}
-		return buildAction.getLinkFor(results.getName(), Hudson.getInstance()
-				.getRootUrl());
+		return buildAction.getLinkFor(results.getName(), Jenkins.getInstance().getRootUrl());
 	}
 
 	/**
@@ -350,12 +349,11 @@ public class FitnesseResults extends TabulatedResult implements
 	}
 
 	/**
-	 * called from links embedded in history/trend graphs TODO: Expose
-	 * sub-suites as separate elements of the fitnesse report.
+	 * called from links embedded in history/trend graphs 
+	 * TODO: Expose sub-suites as separate elements of the fitnesse report.
 	 */
 	@Override
-	public Object getDynamic(String token, StaplerRequest req,
-			StaplerResponse rsp) {
+	public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
 		TestResult result = findCorrespondingResult(token);
 		if (result != null) {
 			return result;
