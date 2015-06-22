@@ -23,6 +23,7 @@ import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -57,8 +58,7 @@ public class FitnesseBuilder extends Builder {
 
 	private Map<String, String> options;
 
-	//@DataBoundConstructor
-	//TODO: implement the constructor the correct way as intended by newer plugins
+	@DataBoundConstructor
 	public FitnesseBuilder(Map<String, String> options) {
 		// Use n,v pairs to ease future extension
 		this.options = options;
@@ -267,16 +267,7 @@ public class FitnesseBuilder extends Builder {
 	}
 
 	/**
-	 * {@link Builder}
-	 */
-	@Override
-	public DescriptorImpl getDescriptor() {
-		return (DescriptorImpl) super.getDescriptor();
-	}
-
-	/**
-	 * See
-	 * <tt>src/main/resources/hudson/plugins/fitnesse/FitnesseBuilder/config.jelly</tt>
+	 * See <tt>src/main/resources/hudson/plugins/fitnesse/FitnesseBuilder/config.jelly</tt>
 	 */
 	@Extension
 	public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
@@ -394,6 +385,8 @@ public class FitnesseBuilder extends Builder {
 		/**
 		 * {@link BuildStepDescriptor}
 		 */
+		@Override
+		@SuppressWarnings("rawtypes")
 		public boolean isApplicable(Class<? extends AbstractProject> aClass) {
 			// indicates that this builder can be used with all kinds of project types
 			return true;
