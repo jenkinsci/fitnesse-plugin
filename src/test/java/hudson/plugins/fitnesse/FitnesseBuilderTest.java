@@ -43,13 +43,13 @@ public class FitnesseBuilderTest {
 		FitnesseBuilder builder = new FitnesseBuilder(options);
 
 		options.put(FitnesseBuilder.FITNESSE_PORT_LOCAL, "99");
-		Assert.assertEquals(99, builder.getFitnessePort());
+		Assert.assertEquals("99", builder.getFitnessePort());
 
 		options.put(FitnesseBuilder.FITNESSE_PORT_REMOTE, null);
-		Assert.assertEquals(99, builder.getFitnessePort());
+		Assert.assertEquals("99", builder.getFitnessePort());
 
 		options.put(FitnesseBuilder.FITNESSE_PORT_REMOTE, "");
-		Assert.assertEquals(99, builder.getFitnessePort());
+		Assert.assertEquals("99", builder.getFitnessePort());
 	}
 
 
@@ -59,13 +59,13 @@ public class FitnesseBuilderTest {
 		FitnesseBuilder builder = new FitnesseBuilder(options);
 
 		options.put(FitnesseBuilder.FITNESSE_PORT_REMOTE, "999");
-		Assert.assertEquals(999, builder.getFitnessePort());
+		Assert.assertEquals("999", builder.getFitnessePort());
 
 		options.put(FitnesseBuilder.FITNESSE_PORT_LOCAL, null);
-		Assert.assertEquals(999, builder.getFitnessePort());
+		Assert.assertEquals("999", builder.getFitnessePort());
 
 		options.put(FitnesseBuilder.FITNESSE_PORT_LOCAL, "");
-		Assert.assertEquals(999, builder.getFitnessePort());
+		Assert.assertEquals("999", builder.getFitnessePort());
 	}
 
 
@@ -113,9 +113,10 @@ public class FitnesseBuilderTest {
 		HashMap<String, String> options = new HashMap<String, String>();
 		FitnesseBuilder builder = new FitnesseBuilder(options);
 
-		Assert.assertEquals(60000, builder.getFitnesseHttpTimeout());
+		Assert.assertEquals("60000", builder.getFitnesseHttpTimeout());
+
 		options.put(FitnesseBuilder.HTTP_TIMEOUT, "1000");
-		Assert.assertEquals(1000, builder.getFitnesseHttpTimeout());
+		Assert.assertEquals("1000", builder.getFitnesseHttpTimeout());
 	}
 
 	@Test
