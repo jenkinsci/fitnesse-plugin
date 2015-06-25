@@ -8,7 +8,7 @@
   xmlns:f="/lib/form"
   xmlns:i="jelly:fmt">
 
-<f:block><em>Fitnesse instance</em></f:block>
+<f:block><em>FitNesse instance</em></f:block>
   
   <f:radioBlock name="fitnesseStart" value="False" 
   title="FitNesse instance is already running"
@@ -32,7 +32,7 @@
   </f:radioBlock>
 
   <f:radioBlock name="fitnesseStart" value="True" 
-  title="Start new Fitnesse instance as part of build" 
+  title="Start new FitNesse instance as part of build" 
   help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/fitnesseStartTrue" 
   checked="${instance.fitnesseStart==true}">
     
@@ -77,14 +77,14 @@
 	    value="${instance.fitnessePathToRoot}" />
 	  </f:entry>
 	  
-	  <f:entry title="Port for Fitnesse instance"  
+	  <f:entry title="Port for FitNesse instance"  
 	  help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/fitnessePort"> 
 	    <f:textbox name="fitnessePortLocal"  
         checkUrl="'descriptorByName/hudson.plugins.fitnesse.FitnesseBuilder/checkFitnessePort?value='+toValue(this)" 
 	    value="${instance.fitnessePort}" />
 	  </f:entry>
 	  
-	  <f:entry title="Additional Fitnesse command line options (e.g. -o)" 
+	  <f:entry title="Additional FitNesse command line options (e.g. -o)" 
 	  help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/additionalFitnesseOptions">
         <f:textbox name="additionalFitnesseOptions"
         checkUrl="'descriptorByName/hudson.plugins.fitnesse.FitnesseBuilder/checkAdditionalFitnesseOptions?value='+toValue(this)" 
