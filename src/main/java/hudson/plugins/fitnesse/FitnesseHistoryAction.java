@@ -67,6 +67,7 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 				{
 					FitnesseResults fakeResult = new FitnesseResults(new Counts("ALL", "", 0, 0, 0, 0, 0, "ALL"));
 					fakeResult.addChild(result);
+					fakeResult.setOwner(build);
 					result = fakeResult;
 				}
 				builds.add(result);
