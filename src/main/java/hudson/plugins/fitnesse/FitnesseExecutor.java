@@ -278,7 +278,7 @@ public class FitnesseExecutor {
 	}
 
 	/* package for test */URL getFitnessePage(AbstractBuild<?, ?> build, boolean withCommand) throws IOException {
-		return new URL("http", //
+		return new URL(builder.getFitnesseSsl() ? "https" : "http", //
 				builder.getFitnesseHost(build, envVars), //
 				builder.getFitnessePort(envVars), //
 				withCommand ? getFitnessePageCmd() : getFitnessePageBase());
