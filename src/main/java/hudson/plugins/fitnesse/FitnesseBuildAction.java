@@ -18,14 +18,20 @@ public class FitnesseBuildAction extends InvisibleAction implements Action {
 	private final String fitnesseHost;
 	private final int fitnessePort;
 	private final boolean fitnesseStarted;
+	private final boolean enableSsl;
 
 	public FitnesseBuildAction(boolean fitnesseStarted, String fitnesseHost, int fitnessePort) {
-		this.fitnesseStarted = fitnesseStarted;
-		this.fitnesseHost = fitnesseHost;
-		this.fitnessePort = fitnessePort;
+	    this(fitnesseStarted, fitnesseHost, fitnessePort, false);
 	}
 
-	public String getLinkFor(String fitnessePage) {
+	public FitnesseBuildAction(boolean fitnesseStarted, String fitnesseHost, int fitnessePort, boolean enableSsl) {
+        this.fitnesseStarted = fitnesseStarted;
+        this.fitnesseHost = fitnesseHost;
+        this.fitnessePort = fitnessePort;
+        this.enableSsl = enableSsl;
+    }
+
+    public String getLinkFor(String fitnessePage) {
 		return getLinkFor(fitnessePage, null, fitnessePage);
 	}
 	
@@ -43,8 +49,8 @@ public class FitnesseBuildAction extends InvisibleAction implements Action {
 			} catch (MalformedURLException e) {
 			}
 		}
-		return String.format("<a href=\"http://%s:%s/%s\">%s</a>", 
-				host, fitnessePort, fitnessePage, display);
+		return String.format("<a href=\"%s://%s:%s/%s\">%s</a>", 
+				enableSsl ? "https" : "http", host, fitnessePort, fitnessePage, display);
 	}
 
 }

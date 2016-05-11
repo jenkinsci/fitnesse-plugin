@@ -75,7 +75,7 @@ public class FitnesseExecutor {
 
 	private FitnesseBuildAction getFitnesseBuildAction(AbstractBuild<?, ?> build) throws IOException {
 		return new FitnesseBuildAction(builder.getFitnesseStart(), builder.getFitnesseHost(build, envVars),
-				builder.getFitnessePort(envVars));
+				builder.getFitnessePort(envVars), builder.getFitnesseSsl());
 	}
 
 	private Proc startFitnesse(FilePath workingDirectory, Launcher launcher) throws IOException, InterruptedException {
