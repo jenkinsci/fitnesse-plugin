@@ -429,7 +429,7 @@ public class FitnesseBuilder extends Builder {
 			}
 			return newFitnesseBuilder(
 					startFitnesseValue,
-					collectFormData(formData, new String[] { FITNESSE_HOST, FITNESSE_PORT_REMOTE, TARGET_PAGE, TARGET_IS_SUITE,
+					collectFormData(formData, new String[] { FITNESSE_HOST, FITNESSE_PORT_REMOTE, FITNESSE_ENABLE_SSL, TARGET_PAGE, TARGET_IS_SUITE,
 							HTTP_TIMEOUT, TEST_TIMEOUT, PATH_TO_RESULTS }));
 		}
 
