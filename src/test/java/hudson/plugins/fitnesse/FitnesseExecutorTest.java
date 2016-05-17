@@ -2,6 +2,7 @@ package hudson.plugins.fitnesse;
 
 import hudson.EnvVars;
 import hudson.FilePath;
+import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.StreamBuildListener;
 
@@ -14,10 +15,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class FitnesseExecutorTest {
 
@@ -158,7 +161,30 @@ public class FitnesseExecutorTest {
 		Assert.assertEquals("9000", cmd.get(8));
 	}
 
-	@Test
+
+    @Test
+    public void fitnessePage() throws IOException {
+        final AbstractBuild<?, ?> build = Mockito.mock(AbstractBuild.class);
+        init(new String[] { FitnesseBuilder.FITNESSE_HOST, FitnesseBuilder.FITNESSE_PORT },
+                new String[] { "localhost", "8080" });
+
+        final String page = executor.getFitnessePage(build, true).toExternalForm();
+        Assert.assertThat(page, Matchers.startsWith("http://localhost:8080"));
+    }
+
+    @Test
+    public void fitnessePageWithSslEnabled() throws IOException {
+        final AbstractBuild<?, ?> build = Mockito.mock(AbstractBuild.class);
+        init(new String[] {
+                FitnesseBuilder.FITNESSE_HOST,
+                FitnesseBuilder.FITNESSE_PORT,
+                FitnesseBuilder.FITNESSE_ENABLE_SSL }, new String[] { "localhost", "8443", "True" });
+
+        final String page = executor.getFitnessePage(build, true).toExternalForm();
+        Assert.assertThat(page, Matchers.startsWith("https://localhost:8443"));
+    }
+
+    @Test
 	public void fitnessePageBase() {
 		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE }, new String[] { "WikiPage",
 				"true" });

@@ -28,6 +28,11 @@
         checkUrl="'descriptorByName/hudson.plugins.fitnesse.FitnesseBuilder/checkFitnessePort?value='+toValue(this)" 
 	    value="${instance.fitnessePort}" />
 	  </f:entry>
+
+      <f:entry title="Enable SSL?" field="fitnesseEnableSsl"
+      help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/fitnesseEnableSsl">
+        <f:checkbox name="fitnesseEnableSsl" value="True" checked="${instance.fitnesseSsl==true}"/>
+      </f:entry>
       
   </f:radioBlock>
 

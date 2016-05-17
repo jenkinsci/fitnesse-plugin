@@ -75,7 +75,7 @@ public class FitnesseExecutor {
 
 	private FitnesseBuildAction getFitnesseBuildAction(AbstractBuild<?, ?> build) throws IOException {
 		return new FitnesseBuildAction(builder.getFitnesseStart(), builder.getFitnesseHost(build, envVars),
-				builder.getFitnessePort(envVars));
+				builder.getFitnessePort(envVars), builder.getFitnesseSsl());
 	}
 
 	private Proc startFitnesse(FilePath workingDirectory, Launcher launcher) throws IOException, InterruptedException {
@@ -278,7 +278,7 @@ public class FitnesseExecutor {
 	}
 
 	/* package for test */URL getFitnessePage(AbstractBuild<?, ?> build, boolean withCommand) throws IOException {
-		return new URL("http", //
+		return new URL(builder.getFitnesseSsl() ? "https" : "http", //
 				builder.getFitnesseHost(build, envVars), //
 				builder.getFitnessePort(envVars), //
 				withCommand ? getFitnessePageCmd() : getFitnessePageBase());

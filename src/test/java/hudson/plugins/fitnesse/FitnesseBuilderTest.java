@@ -69,6 +69,21 @@ public class FitnesseBuilderTest {
 	}
 
 
+    @Test
+    public void getSslShouldReturnSslIfSpecified() {
+        final HashMap<String, String> options = new HashMap<String, String>();
+        final FitnesseBuilder builder = new FitnesseBuilder(options);
+
+        options.put(FitnesseBuilder.FITNESSE_ENABLE_SSL, "True");
+        Assert.assertEquals(true, builder.getFitnesseSsl());
+
+        options.put(FitnesseBuilder.FITNESSE_ENABLE_SSL, null);
+        Assert.assertEquals(false, builder.getFitnesseSsl());
+
+        options.put(FitnesseBuilder.FITNESSE_ENABLE_SSL, "");
+        Assert.assertEquals(false, builder.getFitnesseSsl());
+    }
+
 	@Test
 	public void getPortShouldReturnEnvValueIfMacroIsSpecified() {
 		HashMap<String, String> options = new HashMap<String, String>();

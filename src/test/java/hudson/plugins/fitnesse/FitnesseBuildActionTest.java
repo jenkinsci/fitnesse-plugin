@@ -21,12 +21,20 @@ public class FitnesseBuildActionTest {
 				action.getLinkFor("pagename", "http://host:8080"));
 	}
 
-	@Test
-	public void getLinkForPageWhenBuildNotStartedFitnesseShouldBeHtmlALink() {
-		FitnesseBuildAction action = new FitnesseBuildAction(false, "host", 8900);
-		Assert.assertEquals("<a href=\"http://host:8900/pagename\">pagename</a>", 
-				action.getLinkFor("pagename"));
-	}
+    @Test
+    public void getLinkForPageWhenBuildNotStartedFitnesseShouldBeHtmlALink() {
+        FitnesseBuildAction action = new FitnesseBuildAction(false, "host", 8900);
+        Assert.assertEquals("<a href=\"http://host:8900/pagename\">pagename</a>", 
+                action.getLinkFor("pagename"));
+    }
+
+    @Test
+    public void getLinkForPageWhenSslEnabledShouldBeHttpsALink() {
+        boolean enableSsl = true;
+        FitnesseBuildAction action = new FitnesseBuildAction(false, "host", 8900, enableSsl);
+        Assert.assertEquals("<a href=\"https://host:8900/pagename\">pagename</a>", 
+                action.getLinkFor("pagename"));
+    }
 	
 	@Test
 	public void getLinkForPageShouldSubsitituteHostNameForLocalHost() {

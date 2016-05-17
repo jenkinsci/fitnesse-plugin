@@ -39,6 +39,7 @@ public class FitnesseBuilder extends Builder {
 	public static final String FITNESSE_HOST = "fitnesseHost";
 	public static final String FITNESSE_PORT = "fitnessePort";
 	public static final String FITNESSE_PORT_REMOTE = "fitnessePortRemote";
+    public static final String FITNESSE_ENABLE_SSL = "fitnesseEnableSsl";
 	public static final String FITNESSE_PORT_LOCAL = "fitnessePortLocal";
 	public static final String FITNESSE_ADDITIONAL_OPTIONS = "additionalFitnesseOptions";
 	public static final String JAVA_OPTS = "fitnesseJavaOpts";
@@ -93,6 +94,13 @@ public class FitnesseBuilder extends Builder {
 	public boolean getFitnesseStart() {
 		return Boolean.parseBoolean(getOption(START_FITNESSE, "False"));
 	}
+
+    /**
+     * referenced in config.jelly
+     */
+    public boolean getFitnesseSsl() {
+        return Boolean.parseBoolean(getOption(FITNESSE_ENABLE_SSL, "False"));
+    }
 
 	/**
 	 * referenced in config.jelly
@@ -421,7 +429,7 @@ public class FitnesseBuilder extends Builder {
 			}
 			return newFitnesseBuilder(
 					startFitnesseValue,
-					collectFormData(formData, new String[] { FITNESSE_HOST, FITNESSE_PORT_REMOTE, TARGET_PAGE, TARGET_IS_SUITE,
+					collectFormData(formData, new String[] { FITNESSE_HOST, FITNESSE_PORT_REMOTE, FITNESSE_ENABLE_SSL, TARGET_PAGE, TARGET_IS_SUITE,
 							HTTP_TIMEOUT, TEST_TIMEOUT, PATH_TO_RESULTS }));
 		}
 
