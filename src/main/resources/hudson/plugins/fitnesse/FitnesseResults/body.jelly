@@ -70,7 +70,8 @@
 				<td>${r.passCount}</td>
 				<td>${r.ignoredCount}</td>
 				<td>${r.duration}</td>
-				<td><j:out value="${r.getDetailsLink()}"/></td><td><j:out value="${r.getDetailRemoteLink()}"/></td>
+				<td><j:out value="${r.getDetailsLink()}"/></td>
+				<td><j:out value="${r.getDetailRemoteLink()}"/></td>
 			</tr>
 			</j:forEach>
 		</table>

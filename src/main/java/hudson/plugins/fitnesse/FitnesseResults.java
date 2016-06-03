@@ -1,18 +1,18 @@
 package hudson.plugins.fitnesse;
 
+import hudson.EnvVars;
 import hudson.model.ModelObject;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
+import hudson.slaves.EnvironmentVariablesNodeProperty;
+import hudson.tasks.BuildStep;
 import hudson.tasks.test.TabulatedResult;
 import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResult;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import jenkins.model.Jenkins;
 
@@ -23,9 +23,10 @@ import org.kohsuke.stapler.export.Exported;
 public class FitnesseResults extends TabulatedResult implements
 		Comparable<FitnesseResults> {
 	private static final String DETAILS = "Details";
+	private static final String FITNESSE_HOSTNAME = "FITNESSE_HOSTNAME";
+	private static final String FITNESSE_PORT = "FITNESSE_PORT";
 
 	// private static final Logger log = Logger.getLogger(FitnesseResults.class.getName());
-
 	private static final long serialVersionUID = 1L;
 	private transient List<FitnesseResults> failed;
 	private transient List<FitnesseResults> skipped;
@@ -316,7 +317,7 @@ public class FitnesseResults extends TabulatedResult implements
 		FitnesseBuildAction buildAction = getOwner().getAction(
 				FitnesseBuildAction.class);
 		if (buildAction == null) {
-			buildAction = FitnesseBuildAction.NULL_ACTION;
+			buildAction = getDefaultFitnesseBuidAction();
 		}
 		return buildAction.getLinkFor(results.getName(), Jenkins.getInstance().getRootUrl());
 	}
@@ -342,10 +343,20 @@ public class FitnesseResults extends TabulatedResult implements
 		FitnesseBuildAction buildAction = getOwner().getAction(
 				FitnesseBuildAction.class);
 		if (buildAction == null) {
-			buildAction = FitnesseBuildAction.NULL_ACTION;
+			buildAction = getDefaultFitnesseBuidAction();
 		}
 		return buildAction.getLinkFor(getName() + "?pageHistory&resultDate="
 				+ getResultsDate(), null, "Details");
+	}
+
+	private FitnesseBuildAction getDefaultFitnesseBuidAction() {
+		final FitnesseBuildAction buildAction;Map<String, String> envVars =  getOwner().getEnvVars();
+		if (envVars.containsKey(FITNESSE_HOSTNAME) && envVars.containsKey(FITNESSE_PORT)) {
+            buildAction = new FitnesseBuildAction(false, envVars.get(FITNESSE_HOSTNAME), Integer.valueOf(envVars.get(FITNESSE_PORT)));
+        } else {
+            buildAction = FitnesseBuildAction.NULL_ACTION;
+        }
+		return buildAction;
 	}
 
 	/**
