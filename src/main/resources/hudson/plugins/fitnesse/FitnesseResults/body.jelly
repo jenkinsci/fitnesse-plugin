@@ -20,13 +20,16 @@
 				<td class="pane-header">Duration</td>
 				<td class="pane-header">Details-Captured</td>
 				<td class="pane-header">Details-Remote</td>
+				<td class="pane-header">Run</td>
 			</tr>
 		<j:forEach var="r" items="${it.failedTests}">
 			<tr>
 				<td><j:out value="${it.toHtml(r)}"/></td>
 				<td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td>
 				<td>${r.duration}</td>
-				<td><j:out value="${r.getDetailsLink()}"/></td><td><j:out value="${r.getDetailRemoteLink()}"/></td>
+				<td><j:out value="${r.getDetailsLink()}"/></td>
+				<td><j:out value="${r.getDetailRemoteLink()}"/></td>
+				<td><j:out value="${r.getRunTestRemoteLink()}"/></td>
 			</tr>
 		</j:forEach>
 		</table>

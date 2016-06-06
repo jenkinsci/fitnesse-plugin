@@ -1,12 +1,9 @@
 package hudson.plugins.fitnesse;
 
-import hudson.EnvVars;
 import hudson.model.ModelObject;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
-import hudson.slaves.EnvironmentVariablesNodeProperty;
-import hudson.tasks.BuildStep;
 import hudson.tasks.test.TabulatedResult;
 import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResult;
@@ -314,11 +311,7 @@ public class FitnesseResults extends TabulatedResult implements
 	 * referenced in body.jelly
 	 */
 	public String toHtml(FitnesseResults results) {
-		FitnesseBuildAction buildAction = getOwner().getAction(
-				FitnesseBuildAction.class);
-		if (buildAction == null) {
-			buildAction = getDefaultFitnesseBuidAction();
-		}
+		FitnesseBuildAction buildAction = getFitnesseBuildAction();
 		return buildAction.getLinkFor(results.getName(), Jenkins.getInstance().getRootUrl());
 	}
 
@@ -340,16 +333,26 @@ public class FitnesseResults extends TabulatedResult implements
 	 * server. Note the history may not always be available.
 	 */
 	public String getDetailRemoteLink() {
-		FitnesseBuildAction buildAction = getOwner().getAction(
-				FitnesseBuildAction.class);
-		if (buildAction == null) {
-			buildAction = getDefaultFitnesseBuidAction();
-		}
+		FitnesseBuildAction buildAction = getFitnesseBuildAction();
 		return buildAction.getLinkFor(getName() + "?pageHistory&resultDate="
 				+ getResultsDate(), null, "Details");
 	}
 
-	private FitnesseBuildAction getDefaultFitnesseBuidAction() {
+	public String getRunTestRemoteLink() {
+		FitnesseBuildAction buildAction = getFitnesseBuildAction();
+		String image = "<img class=\"icon-next icon-md\" title=\"Run Test\" src=\"/static/abafcc7b/images/24x24/next.png\" />";
+		return buildAction.getLinkFor(getName() + "?test", null, image);
+	}
+
+	private FitnesseBuildAction getFitnesseBuildAction() {
+		FitnesseBuildAction buildAction = getOwner().getAction(FitnesseBuildAction.class);
+		if (buildAction == null) {
+			buildAction = getDefaultFitnesseBuildAction();
+		}
+		return buildAction;
+	}
+
+	private FitnesseBuildAction getDefaultFitnesseBuildAction() {
 		final FitnesseBuildAction buildAction;Map<String, String> envVars =  getOwner().getEnvVars();
 		if (envVars.containsKey(FITNESSE_HOSTNAME) && envVars.containsKey(FITNESSE_PORT)) {
             buildAction = new FitnesseBuildAction(false, envVars.get(FITNESSE_HOSTNAME), Integer.valueOf(envVars.get(FITNESSE_PORT)));
