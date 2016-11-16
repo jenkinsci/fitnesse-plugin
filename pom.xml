@@ -3,9 +3,9 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.600</version>
+		<version>2.3</version>
 	</parent>
-	
+
 	<profiles>
 		<profile>
 			<id>tools.jar</id>
@@ -57,28 +57,26 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:ssh://git@github.com/jenkinsci/fitnesse-plugin.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/fitnesse-plugin.git</developerConnection>
-		<url>https://github.com/jenkinsci/fitnesse-plugin</url>
+		<connection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+		<url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
 		<tag>HEAD</tag>
 	</scm>
 
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.2</version> <!-- set last version -->
-				<configuration>
-					<goals>deploy</goals>
-				</configuration>
+				<groupId>org.eclipse.hudson.tools</groupId>
+				<artifactId>maven-hpi-plugin</artifactId>
+				<version>3.03</version>
 			</plugin>
-			<plugin> 
-				<groupId>org.jenkins-ci.tools</groupId> 
-				<artifactId>maven-hpi-plugin</artifactId> 
-				<version>1.113</version> <!-- set last version -->
-			</plugin> 
-		</plugins> 
-	</build> 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>3.03</version>
+			</plugin>
+		</plugins>
+	</build>
 
 	<distributionManagement>
 		<repository>
@@ -120,5 +118,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-</project>	
-
+</project>
