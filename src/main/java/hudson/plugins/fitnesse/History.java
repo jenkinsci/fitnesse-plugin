@@ -23,7 +23,7 @@
  */
 package hudson.plugins.fitnesse;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.tasks.test.Messages;
 import hudson.util.ChartUtil;
 import hudson.util.ColorPalette;
@@ -83,7 +83,7 @@ public class History {
 
 	public List<FitnesseResults> getList() {
 		List<FitnesseResults> list = new ArrayList<FitnesseResults>();
-		for (AbstractBuild<?, ?> b : testObject.getOwner().getParent().getBuilds()) {
+		for (Run b : testObject.getOwner().getParent().getBuilds()) {
 			if (b.isBuilding())
 				continue;
 			FitnesseResults o = (FitnesseResults) testObject.getResultInRun(b);

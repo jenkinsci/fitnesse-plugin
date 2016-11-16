@@ -3,18 +3,13 @@ package hudson.plugins.fitnesse;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.Action;
-import hudson.model.BuildListener;
-import hudson.model.ModelObject;
-import hudson.model.Result;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
 import hudson.tasks.BuildStep;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
+import hudson.model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,11 +24,11 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.xml.transform.TransformerException;
-
+import jenkins.tasks.SimpleBuildStep;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-public class FitnesseResultsRecorder extends Recorder {
+public class FitnesseResultsRecorder extends Recorder implements SimpleBuildStep {
 
 	private final String fitnessePathToXmlResultsIn;
 
@@ -53,7 +48,7 @@ public class FitnesseResultsRecorder extends Recorder {
 	 * {@link Recorder}
 	 */
 	@Override
-	public Collection<Action> getProjectActions(AbstractProject<?, ?> project) {
+	public Collection<Action> getProjectActions(Job project) {
 		final Collection<Action> list = new ArrayList<Action>();
 		list.add(new FitnesseProjectAction(project));
 		list.add(new FitnesseHistoryAction(project));
@@ -71,30 +66,30 @@ public class FitnesseResultsRecorder extends Recorder {
 	 * {@link BuildStep}
 	 */
 	@Override
-	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
+	public void perform(Run build, FilePath workspace, Launcher launcher, TaskListener listener)
 			throws InterruptedException, IOException {
 		PrintStream logger = listener.getLogger();
 		try {
 			FilePath[] resultFiles = getResultFiles(logger, build);
 			FitnesseResults results = getResults(logger, resultFiles, build.getRootDir());
 			if (results == null)
-				return true; // no Fitnesse results found at all
+				return; // no Fitnesse results found at all
 
 			FitnesseResultsAction action = new FitnesseResultsAction(build, results);
 			if (results.getBuildResult() != null)
 				build.setResult(results.getBuildResult());
 			build.addAction(action);
-			return true;
+			return;
 		} catch (InterruptedException e) { //aborted
 			throw e;
 		} catch (Throwable t) {
 			t.printStackTrace(logger);
 			build.setResult(Result.FAILURE);
-			return false;
+			return;
 		}
 	}
 
-	private FilePath[] getResultFiles(PrintStream logger, AbstractBuild<?, ?> build) throws IOException,
+	private FilePath[] getResultFiles(PrintStream logger, Run build) throws IOException,
 			InterruptedException {
 		FilePath workingDirectory = FitnesseExecutor.getWorkingDirectory(logger, build);
 		return getResultFiles(logger, workingDirectory);

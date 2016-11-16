@@ -2,7 +2,7 @@ package hudson.plugins.fitnesse;
 
 import hudson.model.ModelObject;
 import hudson.model.Result;
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.test.TabulatedResult;
 import hudson.tasks.test.TestObject;
@@ -32,7 +32,7 @@ public class FitnesseResults extends TabulatedResult implements
 	private Counts pageCounts;
 	private FitnesseResults parent;
 	private List<FitnesseResults> details = new ArrayList<FitnesseResults>();
-	private AbstractBuild<?, ?> owner;
+	private Run owner;
 
 	public FitnesseResults(Counts pageCounts) {
 		this.pageCounts = pageCounts;
@@ -80,7 +80,7 @@ public class FitnesseResults extends TabulatedResult implements
 	}
 
 	@Override
-	public AbstractBuild<?, ?> getOwner() {
+	public Run getOwner() {
 		if (owner != null)
 			return owner;
 		if (parent != null)
@@ -363,7 +363,7 @@ public class FitnesseResults extends TabulatedResult implements
 	}
 
 	/**
-	 * called from links embedded in history/trend graphs 
+	 * called from links embedded in history/trend graphs
 	 * TODO: Expose sub-suites as separate elements of the fitnesse report.
 	 */
 	@Override
@@ -400,7 +400,7 @@ public class FitnesseResults extends TabulatedResult implements
 	/**
 	 * Returns the children of this result. Returns both the details and the
 	 * html content, if available.
-	 * 
+	 *
 	 * @return the details and html content results, or an empty Collection
 	 */
 	@Override
@@ -435,7 +435,7 @@ public class FitnesseResults extends TabulatedResult implements
 
 	/**
 	 * Returns <code>true</code> if this results has html content that is
-	 * available via {@link #getHtmlContent()}	 
+	 * available via {@link #getHtmlContent()}
 	 */
 	protected boolean hasHtmlContent() {
 		return pageCounts != null && pageCounts.contentFile != null;

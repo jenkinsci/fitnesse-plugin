@@ -1,14 +1,14 @@
 package hudson.plugins.fitnesse;
 
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
+import hudson.model.Run;
+import hudson.model.Job;
 import hudson.model.Action;
 
 public class FitnesseProjectAction implements Action {
 
-	private AbstractProject<?, ?> project;
+	private Job project;
 
-	public FitnesseProjectAction(AbstractProject<?, ?> project) {
+	public FitnesseProjectAction(Job project) {
 		this.project = project;
 	}
 
@@ -57,8 +57,8 @@ public class FitnesseProjectAction implements Action {
 	 * {@see TestResultProjectAction#getLastTestResultAction()}
 	 */
 	public FitnesseResultsAction getLatestResults() {
-		final AbstractBuild<?, ?> tb = project.getLastSuccessfulBuild();
-		AbstractBuild<?, ?> b = project.getLastBuild();
+		final Run tb = project.getLastSuccessfulBuild();
+		Run b = project.getLastBuild();
 		while (b != null) {
 			FitnesseResultsAction a = b.getAction(FitnesseResultsAction.class);
 			if (a != null) {

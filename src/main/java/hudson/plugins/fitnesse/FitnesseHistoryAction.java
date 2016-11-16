@@ -1,8 +1,8 @@
 package hudson.plugins.fitnesse;
 
 import hudson.model.Action;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
+import hudson.model.Run;
+import hudson.model.Job;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.util.RunList;
 
@@ -21,20 +21,20 @@ import org.kohsuke.stapler.StaplerProxy;
 import com.google.common.collect.Ordering;
 
 public class FitnesseHistoryAction implements StaplerProxy, Action {
-	private final AbstractProject<?, ?> project;
+	private final Job project;
 
 	private List<FitnesseResults> builds;
 	private Map<String, List<String>> allPages;
 	private Set<String> allFiles;
 
-	public FitnesseHistoryAction(AbstractProject<?, ?> project) {
+	public FitnesseHistoryAction(Job project) {
 		this.project = project;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object getTarget() {
-		extractValues((RunList<AbstractBuild<?, ?>>) project.getBuilds());
+		extractValues((RunList<Run>) project.getBuilds());
 		return new FitnesseHistory(project, allFiles, allPages, builds);
 	}
 
@@ -53,17 +53,17 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 		return "fitnesseHistory";
 	}
 
-	public void extractValues(List<AbstractBuild<?, ?>> projectBuilds) {
+	public void extractValues(List<Run> projectBuilds) {
 		builds = new ArrayList<FitnesseResults>();
 		allFiles = new HashSet<String>();
 		allPages = new HashMap<String, List<String>>();
 
-		for (AbstractBuild<?, ?> build : projectBuilds) {
+		for (Run build : projectBuilds) {
 			FitnesseResultsAction action = build.getAction(FitnesseResultsAction.class);
 			if (action != null) {
 				FitnesseResults result = action.getResult();
 
-				if(!(result instanceof CompoundFitnesseResults)) 
+				if(!(result instanceof CompoundFitnesseResults))
 				{
 					FitnesseResults fakeResult = new FitnesseResults(new Counts("ALL", "", 0, 0, 0, 0, 0, "ALL"));
 					fakeResult.addChild(result);

@@ -1,7 +1,7 @@
 package hudson.plugins.fitnesse;
 
-import hudson.model.AbstractBuild;
 import hudson.tasks.test.AbstractTestResultAction;
+import hudson.model.Run;
 
 import org.kohsuke.stapler.StaplerProxy;
 
@@ -9,7 +9,7 @@ import org.kohsuke.stapler.StaplerProxy;
 public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResultsAction> implements StaplerProxy {
 	private FitnesseResults results;
 
-	protected FitnesseResultsAction(AbstractBuild<?, ?> owner, FitnesseResults results) {
+	protected FitnesseResultsAction(Run owner, FitnesseResults results) {
 		this.results = results;
 		this.results.setOwner(owner);
 	}
@@ -58,7 +58,7 @@ public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResu
 		return "/plugin/fitnesse/icons/fitnesselogo-32x32.gif";
 	}
 
-	/** 
+	/**
 	 * {@link StaplerProxy}
 	 */
 	public Object getTarget() {

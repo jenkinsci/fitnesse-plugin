@@ -6,8 +6,8 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.model.ModelObject;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
+import hudson.model.Run;
+import hudson.model.Job;
 import hudson.model.Descriptor;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.tasks.BuildStepDescriptor;
@@ -121,7 +121,7 @@ public class FitnesseBuilder extends Builder {
 		}
 	}
 
-	public String getFitnesseHost(AbstractBuild<?, ?> build, EnvVars environment) {
+	public String getFitnesseHost(Run build, EnvVars environment) {
 		if (getFitnesseStart()) {
 			EnvironmentVariablesNodeProperty prop = build.getBuiltOn().getNodeProperties().get(EnvironmentVariablesNodeProperty.class);
 			if (prop != null && prop.getEnvVars() != null && prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY) != null) {
@@ -271,7 +271,7 @@ public class FitnesseBuilder extends Builder {
 	 * {@link Builder}
 	 */
 	@Override
-	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws IOException,
+	public boolean perform(Run build, Filepath workspace, Launcher launcher, TaskListener listener) throws IOException,
 			InterruptedException {
 		listener.getLogger().println(getClass().getName() + ": " + options);
 		FitnesseExecutor fitnesseExecutor = new FitnesseExecutor(this, listener, build.getEnvironment(listener));
@@ -400,7 +400,7 @@ public class FitnesseBuilder extends Builder {
 		 */
 		@Override
 		@SuppressWarnings("rawtypes")
-		public boolean isApplicable(Class<? extends AbstractProject> aClass) {
+		public boolean isApplicable(Class<? extends Job> aClass) {
 			// indicates that this builder can be used with all kinds of project types
 			return true;
 		}

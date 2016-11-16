@@ -1,15 +1,5 @@
 package hudson.plugins.fitnesse;
 
-import hudson.EnvVars;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.Launcher.ProcStarter;
-import hudson.Proc;
-import hudson.model.BuildListener;
-import hudson.model.AbstractBuild;
-import hudson.model.Computer;
-import hudson.model.JDK;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -25,10 +15,20 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import hudson.EnvVars;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.Launcher.ProcStarter;
+import hudson.Proc;
+import hudson.model.BuildListener;
+import hudson.model.Computer;
+import hudson.model.JDK;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import jenkins.model.Jenkins;
 
 /**
- * 
+ *
  * @author Tim Bacon
  */
 public class FitnesseExecutor {
@@ -39,16 +39,16 @@ public class FitnesseExecutor {
 	private final FitnesseBuilder builder;
 	private final EnvVars envVars;
 	private final PrintStream logger;
-	private final BuildListener listener;
+	private final TaskListener listener;
 
-	public FitnesseExecutor(FitnesseBuilder builder, BuildListener listener, EnvVars envVars) {
+	public FitnesseExecutor(FitnesseBuilder builder, TaskListener listener, EnvVars envVars) {
 		this.builder = builder;
 		this.listener = listener;
 		this.envVars = envVars;
 		this.logger = listener.getLogger();
 	}
 
-	public boolean execute(Launcher launcher, AbstractBuild<?, ?> build) throws InterruptedException {
+	public boolean execute(Launcher launcher, Run build) throws InterruptedException {
 		Proc fitnesseProc = null;
 		try {
 			build.addAction(getFitnesseBuildAction(build));
@@ -73,7 +73,7 @@ public class FitnesseExecutor {
 		}
 	}
 
-	private FitnesseBuildAction getFitnesseBuildAction(AbstractBuild<?, ?> build) throws IOException {
+	private FitnesseBuildAction getFitnesseBuildAction(Run build) throws IOException {
 		return new FitnesseBuildAction(builder.getFitnesseStart(), builder.getFitnesseHost(build, envVars),
 				builder.getFitnessePort(envVars), builder.getFitnesseSsl());
 	}
@@ -166,7 +166,7 @@ public class FitnesseExecutor {
 
 	/**
 	 * Detect if fitnesse has started by try to do an HTTP connection
-	 * 
+	 *
 	 * @return true if fitnesse has started, false otherwise
 	 */
 	public boolean isFitnesseStarted(URL fitnessePageURL) throws InterruptedException {
@@ -277,7 +277,7 @@ public class FitnesseExecutor {
 		return bucket.toByteArray();
 	}
 
-	/* package for test */URL getFitnessePage(AbstractBuild<?, ?> build, boolean withCommand) throws IOException {
+	/* package for test */URL getFitnessePage(Run build, boolean withCommand) throws IOException {
 		return new URL(builder.getFitnesseSsl() ? "https" : "http", //
 				builder.getFitnesseHost(build, envVars), //
 				builder.getFitnessePort(envVars), //
@@ -335,7 +335,7 @@ public class FitnesseExecutor {
 		return getFilePath(logger, workingDirectory, fileName);
 	}
 
-	static FilePath getWorkingDirectory(PrintStream logger, AbstractBuild<?, ?> build) {
+	static FilePath getWorkingDirectory(PrintStream logger, Run build) {
 		FilePath workspace = build.getWorkspace(); // null only is slave is disconnected
 		logger.println("Working directory is: " + workspace != null ? workspace.getRemote() : "null !!");
 		return workspace;
