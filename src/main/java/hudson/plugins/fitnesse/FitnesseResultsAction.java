@@ -2,6 +2,7 @@ package hudson.plugins.fitnesse;
 
 import hudson.tasks.test.AbstractTestResultAction;
 import hudson.model.Run;
+import hudson.model.TaskListener;
 
 import org.kohsuke.stapler.StaplerProxy;
 
@@ -9,9 +10,10 @@ import org.kohsuke.stapler.StaplerProxy;
 public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResultsAction> implements StaplerProxy {
 	private FitnesseResults results;
 
-	protected FitnesseResultsAction(Run owner, FitnesseResults results) {
+	protected FitnesseResultsAction(Run<?,?> owner, FitnesseResults results, TaskListener listener) {
 		this.results = results;
 		this.results.setOwner(owner);
+		this.results.setTaskListener(listener);
 	}
 
 	@Override

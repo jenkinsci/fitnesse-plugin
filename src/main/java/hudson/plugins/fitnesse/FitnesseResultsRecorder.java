@@ -3,13 +3,17 @@ package hudson.plugins.fitnesse;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.AbstractProject;
+import hudson.model.Action;
+import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStep;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
-import hudson.model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import javax.xml.transform.TransformerException;
 import jenkins.tasks.SimpleBuildStep;
@@ -48,7 +53,7 @@ public class FitnesseResultsRecorder extends Recorder implements SimpleBuildStep
 	 * {@link Recorder}
 	 */
 	@Override
-	public Collection<Action> getProjectActions(Job project) {
+	public Collection<Action> getProjectActions(AbstractProject<?,?> project) {
 		final Collection<Action> list = new ArrayList<Action>();
 		list.add(new FitnesseProjectAction(project));
 		list.add(new FitnesseHistoryAction(project));
@@ -66,16 +71,16 @@ public class FitnesseResultsRecorder extends Recorder implements SimpleBuildStep
 	 * {@link BuildStep}
 	 */
 	@Override
-	public void perform(Run build, FilePath workspace, Launcher launcher, TaskListener listener)
+	public void perform(@Nonnull Run<?,?> build,@Nonnull FilePath workspace,@Nonnull Launcher launcher,@Nonnull TaskListener listener)
 			throws InterruptedException, IOException {
 		PrintStream logger = listener.getLogger();
 		try {
-			FilePath[] resultFiles = getResultFiles(logger, build);
+			FilePath[] resultFiles = getResultFiles(logger, workspace);
 			FitnesseResults results = getResults(logger, resultFiles, build.getRootDir());
 			if (results == null)
-				return; // no Fitnesse results found at all
+				return; // no FitNesse results found at all
 
-			FitnesseResultsAction action = new FitnesseResultsAction(build, results);
+			FitnesseResultsAction action = new FitnesseResultsAction(build, results, listener);
 			if (results.getBuildResult() != null)
 				build.setResult(results.getBuildResult());
 			build.addAction(action);
@@ -89,13 +94,12 @@ public class FitnesseResultsRecorder extends Recorder implements SimpleBuildStep
 		}
 	}
 
-	private FilePath[] getResultFiles(PrintStream logger, Run build) throws IOException,
+	private FilePath[] getResultFiles(PrintStream logger, FilePath workspace) throws IOException,
 			InterruptedException {
-		FilePath workingDirectory = FitnesseExecutor.getWorkingDirectory(logger, build);
-		return getResultFiles(logger, workingDirectory);
+		return getResultFiles(logger, workspace);
 	}
 
-	public FilePath[] getResultFiles(PrintStream logger, FilePath workingDirectory) throws IOException,
+	public FilePath[] getResultFiles1(PrintStream logger, FilePath workingDirectory) throws IOException,
 			InterruptedException {
 		FilePath resultsFile = FitnesseExecutor.getFilePath(logger, workingDirectory, fitnessePathToXmlResultsIn);
 

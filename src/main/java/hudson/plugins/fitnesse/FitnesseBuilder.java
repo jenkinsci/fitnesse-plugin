@@ -2,23 +2,24 @@ package hudson.plugins.fitnesse;
 
 import hudson.EnvVars;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.BuildListener;
 import hudson.model.ModelObject;
 import hudson.model.Run;
-import hudson.model.Job;
+import hudson.model.TaskListener;
+import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
-import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
-
+import jenkins.tasks.SimpleBuildStep;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
@@ -33,7 +34,7 @@ import org.kohsuke.stapler.StaplerRequest;
  *
  * @author Tim Bacon
  */
-public class FitnesseBuilder extends Builder {
+public class FitnesseBuilder extends Builder implements SimpleBuildStep{
 
 	public static final String START_FITNESSE = "fitnesseStart";
 	public static final String FITNESSE_HOST = "fitnesseHost";
@@ -121,11 +122,10 @@ public class FitnesseBuilder extends Builder {
 		}
 	}
 
-	public String getFitnesseHost(Run build, EnvVars environment) {
+	public String getFitnesseHost(Run<?,?> build, EnvVars environment) throws IOException, InterruptedException {
 		if (getFitnesseStart()) {
-			EnvironmentVariablesNodeProperty prop = build.getBuiltOn().getNodeProperties().get(EnvironmentVariablesNodeProperty.class);
-			if (prop != null && prop.getEnvVars() != null && prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY) != null) {
-				return prop.getEnvVars().get(_HOSTNAME_SLAVE_PROPERTY);
+			if (build != null && environment != null && environment.get(_HOSTNAME_SLAVE_PROPERTY) != null) {
+				return environment.get(_HOSTNAME_SLAVE_PROPERTY);
 			} else {
 				return _LOCALHOST;
 			}
@@ -271,11 +271,11 @@ public class FitnesseBuilder extends Builder {
 	 * {@link Builder}
 	 */
 	@Override
-	public boolean perform(Run build, Filepath workspace, Launcher launcher, TaskListener listener) throws IOException,
+	public void perform(@Nonnull Run<?,?> build,@Nonnull FilePath workspace,@Nonnull Launcher launcher,@Nonnull TaskListener listener) throws IOException,
 			InterruptedException {
 		listener.getLogger().println(getClass().getName() + ": " + options);
 		FitnesseExecutor fitnesseExecutor = new FitnesseExecutor(this, listener, build.getEnvironment(listener));
-		return fitnesseExecutor.execute(launcher, build);
+		fitnesseExecutor.execute(launcher, workspace, build);
 	}
 
 	/**
@@ -400,7 +400,7 @@ public class FitnesseBuilder extends Builder {
 		 */
 		@Override
 		@SuppressWarnings("rawtypes")
-		public boolean isApplicable(Class<? extends Job> aClass) {
+		public boolean isApplicable(Class<? extends AbstractProject> aClass) {
 			// indicates that this builder can be used with all kinds of project types
 			return true;
 		}
@@ -451,5 +451,6 @@ public class FitnesseBuilder extends Builder {
 			}
 			return targetElements;
 		}
+
 	}
 }

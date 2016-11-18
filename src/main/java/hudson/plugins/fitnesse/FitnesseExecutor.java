@@ -20,7 +20,6 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Launcher.ProcStarter;
 import hudson.Proc;
-import hudson.model.BuildListener;
 import hudson.model.Computer;
 import hudson.model.JDK;
 import hudson.model.Run;
@@ -48,19 +47,18 @@ public class FitnesseExecutor {
 		this.logger = listener.getLogger();
 	}
 
-	public boolean execute(Launcher launcher, Run build) throws InterruptedException {
+	public boolean execute(Launcher launcher,FilePath workspace, Run<?,?> build) throws InterruptedException {
 		Proc fitnesseProc = null;
 		try {
 			build.addAction(getFitnesseBuildAction(build));
-			FilePath workingDirectory = getWorkingDirectory(logger, build);
 			if (builder.getFitnesseStart()) {
-				fitnesseProc = startFitnesse(workingDirectory, launcher);
+				fitnesseProc = startFitnesse(workspace, launcher);
 				if (!fitnesseProc.isAlive() || !isFitnesseStarted(getFitnessePage(build, false))) {
 					return false;
 				}
 			}
 
-			FilePath resultsFilePath = getFilePath(logger, workingDirectory, builder.getFitnessePathToXmlResultsOut(envVars));
+			FilePath resultsFilePath = getFilePath(logger, workspace, builder.getFitnessePathToXmlResultsOut(envVars));
 			readAndWriteFitnesseResults(getFitnessePage(build, true), resultsFilePath);
 			return true;
 		} catch (Throwable t) {
@@ -73,7 +71,7 @@ public class FitnesseExecutor {
 		}
 	}
 
-	private FitnesseBuildAction getFitnesseBuildAction(Run build) throws IOException {
+	private FitnesseBuildAction getFitnesseBuildAction(Run<?,?> build) throws IOException, InterruptedException {
 		return new FitnesseBuildAction(builder.getFitnesseStart(), builder.getFitnesseHost(build, envVars),
 				builder.getFitnessePort(envVars), builder.getFitnesseSsl());
 	}
@@ -277,7 +275,7 @@ public class FitnesseExecutor {
 		return bucket.toByteArray();
 	}
 
-	/* package for test */URL getFitnessePage(Run build, boolean withCommand) throws IOException {
+	/* package for test */URL getFitnessePage(Run<?,?> build, boolean withCommand) throws IOException, InterruptedException {
 		return new URL(builder.getFitnesseSsl() ? "https" : "http", //
 				builder.getFitnesseHost(build, envVars), //
 				builder.getFitnessePort(envVars), //
@@ -333,12 +331,6 @@ public class FitnesseExecutor {
 
 	FilePath getFilePath(FilePath workingDirectory, String fileName) {
 		return getFilePath(logger, workingDirectory, fileName);
-	}
-
-	static FilePath getWorkingDirectory(PrintStream logger, Run build) {
-		FilePath workspace = build.getWorkspace(); // null only is slave is disconnected
-		logger.println("Working directory is: " + workspace != null ? workspace.getRemote() : "null !!");
-		return workspace;
 	}
 
 	static FilePath getFilePath(PrintStream logger, FilePath workingDirectory, String fileName) {
