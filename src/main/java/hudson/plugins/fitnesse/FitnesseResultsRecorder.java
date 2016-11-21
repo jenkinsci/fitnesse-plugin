@@ -96,7 +96,7 @@ public class FitnesseResultsRecorder extends Recorder implements SimpleBuildStep
 
 	private FilePath[] getResultFiles(PrintStream logger, FilePath workspace) throws IOException,
 			InterruptedException {
-		return getResultFiles(logger, workspace);
+		return getResultFiles1(logger, workspace);
 	}
 
 	public FilePath[] getResultFiles1(PrintStream logger, FilePath workingDirectory) throws IOException,
