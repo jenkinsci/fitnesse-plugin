@@ -1,15 +1,15 @@
 package hudson.plugins.fitnesse;
 
 import hudson.model.Action;
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.Run;
 
 public class FitnesseProjectAction implements Action {
 
-	private AbstractProject<?,?> project;
+	private Job<?,?> project;
 
-	public FitnesseProjectAction(AbstractProject<?,?> project) {
-		this.project = project;
+	public FitnesseProjectAction(Job<?, ?> project2) {
+		this.project = project2;
 	}
 
 	/**

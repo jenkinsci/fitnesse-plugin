@@ -1,8 +1,8 @@
 package hudson.plugins.fitnesse;
 
 import hudson.model.Action;
+import hudson.model.Job;
 import hudson.model.Run;
-import hudson.model.AbstractProject;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.util.RunList;
 
@@ -21,14 +21,14 @@ import org.kohsuke.stapler.StaplerProxy;
 import com.google.common.collect.Ordering;
 
 public class FitnesseHistoryAction implements StaplerProxy, Action {
-	private final AbstractProject<?,?> project;
+	private final Job<?,?> project;
 
 	private List<FitnesseResults> builds;
 	private Map<String, List<String>> allPages;
 	private Set<String> allFiles;
 
-	public FitnesseHistoryAction(AbstractProject<?,?> project) {
-		this.project = project;
+	public FitnesseHistoryAction(Job<?, ?> project2) {
+		this.project = project2;
 	}
 
 	@Override

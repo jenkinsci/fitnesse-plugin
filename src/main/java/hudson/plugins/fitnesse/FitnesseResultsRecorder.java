@@ -4,7 +4,6 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
-import hudson.model.Action;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -23,7 +22,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -49,16 +47,6 @@ public class FitnesseResultsRecorder extends Recorder implements SimpleBuildStep
 		return fitnessePathToXmlResultsIn;
 	}
 
-	/**
-	 * {@link Recorder}
-	 */
-	@Override
-	public Collection<Action> getProjectActions(AbstractProject<?,?> project) {
-		final Collection<Action> list = new ArrayList<Action>();
-		list.add(new FitnesseProjectAction(project));
-		list.add(new FitnesseHistoryAction(project));
-		return list;
-	}
 
 	/**
 	 * {@link BuildStep}
