@@ -323,6 +323,8 @@ public class FitnesseResults extends TabulatedResult implements
 	 * referenced in body.jelly
 	 * throws InterruptedException 
 	 * throws IOException 
+	 * @throws InterruptedException 
+	 * @throws IOException 
 	 */
 	public String toHtml(FitnesseResults results) throws IOException, InterruptedException {
 		FitnesseBuildAction buildAction = getFitnesseBuildAction();

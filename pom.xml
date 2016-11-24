@@ -35,7 +35,7 @@
 	</profiles>
 
 	<artifactId>fitnesse</artifactId>
-	<version>1.18</version>
+	<version>1.22</version>
 	<packaging>hpi</packaging>
 	<name>Jenkins FitNesse plugin</name>
 	<url>http://wiki.jenkins-ci.org/display/HUDSON/Fitnesse+Plugin</url>
