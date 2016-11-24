@@ -281,6 +281,16 @@ public class History {
 		public int hashCode() {
 			return o.hashCode();
 		}
+		
+		@Override
+		public String toString() {
+			String l = o.getOwner().getDisplayName();
+			String s = o.getOwner().getBuiltOnStr();
+			if(s!=null)
+				l+= ' ' + s;
+			return l;
+		}
+		
 	}
 
 }

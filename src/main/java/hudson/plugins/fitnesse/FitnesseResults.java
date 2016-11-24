@@ -236,7 +236,7 @@ public class FitnesseResults extends TabulatedResult implements
 	}
 
 	/**
-	 * {see TestObject#getTestResultAction()} Required to prevent looking for
+	 * {@see TestObject#getTestResultAction()} Required to prevent looking for
 	 * any old AbstractTestResultAction when e.g. looking for history across
 	 * multiple builds
 	 */
@@ -246,7 +246,7 @@ public class FitnesseResults extends TabulatedResult implements
 	}
 
 	/**
-	 * {see TestResult#getParentAction()} Required to prevent looking for any
+	 * {@see TestResult#getParentAction()} Required to prevent looking for any
 	 * old AbstractTestResultAction when e.g. looking for history across
 	 * multiple builds
 	 */
@@ -417,7 +417,7 @@ public class FitnesseResults extends TabulatedResult implements
 	 * Returns the children of this result. Returns both the details and the
 	 * html content, if available.
 	 *
-	 * return the details and html content results, or an empty Collection
+	 * @return the details and html content results, or an empty Collection
 	 */
 	@Override
 	@Exported(visibility = 1)
