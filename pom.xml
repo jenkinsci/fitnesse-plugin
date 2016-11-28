@@ -65,24 +65,27 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.eclipse.hudson.tools</groupId>
-				<artifactId>maven-hpi-plugin</artifactId>
-				<version>3.03</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.2</version> <!-- set last version -->
+				<configuration>
+					<goals>deploy</goals>
+				</configuration>
 			</plugin>
-			<plugin>
-     			<groupId>org.apache.maven.plugins</groupId>
-     			<artifactId>maven-javadoc-plugin</artifactId>
-      			<configuration>
-        		<additionalparam>-Xdoclint:none</additionalparam>
-      			</configuration>
-    		</plugin>
-		</plugins>
-	</build>
-
+			<plugin> 
+				<groupId>org.jenkins-ci.tools</groupId> 
+				<artifactId>maven-hpi-plugin</artifactId> 
+				<version>1.113</version> <!-- set last version -->
+				<configuration>
+            		<disabledTestInjection>true</disabledTestInjection>
+          		</configuration> 
+			</plugin> 
+		</plugins> 
+	</build> 
+	
+	<properties>
+    	<maven.javadoc.skip>true</maven.javadoc.skip>
+	</properties>
+	
 	<distributionManagement>
 		<repository>
 			<id>maven.jenkins-ci.org</id>
