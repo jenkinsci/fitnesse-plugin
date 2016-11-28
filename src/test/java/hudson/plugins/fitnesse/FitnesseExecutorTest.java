@@ -163,7 +163,7 @@ public class FitnesseExecutorTest {
 
 
     @Test
-    public void fitnessePage() throws IOException {
+    public void fitnessePage() throws IOException, InterruptedException {
         final AbstractBuild<?, ?> build = Mockito.mock(AbstractBuild.class);
         init(new String[] { FitnesseBuilder.FITNESSE_HOST, FitnesseBuilder.FITNESSE_PORT },
                 new String[] { "localhost", "8080" });
@@ -173,7 +173,7 @@ public class FitnesseExecutorTest {
     }
 
     @Test
-    public void fitnessePageWithSslEnabled() throws IOException {
+    public void fitnessePageWithSslEnabled() throws IOException, InterruptedException {
         final AbstractBuild<?, ?> build = Mockito.mock(AbstractBuild.class);
         init(new String[] {
                 FitnesseBuilder.FITNESSE_HOST,

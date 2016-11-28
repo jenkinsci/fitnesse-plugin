@@ -1,13 +1,16 @@
 package hudson.plugins.fitnesse;
 
+import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 import hudson.model.Result;
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.tasks.test.TabulatedResult;
 import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResult;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -32,7 +35,8 @@ public class FitnesseResults extends TabulatedResult implements
 	private Counts pageCounts;
 	private FitnesseResults parent;
 	private List<FitnesseResults> details = new ArrayList<FitnesseResults>();
-	private AbstractBuild<?, ?> owner;
+	private Run<?,?> owner;
+	private TaskListener listener;
 
 	public FitnesseResults(Counts pageCounts) {
 		this.pageCounts = pageCounts;
@@ -75,19 +79,27 @@ public class FitnesseResults extends TabulatedResult implements
 		return (match.size() == 0 ? null : match.get(0));
 	}
 
-	public void setOwner(AbstractBuild<?, ?> build) {
+	public void setOwner(Run<?,?> build) {
 		this.owner = build;
+	}
+	
+	public void setTaskListener(TaskListener listener) {
+		this.listener = listener;
 	}
 
 	@Override
 	public AbstractBuild<?, ?> getOwner() {
 		if (owner != null)
-			return owner;
+			return (AbstractBuild<?, ?>) owner;
 		if (parent != null)
 			return parent.getOwner();
 		return null;
 	}
 
+	public TaskListener getTaskListener() {
+		return listener;
+	}
+	
 	@Override
 	public void setParent(TestObject parentObject) {
 		this.parent = (FitnesseResults) parentObject;
@@ -309,8 +321,12 @@ public class FitnesseResults extends TabulatedResult implements
 
 	/**
 	 * referenced in body.jelly
+	 * throws InterruptedException 
+	 * throws IOException 
+	 * @throws InterruptedException 
+	 * @throws IOException 
 	 */
-	public String toHtml(FitnesseResults results) {
+	public String toHtml(FitnesseResults results) throws IOException, InterruptedException {
 		FitnesseBuildAction buildAction = getFitnesseBuildAction();
 		return buildAction.getLinkFor(results.getName(), Jenkins.getInstance().getRootUrl());
 	}
@@ -331,20 +347,22 @@ public class FitnesseResults extends TabulatedResult implements
 	/**
 	 * referenced in body.jelly. The link points to the history of the fitnesse
 	 * server. Note the history may not always be available.
+	 * throws InterruptedException 
+	 * throws IOException 
 	 */
-	public String getDetailRemoteLink() {
+	public String getDetailRemoteLink() throws IOException, InterruptedException {
 		FitnesseBuildAction buildAction = getFitnesseBuildAction();
 		return buildAction.getLinkFor(getName() + "?pageHistory&resultDate="
 				+ getResultsDate(), null, "Details");
 	}
 
-	public String getRunTestRemoteLink() {
+	public String getRunTestRemoteLink() throws IOException, InterruptedException {
 		FitnesseBuildAction buildAction = getFitnesseBuildAction();
 		String image = "<img class=\"icon-next icon-md\" title=\"Run Test\" src=\"/static/abafcc7b/images/24x24/next.png\" />";
 		return buildAction.getLinkFor(getName() + "?test", null, image);
 	}
 
-	private FitnesseBuildAction getFitnesseBuildAction() {
+	private FitnesseBuildAction getFitnesseBuildAction() throws IOException, InterruptedException {
 		FitnesseBuildAction buildAction = getOwner().getAction(FitnesseBuildAction.class);
 		if (buildAction == null) {
 			buildAction = getDefaultFitnesseBuildAction();
@@ -352,8 +370,8 @@ public class FitnesseResults extends TabulatedResult implements
 		return buildAction;
 	}
 
-	private FitnesseBuildAction getDefaultFitnesseBuildAction() {
-		final FitnesseBuildAction buildAction;Map<String, String> envVars =  getOwner().getEnvVars();
+	private FitnesseBuildAction getDefaultFitnesseBuildAction() throws IOException, InterruptedException {
+		final FitnesseBuildAction buildAction;Map<String, String> envVars =  getOwner().getEnvironment(listener);
 		if (envVars.containsKey(FITNESSE_HOSTNAME) && envVars.containsKey(FITNESSE_PORT)) {
             buildAction = new FitnesseBuildAction(false, envVars.get(FITNESSE_HOSTNAME), Integer.valueOf(envVars.get(FITNESSE_PORT)));
         } else {
@@ -363,7 +381,7 @@ public class FitnesseResults extends TabulatedResult implements
 	}
 
 	/**
-	 * called from links embedded in history/trend graphs 
+	 * called from links embedded in history/trend graphs
 	 * TODO: Expose sub-suites as separate elements of the fitnesse report.
 	 */
 	@Override
@@ -400,7 +418,7 @@ public class FitnesseResults extends TabulatedResult implements
 	/**
 	 * Returns the children of this result. Returns both the details and the
 	 * html content, if available.
-	 * 
+	 *
 	 * @return the details and html content results, or an empty Collection
 	 */
 	@Override
@@ -435,7 +453,7 @@ public class FitnesseResults extends TabulatedResult implements
 
 	/**
 	 * Returns <code>true</code> if this results has html content that is
-	 * available via {@link #getHtmlContent()}	 
+	 * available via {@link #getHtmlContent()}
 	 */
 	protected boolean hasHtmlContent() {
 		return pageCounts != null && pageCounts.contentFile != null;
