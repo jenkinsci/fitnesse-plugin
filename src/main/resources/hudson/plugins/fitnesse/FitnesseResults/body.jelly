@@ -24,8 +24,7 @@
 			</tr>
 		<j:forEach var="r" items="${it.failedTests}">
 			<tr>
-				<td><j:out value="${it.toHtml(r)}"/></td>
-				<td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td>
+				<td>${r.name}</td><td>${r.passCount}</td><td>${r.failOnlyCount}</td><td>${r.ignoredCount}</td><td>${r.exceptionCount}</td>
 				<td>${r.duration}</td>
 				<td><j:out value="${r.getDetailsLink()}"/></td>
 				<td><j:out value="${r.getDetailRemoteLink()}"/></td>
@@ -47,7 +46,7 @@
 			</tr>
 			<j:forEach var="r" items="${it.skippedTests}">
 			<tr>
-				<td><j:out value="${it.toHtml(r)}"/></td>
+				<td>${r.name}</td>
 				<td>${r.ignoredCount}</td>
 				<td>${r.duration}</td>
 				<td><j:out value="${r.getDetailsLink()}"/></td><td><j:out value="${r.getDetailRemoteLink()}"/></td>
@@ -69,7 +68,7 @@
 			</tr>
 			<j:forEach var="r" items="${it.passedTests}">
 			<tr>
-				<td><j:out value="${it.toHtml(r)}"/></td>
+				<td>${r.name}</td>
 				<td>${r.passCount}</td>
 				<td>${r.ignoredCount}</td>
 				<td>${r.duration}</td>

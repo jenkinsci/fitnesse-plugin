@@ -1,11 +1,12 @@
 package hudson.plugins.fitnesse;
 
 import hudson.model.Action;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
+import hudson.model.Job;
+import hudson.model.Run;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.util.RunList;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,20 +22,20 @@ import org.kohsuke.stapler.StaplerProxy;
 import com.google.common.collect.Ordering;
 
 public class FitnesseHistoryAction implements StaplerProxy, Action {
-	private final AbstractProject<?, ?> project;
+	private final Job<?,?> project;
 
 	private List<FitnesseResults> builds;
 	private Map<String, List<String>> allPages;
 	private Set<String> allFiles;
 
-	public FitnesseHistoryAction(AbstractProject<?, ?> project) {
-		this.project = project;
+	public FitnesseHistoryAction(Job<?, ?> project2) {
+		this.project = project2;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object getTarget() {
-		extractValues((RunList<AbstractBuild<?, ?>>) project.getBuilds());
+		extractValues((RunList<Run<?,?>>) project.getBuilds());
 		return new FitnesseHistory(project, allFiles, allPages, builds);
 	}
 
@@ -53,17 +54,17 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 		return "fitnesseHistory";
 	}
 
-	public void extractValues(List<AbstractBuild<?, ?>> projectBuilds) {
+	public void extractValues(RunList<Run<?, ?>> runList) {
 		builds = new ArrayList<FitnesseResults>();
 		allFiles = new HashSet<String>();
 		allPages = new HashMap<String, List<String>>();
 
-		for (AbstractBuild<?, ?> build : projectBuilds) {
+		for (Run<?,?> build : runList) {
 			FitnesseResultsAction action = build.getAction(FitnesseResultsAction.class);
 			if (action != null) {
 				FitnesseResults result = action.getResult();
 
-				if(!(result instanceof CompoundFitnesseResults)) 
+				if(!(result instanceof CompoundFitnesseResults))
 				{
 					FitnesseResults fakeResult = new FitnesseResults(new Counts("ALL", "", 0, 0, 0, 0, 0, "ALL"));
 					fakeResult.addChild(result);
@@ -173,14 +174,16 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 			return new PageInfo.ByErraticness().reverse().compound(new PageInfo.ByPage());
 		}
 
-		private static class ByErraticness extends Ordering<PageInfo> {
+		private static class ByErraticness extends Ordering<PageInfo> implements Serializable {
+			private static final long serialVersionUID = 1L;
 
 			public int compare(PageInfo o1, PageInfo o2) {
 				return o1.erraticnessIndex().compareTo(o2.erraticnessIndex());
 			}
 		}
 
-		private static class ByPage extends Ordering<PageInfo> {
+		private static class ByPage extends Ordering<PageInfo> implements Serializable {
+			private static final long serialVersionUID = 1L;
 
 			public int compare(PageInfo o1, PageInfo o2) {
 				return o1.page.compareTo(o2.page);

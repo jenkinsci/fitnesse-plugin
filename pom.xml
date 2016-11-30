@@ -3,9 +3,9 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.600</version>
+		<version>2.2</version>
 	</parent>
-	
+
 	<profiles>
 		<profile>
 			<id>tools.jar</id>
@@ -24,7 +24,6 @@
 							<dependency>
 								<groupId>com.sun</groupId>
 								<artifactId>tools</artifactId>
-								<version>1.5.0</version>
 								<scope>system</scope>
 								<systemPath>${java.home}/../lib/tools.jar</systemPath>
 							</dependency>
@@ -36,7 +35,7 @@
 	</profiles>
 
 	<artifactId>fitnesse</artifactId>
-	<version>1.17-SNAPSHOT</version>
+	<version>1.22</version>
 	<packaging>hpi</packaging>
 	<name>Jenkins FitNesse plugin</name>
 	<url>http://wiki.jenkins-ci.org/display/HUDSON/Fitnesse+Plugin</url>
@@ -57,9 +56,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:ssh://git@github.com/jenkinsci/fitnesse-plugin.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/fitnesse-plugin.git</developerConnection>
-		<url>https://github.com/jenkinsci/fitnesse-plugin</url>
+		<connection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+		<url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -76,10 +75,17 @@
 				<groupId>org.jenkins-ci.tools</groupId> 
 				<artifactId>maven-hpi-plugin</artifactId> 
 				<version>1.113</version> <!-- set last version -->
+				<configuration>
+            		<disabledTestInjection>true</disabledTestInjection>
+          		</configuration> 
 			</plugin> 
 		</plugins> 
 	</build> 
-
+	
+	<properties>
+    	<maven.javadoc.skip>true</maven.javadoc.skip>
+	</properties>
+	
 	<distributionManagement>
 		<repository>
 			<id>maven.jenkins-ci.org</id>
@@ -120,5 +126,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-</project>	
-
+</project>

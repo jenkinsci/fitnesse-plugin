@@ -23,7 +23,7 @@
  */
 package hudson.plugins.fitnesse;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.tasks.test.Messages;
 import hudson.util.ChartUtil;
 import hudson.util.ColorPalette;
@@ -83,7 +83,7 @@ public class History {
 
 	public List<FitnesseResults> getList() {
 		List<FitnesseResults> list = new ArrayList<FitnesseResults>();
-		for (AbstractBuild<?, ?> b : testObject.getOwner().getParent().getBuilds()) {
+		for (Run<?,?> b : testObject.getOwner().getParent().getBuilds()) {
 			if (b.isBuilding())
 				continue;
 			FitnesseResults o = (FitnesseResults) testObject.getResultInRun(b);
@@ -254,10 +254,10 @@ public class History {
 		}
 
 		private void generateUrl() {
-			AbstractBuild<?, ?> build = o.getOwner();
+			Run<?,?> build = o.getOwner();
 			String buildLink = build.getUrl();
 			String actionUrl = o.getTestResultAction().getUrlName();
-			this.url = Jenkins.getInstance().getRootUrlFromRequest() + buildLink + actionUrl + o.getUrl();
+			this.url = Jenkins.getActiveInstance().getRootUrlFromRequest() + buildLink + actionUrl + o.getUrl();
 		}
 
 		public int compareTo(ChartLabel that) {
@@ -281,17 +281,16 @@ public class History {
 		public int hashCode() {
 			return o.hashCode();
 		}
-
+		
 		@Override
 		public String toString() {
 			String l = o.getOwner().getDisplayName();
 			String s = o.getOwner().getBuiltOnStr();
-			if (s != null)
-				l += ' ' + s;
+			if(s!=null)
+				l+= ' ' + s;
 			return l;
-			//return o.getDisplayName() + " " + o.getOwner().getDisplayName();
 		}
-
+		
 	}
 
 }

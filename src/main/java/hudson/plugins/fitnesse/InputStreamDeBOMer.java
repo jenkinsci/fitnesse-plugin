@@ -15,11 +15,11 @@ public class InputStreamDeBOMer {
 	/**
 	 * BOM definitions at {@linkplain http://www.unicode.org/faq/utf_bom.html#BOM}
 	 */
-	public static final byte[] UTF8_BOM = new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
-	public static final byte[] UTF32LE_BOM = new byte[] { (byte) 0xFF, (byte) 0xFE, (byte) 0x00, (byte) 0x00 };
-	public static final byte[] UTF16LE_BOM = new byte[] { (byte) 0xFF, (byte) 0xFE };
-	public static final byte[] UTF16BE_BOM = new byte[] { (byte) 0xFE, (byte) 0xFF };
-	public static final byte[] UTF32BE_BOM = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0xFE, (byte) 0xFF };
+	static final byte[] UTF8_BOM = new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
+	static final byte[] UTF32LE_BOM = new byte[] { (byte) 0xFF, (byte) 0xFE, (byte) 0x00, (byte) 0x00 };
+	static final byte[] UTF16LE_BOM = new byte[] { (byte) 0xFF, (byte) 0xFE };
+	static final byte[] UTF16BE_BOM = new byte[] { (byte) 0xFE, (byte) 0xFF };
+	static final byte[] UTF32BE_BOM = new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0xFE, (byte) 0xFF };
 
 	public static InputStream deBOM(InputStream in) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
