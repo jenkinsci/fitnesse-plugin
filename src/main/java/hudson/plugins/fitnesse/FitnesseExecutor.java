@@ -22,6 +22,7 @@ import hudson.Launcher.ProcStarter;
 import hudson.Proc;
 import hudson.model.Computer;
 import hudson.model.JDK;
+import hudson.model.Node;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import jenkins.model.Jenkins;
@@ -89,10 +90,14 @@ public class FitnesseExecutor {
 
 		// master/salve configuration
 		if (!builder.getFitnesseJdk(envVars).isEmpty()) {
-			JDK jdk = Jenkins.getInstance().getJDK(builder.getFitnesseJdk(envVars));
+			JDK jdk = Jenkins.getActiveInstance().getJDK(builder.getFitnesseJdk(envVars));
 			if (jdk != null) {
-				jdk = jdk.forNode(Computer.currentComputer().getNode(), listener);
-				java = getJavaBinFromjavaHome(workingDirectory, jdk.getHome());
+				Node node = Computer.currentComputer().getNode();
+				
+				if(node != null) {
+					jdk = jdk.forNode(node, listener);
+					java = getJavaBinFromjavaHome(workingDirectory, jdk.getHome());
+				}
 			}
 		}
 		// env variable

@@ -257,7 +257,7 @@ public class History {
 			Run<?,?> build = o.getOwner();
 			String buildLink = build.getUrl();
 			String actionUrl = o.getTestResultAction().getUrlName();
-			this.url = Jenkins.getInstance().getRootUrlFromRequest() + buildLink + actionUrl + o.getUrl();
+			this.url = Jenkins.getActiveInstance().getRootUrlFromRequest() + buildLink + actionUrl + o.getUrl();
 		}
 
 		public int compareTo(ChartLabel that) {

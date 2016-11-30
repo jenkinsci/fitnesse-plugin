@@ -20,6 +20,8 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.export.Exported;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class FitnesseResults extends TabulatedResult implements
 		Comparable<FitnesseResults> {
 	private static final String DETAILS = "Details";
@@ -35,7 +37,7 @@ public class FitnesseResults extends TabulatedResult implements
 	private Counts pageCounts;
 	private FitnesseResults parent;
 	private List<FitnesseResults> details = new ArrayList<FitnesseResults>();
-	private Run<?,?> owner;
+	private transient Run<?,?> owner;
 	private TaskListener listener;
 
 	public FitnesseResults(Counts pageCounts) {
@@ -49,6 +51,7 @@ public class FitnesseResults extends TabulatedResult implements
 		}
 	}
 
+	@SuppressFBWarnings("SE_PRIVATE_READ_RESOLVE_NOT_INHERITED")
 	private Object readResolve() {
 		// for some reason, XStream does not instantiate the details list,
 		// so we do it manually
@@ -263,6 +266,24 @@ public class FitnesseResults extends TabulatedResult implements
 	public int compareTo(FitnesseResults other) {
 		return getDisplayName().compareTo(other.getDisplayName());
 	}
+	
+	@Override
+	public int hashCode() {
+		return getDisplayName().hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FitnesseResults other = (FitnesseResults) obj;
+	
+		return getDisplayName().equals(other.getDisplayName());
+	}
 
 	@Override
 	@Exported(visibility = 1)
@@ -328,7 +349,7 @@ public class FitnesseResults extends TabulatedResult implements
 	 */
 	public String toHtml(FitnesseResults results) throws IOException, InterruptedException {
 		FitnesseBuildAction buildAction = getFitnesseBuildAction();
-		return buildAction.getLinkFor(results.getName(), Jenkins.getInstance().getRootUrl());
+		return buildAction.getLinkFor(results.getName(), Jenkins.getActiveInstance().getRootUrl());
 	}
 
 	/**
@@ -373,7 +394,7 @@ public class FitnesseResults extends TabulatedResult implements
 	private FitnesseBuildAction getDefaultFitnesseBuildAction() throws IOException, InterruptedException {
 		final FitnesseBuildAction buildAction;Map<String, String> envVars =  getOwner().getEnvironment(listener);
 		if (envVars.containsKey(FITNESSE_HOSTNAME) && envVars.containsKey(FITNESSE_PORT)) {
-            buildAction = new FitnesseBuildAction(false, envVars.get(FITNESSE_HOSTNAME), Integer.valueOf(envVars.get(FITNESSE_PORT)));
+            buildAction = new FitnesseBuildAction(false, envVars.get(FITNESSE_HOSTNAME), Integer.parseInt(envVars.get(FITNESSE_PORT)));
         } else {
             buildAction = FitnesseBuildAction.NULL_ACTION;
         }
