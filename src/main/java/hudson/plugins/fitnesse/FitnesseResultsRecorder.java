@@ -127,7 +127,7 @@ public class FitnesseResultsRecorder extends Recorder implements SimpleBuildStep
 			resultsInputStream = resultsFile.read();
 
 			Path p = Paths.get(resultsFile.getRemote());
-			String resultFileName = p.getFileName().toString();
+			String resultFileName = p.toFile().getName();
 
 			logger.println("Parsing results... ");
 			NativePageCountsParser pageCountsParser = new NativePageCountsParser();

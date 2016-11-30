@@ -3,6 +3,7 @@ package hudson.plugins.fitnesse;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -36,7 +37,7 @@ public class NativePageCountsTest {
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear(Calendar.MILLISECOND);
 		Date aDate = calendar.getTime();
-		Counts actual = new Counts("name", Counts.RESULTS_DATE_FORMAT.format(aDate), 11, 10, 9, 8, 7, null);
+		Counts actual = new Counts("name", new SimpleDateFormat("yyyyMMddHHmmss").format(aDate), 11, 10, 9, 8, 7, null);
 		Assert.assertEquals(aDate, actual.resultsDateAsDate());
 	}
 

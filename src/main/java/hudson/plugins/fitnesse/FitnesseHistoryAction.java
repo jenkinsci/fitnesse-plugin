@@ -6,6 +6,7 @@ import hudson.model.Run;
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 import hudson.util.RunList;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -173,14 +174,16 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 			return new PageInfo.ByErraticness().reverse().compound(new PageInfo.ByPage());
 		}
 
-		private static class ByErraticness extends Ordering<PageInfo> {
+		private static class ByErraticness extends Ordering<PageInfo> implements Serializable {
+			private static final long serialVersionUID = 1L;
 
 			public int compare(PageInfo o1, PageInfo o2) {
 				return o1.erraticnessIndex().compareTo(o2.erraticnessIndex());
 			}
 		}
 
-		private static class ByPage extends Ordering<PageInfo> {
+		private static class ByPage extends Ordering<PageInfo> implements Serializable {
+			private static final long serialVersionUID = 1L;
 
 			public int compare(PageInfo o1, PageInfo o2) {
 				return o1.page.compareTo(o2.page);

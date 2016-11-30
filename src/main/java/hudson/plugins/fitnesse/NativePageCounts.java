@@ -1,9 +1,13 @@
 package hudson.plugins.fitnesse;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.Serializable;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -119,16 +123,17 @@ public class NativePageCounts extends DefaultHandler {
 
 	public List<Counts> getDetails() {
 		ArrayList<Counts> details = new ArrayList<Counts>();
-		for (String key : allCounts.keySet()) {
-			Counts counts = allCounts.get(key);
+		for (Counts counts : allCounts.values()) {
 			if (counts != summary)
 				details.add(counts);
 		}
 		return details;
 	}
 
-	static final class Counts {
-		static final SimpleDateFormat RESULTS_DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
+	static final class Counts implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		final SimpleDateFormat RESULTS_DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 
 		public final String page;
 		public final String resultsDate;
@@ -186,7 +191,7 @@ public class NativePageCounts extends DefaultHandler {
 		String fileName = rootDirName + pageName;
 		try {
 			// Create separate file for every test in a suite
-			FileWriter fstream = new FileWriter(fileName);
+			Writer fstream = new OutputStreamWriter(new FileOutputStream(fileName), Charset.forName("ISO-8859-1"));
 			out = new BufferedWriter(fstream);
 			out.write(htmlContent);
 			logger.println(" File: " + fileName + " wrote");

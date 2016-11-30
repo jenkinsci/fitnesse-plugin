@@ -7,8 +7,10 @@ import hudson.tasks.test.TestObject;
 import hudson.tasks.test.TestResult;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -85,7 +87,7 @@ public class ResultsDetails extends TestResult {
 		}
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new FileReader(fileName));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), Charset.forName("ISO-8859-1")));
 			String strLine;
 			while ((strLine = br.readLine()) != null) {
 				ret.append(strLine);

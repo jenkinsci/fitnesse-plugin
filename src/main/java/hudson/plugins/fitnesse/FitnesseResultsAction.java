@@ -22,7 +22,7 @@ public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResu
 		this.results.setOwner(owner);
 		this.results.setTaskListener(listener);
 		
-		List<Action> projectActions = new ArrayList<>();
+		List<Action> projectActions = new ArrayList<Action>();
 		projectActions.add(new FitnesseProjectAction(owner.getParent()));
 		projectActions.add(new FitnesseHistoryAction(owner.getParent()));
 		this.projectActions = projectActions;
