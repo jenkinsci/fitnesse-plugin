@@ -66,16 +66,16 @@ public class FitnesseExecutor {
 			readAndWriteFitnesseResults(getFitnessePage(build, true), resultsFilePath);
 			return true;
 		} catch (Throwable t) {
-			t.printStackTrace(logger);
-			if (t instanceof InterruptedException)
-				throw (InterruptedException) t;
-			return false;
-		} finally {
 			try {
 				killTest(getFitnessePage(build, false));
 			} catch (Exception e) {
 				logger.println("Caught exception while trying to terminate Fitnesse test");
 			}			
+			t.printStackTrace(logger);
+			if (t instanceof InterruptedException)
+				throw (InterruptedException) t;
+			return false;
+		} finally {
 			killProc(fitnesseProc);
 		}
 	}
