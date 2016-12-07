@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ public class FitnesseExecutor {
 	private final EnvVars envVars;
 	private final PrintStream logger;
 	private final TaskListener listener;
+	
+	private String fitnesseTestId=null;
 
 	public FitnesseExecutor(FitnesseBuilder builder, TaskListener listener, EnvVars envVars) {
 		this.builder = builder;
@@ -64,6 +67,11 @@ public class FitnesseExecutor {
 			return true;
 		} catch (Throwable t) {
 			t.printStackTrace(logger);
+			try {
+				killTest(getFitnessePage(build, false));
+			} catch (Exception e) {
+				logger.println("Caught exception while trying to terminate Fitnesse test");
+			}			
 			if (t instanceof InterruptedException)
 				throw (InterruptedException) t;
 			return false;
@@ -220,6 +228,19 @@ public class FitnesseExecutor {
 		}
 	}
 
+	private void killTest(URL url) throws IOException, MalformedURLException {
+		if (fitnesseTestId == null)
+			return;
+		logger.println("Attempting to stop Fitnesse test with id " + fitnesseTestId);
+		URL pageStopTarget = new URL(url.toString().split("\\?")[0]
+			+ "?stoptest&id=" + fitnesseTestId);
+		HttpURLConnection connection = (HttpURLConnection) pageStopTarget
+			.openConnection();
+		connection.setReadTimeout(5000);
+		logger.println("Stop test result: " + connection.getResponseCode()
+			+ "/" + connection.getResponseMessage());
+	}
+	
 	private void readAndWriteFitnesseResults(final URL readFromURL, final FilePath writeToFilePath)
 			throws InterruptedException {
 		final RunnerWithTimeOut runnerWithTimeOut = new RunnerWithTimeOut(builder.getFitnesseTestTimeout(envVars));
@@ -249,6 +270,11 @@ public class FitnesseExecutor {
 			connection.setReadTimeout(httpTimeout);
 			logger.println("Connected: " + connection.getResponseCode() + "/" + connection.getResponseMessage());
 
+			fitnesseTestId = connection.getHeaderField("X-FitNesse-Test-Id");
+			if (fitnesseTestId != null) {
+				logger.println("Fitnesse-Test-Id: " + fitnesseTestId);
+			}
+			
 			inputStream = connection.getInputStream();
 			long recvd = 0, lastLogged = 0;
 			byte[] buf = new byte[4096];
@@ -262,6 +288,10 @@ public class FitnesseExecutor {
 					lastLogged = recvd;
 				}
 			}
+			
+			// no exceptions, so the test has finished and should not be terminated
+			fitnesseTestId = null;
+			
 		} catch (IOException e) {
 			// this may be a "premature EOF" caused by e.g. incorrect content-length HTTP header
 			// so it may be non-fatal -- try to recover
