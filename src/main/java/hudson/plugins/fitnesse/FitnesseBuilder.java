@@ -357,7 +357,7 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep {
 			if (value.length() == 0)
 				return FormValidation.error("Please specify the location of 'FitNesseRoot'.");
 			if (!value.endsWith("FitNesseRoot") && new File(value, "FitNesseRoot").exists())
-				return FormValidation.warning("Path doFes not end with 'FitNesseRoot': is that correct?");
+				return FormValidation.warning("Path does not end with 'FitNesseRoot': is that correct?");
 			return FormValidation.ok();
 		}
 
