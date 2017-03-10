@@ -29,6 +29,18 @@
 	    value="${instance.fitnessePort}" />
 	  </f:entry>
 
+	   <f:entry title="FitNesse Username"
+	   help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/fitnesseUsername">
+         <f:textbox name="fitnesseUsername"
+         value="${instance.fitnesseUsername}" />
+       </f:entry>
+
+       <f:entry title="FitNesse Password"
+       help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/fitnessePassword">
+         <f:password name="fitnessePassword"
+         value="${instance.fitnessePassword}" />
+       </f:entry>
+
       <f:entry title="Enable SSL?" field="fitnesseEnableSsl"
       help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/fitnesseEnableSsl">
         <f:checkbox name="fitnesseEnableSsl" value="True" checked="${instance.fitnesseSsl==true}"/>
