@@ -260,7 +260,7 @@ public class FitnesseExecutor {
 
 			//If remote fitnesse is protected, let's use basic authentication taking in the username/password provided.
 			if (builder.getFitnesseUsername().trim().length() > 0) {
-				byte[] message = (builder.getFitnesseUsername() + ":" + builder.getFitnessePassword()).getBytes();
+                                byte[] message = (builder.getFitnesseUsername() + ":" + builder.getFitnessePassword()).getBytes("UTF-8");
 				String encoded = javax.xml.bind.DatatypeConverter.printBase64Binary(message);
 				connection.setRequestProperty("Authorization", "Basic " + encoded);
 			}
