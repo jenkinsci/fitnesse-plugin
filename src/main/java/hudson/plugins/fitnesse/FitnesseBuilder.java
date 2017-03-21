@@ -1,32 +1,22 @@
 package hudson.plugins.fitnesse;
 
-import hudson.EnvVars;
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.Util;
-import hudson.model.ModelObject;
-import hudson.model.Run;
-import hudson.model.TaskListener;
-import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
+import hudson.*;
+import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import jenkins.tasks.SimpleBuildStep;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
+
+import javax.annotation.Nonnull;
+import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.servlet.ServletException;
-
-import net.sf.json.JSONObject;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Execute fitnesse tests, either by starting a new fitnesse instance or by
@@ -34,13 +24,15 @@ import org.kohsuke.stapler.StaplerRequest;
  *
  * @author Tim Bacon
  */
-public class FitnesseBuilder extends Builder implements SimpleBuildStep{
+public class FitnesseBuilder extends Builder implements SimpleBuildStep {
 
 	public static final String START_FITNESSE = "fitnesseStart";
 	public static final String FITNESSE_HOST = "fitnesseHost";
 	public static final String FITNESSE_PORT = "fitnessePort";
+	public static final String FITNESSE_USERNAME = "fitnesseUsername";
+	public static final String FITNESSE_PASSWORD = "fitnessePassword";
 	public static final String FITNESSE_PORT_REMOTE = "fitnessePortRemote";
-    public static final String FITNESSE_ENABLE_SSL = "fitnesseEnableSsl";
+	public static final String FITNESSE_ENABLE_SSL = "fitnesseEnableSsl";
 	public static final String FITNESSE_PORT_LOCAL = "fitnessePortLocal";
 	public static final String FITNESSE_ADDITIONAL_OPTIONS = "additionalFitnesseOptions";
 	public static final String JAVA_OPTS = "fitnesseJavaOpts";
@@ -57,6 +49,7 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep{
 	static final int _URL_READ_TIMEOUT_MILLIS = 60 * 1000;
 	static final String _LOCALHOST = "localhost";
 	static final String _HOSTNAME_SLAVE_PROPERTY = "HOST_NAME";
+
 
 	private Map<String, String> options;
 
@@ -96,12 +89,12 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep{
 		return Boolean.parseBoolean(getOption(START_FITNESSE, "False"));
 	}
 
-    /**
-     * referenced in config.jelly
-     */
-    public boolean getFitnesseSsl() {
-        return Boolean.parseBoolean(getOption(FITNESSE_ENABLE_SSL, "False"));
-    }
+	/**
+	 * referenced in config.jelly
+	 */
+	public boolean getFitnesseSsl() {
+		return Boolean.parseBoolean(getOption(FITNESSE_ENABLE_SSL, "False"));
+	}
 
 	/**
 	 * referenced in config.jelly
@@ -122,7 +115,7 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep{
 		}
 	}
 
-	public String getFitnesseHost(Run<?,?> build, EnvVars environment) throws IOException, InterruptedException {
+	public String getFitnesseHost(Run<?, ?> build, EnvVars environment) throws IOException, InterruptedException {
 		if (getFitnesseStart()) {
 			if (build != null && environment != null && environment.get(_HOSTNAME_SLAVE_PROPERTY) != null) {
 				return environment.get(_HOSTNAME_SLAVE_PROPERTY);
@@ -183,6 +176,22 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep{
 	public int getFitnessePort(EnvVars environment) {
 		return Integer.parseInt(getOption(FITNESSE_PORT_REMOTE,
 				getOption(FITNESSE_PORT_LOCAL, getOption(FITNESSE_PORT, "-1", environment), environment), environment));
+	}
+
+	/**
+	 * referenced in config.jelly
+	 */
+
+	public String getFitnesseUsername() {
+		return getOption(FITNESSE_USERNAME, "");
+	}
+
+
+	/**
+	 * referenced in config.jelly
+	 */
+	public String getFitnessePassword() {
+		return getOption(FITNESSE_PASSWORD, "");
 	}
 
 	/**
@@ -271,9 +280,12 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep{
 	 * {@link Builder}
 	 */
 	@Override
-	public void perform(@Nonnull Run<?,?> build,@Nonnull FilePath workspace,@Nonnull Launcher launcher,@Nonnull TaskListener listener) throws IOException,
+	public void perform(@Nonnull Run<?, ?> build, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws IOException,
 			InterruptedException {
-		listener.getLogger().println(getClass().getName() + ": " + options);
+		Map optionsWithoutPassword = new HashMap();
+		optionsWithoutPassword.putAll(options);
+		optionsWithoutPassword.remove("fitnessePassword");
+		listener.getLogger().println(getClass().getName() + ": " + optionsWithoutPassword);
 		FitnesseExecutor fitnesseExecutor = new FitnesseExecutor(this, listener, build.getEnvironment(listener));
 		fitnesseExecutor.execute(launcher, workspace, build);
 	}
@@ -423,14 +435,14 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep{
 			if (Boolean.parseBoolean(startFitnesseValue)) {
 				return newFitnesseBuilder(
 						startFitnesseValue,
-						collectFormData(formData, new String[] { FITNESSE_JDK, JAVA_OPTS, JAVA_WORKING_DIRECTORY, PATH_TO_JAR,
+						collectFormData(formData, new String[]{FITNESSE_JDK, JAVA_OPTS, JAVA_WORKING_DIRECTORY, PATH_TO_JAR,
 								PATH_TO_ROOT, FITNESSE_PORT_LOCAL, TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, TEST_TIMEOUT,
-								PATH_TO_RESULTS, FITNESSE_ADDITIONAL_OPTIONS }));
+								PATH_TO_RESULTS, FITNESSE_ADDITIONAL_OPTIONS}));
 			}
 			return newFitnesseBuilder(
 					startFitnesseValue,
-					collectFormData(formData, new String[] { FITNESSE_HOST, FITNESSE_PORT_REMOTE, FITNESSE_ENABLE_SSL, TARGET_PAGE, TARGET_IS_SUITE,
-							HTTP_TIMEOUT, TEST_TIMEOUT, PATH_TO_RESULTS }));
+					collectFormData(formData, new String[]{FITNESSE_HOST, FITNESSE_PORT_REMOTE, FITNESSE_USERNAME, FITNESSE_PASSWORD, FITNESSE_ENABLE_SSL, TARGET_PAGE, TARGET_IS_SUITE,
+							HTTP_TIMEOUT, TEST_TIMEOUT, PATH_TO_RESULTS}));
 		}
 
 		private FitnesseBuilder newFitnesseBuilder(String startFitnesseValue, Map<String, String> collectedFormData) {

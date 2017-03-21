@@ -5,6 +5,12 @@ import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.StreamBuildListener;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -14,13 +20,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.mockito.Mockito;
 
 public class FitnesseExecutorTest {
 
@@ -162,29 +161,29 @@ public class FitnesseExecutorTest {
 	}
 
 
-    @Test
-    public void fitnessePage() throws IOException, InterruptedException {
-        final AbstractBuild<?, ?> build = Mockito.mock(AbstractBuild.class);
-        init(new String[] { FitnesseBuilder.FITNESSE_HOST, FitnesseBuilder.FITNESSE_PORT },
-                new String[] { "localhost", "8080" });
+	@Test
+	public void fitnessePage() throws IOException, InterruptedException {
+		final AbstractBuild<?, ?> build = Mockito.mock(AbstractBuild.class);
+		init(new String[] { FitnesseBuilder.FITNESSE_HOST, FitnesseBuilder.FITNESSE_PORT },
+				new String[] { "localhost", "8080" });
 
-        final String page = executor.getFitnessePage(build, true).toExternalForm();
-        Assert.assertThat(page, Matchers.startsWith("http://localhost:8080"));
-    }
+		final String page = executor.getFitnessePage(build, true).toExternalForm();
+		Assert.assertThat(page, Matchers.startsWith("http://localhost:8080"));
+	}
 
-    @Test
-    public void fitnessePageWithSslEnabled() throws IOException, InterruptedException {
-        final AbstractBuild<?, ?> build = Mockito.mock(AbstractBuild.class);
-        init(new String[] {
-                FitnesseBuilder.FITNESSE_HOST,
-                FitnesseBuilder.FITNESSE_PORT,
-                FitnesseBuilder.FITNESSE_ENABLE_SSL }, new String[] { "localhost", "8443", "True" });
+	@Test
+	public void fitnessePageWithSslEnabled() throws IOException, InterruptedException {
+		final AbstractBuild<?, ?> build = Mockito.mock(AbstractBuild.class);
+		init(new String[] {
+				FitnesseBuilder.FITNESSE_HOST,
+				FitnesseBuilder.FITNESSE_PORT,
+				FitnesseBuilder.FITNESSE_ENABLE_SSL }, new String[] { "localhost", "8443", "True" });
 
-        final String page = executor.getFitnessePage(build, true).toExternalForm();
-        Assert.assertThat(page, Matchers.startsWith("https://localhost:8443"));
-    }
+		final String page = executor.getFitnessePage(build, true).toExternalForm();
+		Assert.assertThat(page, Matchers.startsWith("https://localhost:8443"));
+	}
 
-    @Test
+	@Test
 	public void fitnessePageBase() {
 		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE }, new String[] { "WikiPage",
 				"true" });
@@ -247,8 +246,8 @@ public class FitnesseExecutorTest {
 		Assert.assertTrue(bytes.length > 0);
 		Assert.assertTrue(new String(bytes).contains("<html"));
 		Assert.assertTrue(new String(bytes).contains("</html>"));
-		Assert.assertTrue(output.toString().startsWith("Connnecting to http://hudson-ci.org/"));
-		Assert.assertTrue(output.toString().contains("Connected: 200/OK"));
+		Assert.assertTrue(output.toString().startsWith("Connecting to http://hudson-ci.org/"));
+		Assert.assertTrue(output.toString().contains("Connection Status: 200/OK"));
 		Assert.assertTrue(resetWasCalled);
 	}
 

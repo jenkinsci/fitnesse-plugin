@@ -1,11 +1,14 @@
 package hudson.plugins.fitnesse;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import hudson.EnvVars;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.Launcher.ProcStarter;
+import hudson.Proc;
+import hudson.model.*;
+import jenkins.model.Jenkins;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,20 +19,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import hudson.EnvVars;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.Launcher.ProcStarter;
-import hudson.Proc;
-import hudson.model.Computer;
-import hudson.model.JDK;
-import hudson.model.Node;
-import hudson.model.Run;
-import hudson.model.TaskListener;
-import jenkins.model.Jenkins;
-
 /**
- *
  * @author Tim Bacon
  */
 public class FitnesseExecutor {
@@ -41,8 +31,8 @@ public class FitnesseExecutor {
 	private final EnvVars envVars;
 	private final PrintStream logger;
 	private final TaskListener listener;
-	
-	private String fitnesseTestId=null;
+
+	private String fitnesseTestId = null;
 
 	public FitnesseExecutor(FitnesseBuilder builder, TaskListener listener, EnvVars envVars) {
 		this.builder = builder;
@@ -51,7 +41,7 @@ public class FitnesseExecutor {
 		this.logger = listener.getLogger();
 	}
 
-	public boolean execute(Launcher launcher,FilePath workspace, Run<?,?> build) throws InterruptedException {
+	public boolean execute(Launcher launcher, FilePath workspace, Run<?, ?> build) throws InterruptedException {
 		Proc fitnesseProc = null;
 		try {
 			build.addAction(getFitnesseBuildAction(build));
@@ -71,7 +61,7 @@ public class FitnesseExecutor {
 				killTest(getFitnessePage(build, false));
 			} catch (Exception e) {
 				logger.println("Caught exception while trying to terminate Fitnesse test");
-			}			
+			}
 			if (t instanceof InterruptedException)
 				throw (InterruptedException) t;
 			return false;
@@ -80,7 +70,7 @@ public class FitnesseExecutor {
 		}
 	}
 
-	private FitnesseBuildAction getFitnesseBuildAction(Run<?,?> build) throws IOException, InterruptedException {
+	private FitnesseBuildAction getFitnesseBuildAction(Run<?, ?> build) throws IOException, InterruptedException {
 		return new FitnesseBuildAction(builder.getFitnesseStart(), builder.getFitnesseHost(build, envVars),
 				builder.getFitnessePort(envVars), builder.getFitnesseSsl());
 	}
@@ -101,8 +91,8 @@ public class FitnesseExecutor {
 			JDK jdk = Jenkins.getActiveInstance().getJDK(builder.getFitnesseJdk(envVars));
 			if (jdk != null) {
 				Node node = Computer.currentComputer().getNode();
-				
-				if(node != null) {
+
+				if (node != null) {
 					jdk = jdk.forNode(node, listener);
 					java = getJavaBinFromjavaHome(workingDirectory, jdk.getHome());
 				}
@@ -121,13 +111,13 @@ public class FitnesseExecutor {
 		String[] java_opts = ("".equals(fitnesseJavaOpts) ? new String[0] : fitnesseJavaOpts.split(" "));
 
 		String absolutePathToFitnesseJar = getAbsolutePathToFile(workingDirectory, builder.getFitnessePathToJar());
-		String[] jar_opts = { "-jar", absolutePathToFitnesseJar };
+		String[] jar_opts = {"-jar", absolutePathToFitnesseJar};
 
 		FilePath absolutePathToFitNesseRoot = getFilePath(workingDirectory, builder.getFitnessePathToRoot());
 		String[] fitnesse_opts = { // --
-		"-d", absolutePathToFitNesseRoot.getParent().getRemote(), // --
+				"-d", absolutePathToFitNesseRoot.getParent().getRemote(), // --
 				"-r", absolutePathToFitNesseRoot.getName(), // --
-				"-p", Integer.toString(builder.getFitnessePort(envVars)) };
+				"-p", Integer.toString(builder.getFitnessePort(envVars))};
 
 		// split additional fitness options and add them to those explicitly configured ones
 		String[] addOps = splitOptions(builder.getAdditionalFitnesseOptions());
@@ -189,7 +179,7 @@ public class FitnesseExecutor {
 			try {
 				connection = (HttpURLConnection) fitnessePageURL.openConnection();
 				connection.setRequestMethod("GET"); // HEAD is not allowed on Fitnesse
-																						// server (error 400)
+				// server (error 400)
 				connection.setReadTimeout(READ_PAGE_TIMEOUT);
 				int responseCode = connection.getResponseCode();
 				if (responseCode != 200)
@@ -208,7 +198,7 @@ public class FitnesseExecutor {
 		}
 
 		logger.printf(launched // --
-		? "%nFitnesse server started in %sms.%n" // --
+				? "%nFitnesse server started in %sms.%n" // --
 				: "%nFitnesse server NOT started in %sms on URL: %s%n", waitedAlready, fitnessePageURL);
 
 		return launched;
@@ -233,14 +223,14 @@ public class FitnesseExecutor {
 			return;
 		logger.println("Attempting to stop Fitnesse test with id " + fitnesseTestId);
 		URL pageStopTarget = new URL(url.toString().split("\\?")[0]
-			+ "?stoptest&id=" + fitnesseTestId);
+				+ "?stoptest&id=" + fitnesseTestId);
 		HttpURLConnection connection = (HttpURLConnection) pageStopTarget
-			.openConnection();
+				.openConnection();
 		connection.setReadTimeout(5000);
 		logger.println("Stop test result: " + connection.getResponseCode()
-			+ "/" + connection.getResponseMessage());
+				+ "/" + connection.getResponseMessage());
 	}
-	
+
 	private void readAndWriteFitnesseResults(final URL readFromURL, final FilePath writeToFilePath)
 			throws InterruptedException {
 		final RunnerWithTimeOut runnerWithTimeOut = new RunnerWithTimeOut(builder.getFitnesseTestTimeout(envVars));
@@ -265,16 +255,23 @@ public class FitnesseExecutor {
 		ByteArrayOutputStream bucket = new ByteArrayOutputStream();
 
 		try {
-			logger.println("Connnecting to " + pageCmdTarget);
+			logger.println("Connecting to " + pageCmdTarget);
 			HttpURLConnection connection = (HttpURLConnection) pageCmdTarget.openConnection();
+
+			//If remote fitnesse is protected, let's use basic authentication taking in the username/password provided.
+			if (builder.getFitnesseUsername().trim().length() > 0) {
+                                byte[] message = (builder.getFitnesseUsername() + ":" + builder.getFitnessePassword()).getBytes("UTF-8");
+				String encoded = javax.xml.bind.DatatypeConverter.printBase64Binary(message);
+				connection.setRequestProperty("Authorization", "Basic " + encoded);
+			}
 			connection.setReadTimeout(httpTimeout);
-			logger.println("Connected: " + connection.getResponseCode() + "/" + connection.getResponseMessage());
+			logger.println("Connection Status: " + connection.getResponseCode() + "/" + connection.getResponseMessage());
 
 			fitnesseTestId = connection.getHeaderField("X-FitNesse-Test-Id");
 			if (fitnesseTestId != null) {
 				logger.println("Fitnesse-Test-Id: " + fitnesseTestId);
 			}
-			
+
 			inputStream = connection.getInputStream();
 			long recvd = 0, lastLogged = 0;
 			byte[] buf = new byte[4096];
@@ -288,10 +285,10 @@ public class FitnesseExecutor {
 					lastLogged = recvd;
 				}
 			}
-			
+
 			// no exceptions, so the test has finished and should not be terminated
 			fitnesseTestId = null;
-			
+
 		} catch (IOException e) {
 			// this may be a "premature EOF" caused by e.g. incorrect content-length HTTP header
 			// so it may be non-fatal -- try to recover
@@ -310,7 +307,8 @@ public class FitnesseExecutor {
 		return bucket.toByteArray();
 	}
 
-	/* package for test */URL getFitnessePage(Run<?,?> build, boolean withCommand) throws IOException, InterruptedException {
+	/* package for test */URL getFitnessePage(Run<?, ?> build, boolean withCommand) throws IOException, InterruptedException {
+
 		return new URL(builder.getFitnesseSsl() ? "https" : "http", //
 				builder.getFitnesseHost(build, envVars), //
 				builder.getFitnessePort(envVars), //
