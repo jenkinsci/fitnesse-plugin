@@ -33,8 +33,15 @@ public class FitnesseExecutor {
 	private final TaskListener listener;
 
 	private String fitnesseTestId = null;
-    private static String fitnessePathToJunitResults;
+	private static volatile String fitnessePathToJunitResults = null;
 
+	public synchronized static void setFitnessePathToJunitResults(String valuePassed) {
+		fitnessePathToJunitResults = valuePassed;
+	}
+
+	public static String getFitnessePathToJunitResults() {
+		return fitnessePathToJunitResults;
+	}
 	public FitnesseExecutor(FitnesseBuilder builder, TaskListener listener, EnvVars envVars) {
 		this.builder = builder;
 		this.listener = listener;
@@ -54,7 +61,9 @@ public class FitnesseExecutor {
 			}
 
 			FilePath resultsFilePath = getFilePath(logger, workspace, builder.getFitnessePathToXmlResultsOut(envVars));
-            fitnessePathToJunitResults = builder.getFitnessePathToJunitResultsOut(envVars);
+			String junitResultsFileName = builder.getFitnessePathToJunitResultsOut(envVars);
+			if(junitResultsFileName.trim().length()>1)
+				setFitnessePathToJunitResults(junitResultsFileName.trim());
 			readAndWriteFitnesseResults(getFitnessePage(build, true), resultsFilePath);
 			return true;
 		} catch (Throwable t) {
@@ -386,26 +395,22 @@ public class FitnesseExecutor {
 		}
 	}
 
-    static FilePath getJunitFilePath(PrintStream logger, FilePath workingDirectory) {
-        if (fitnessePathToJunitResults == null || !fitnessePathToJunitResults.endsWith(".xml"))
-            return null;
-        File fp;
-        //Determine if it is in custom folder or in working directory
-        if (fitnessePathToJunitResults.contains("/") || fitnessePathToJunitResults.contains("\\")) {
-            fp = new File(fitnessePathToJunitResults);
-            //if(fp.getPath().
-        }
-        else
-            fp = new File(workingDirectory + "\\" + fitnessePathToJunitResults);
+	static FilePath getJunitFilePath(PrintStream logger, FilePath workingDirectory) {
+		String fitnessePathToJunitResults = getFitnessePathToJunitResults();
 
-        //Recreate the file if exists. We want to start on a clean file.
-        if (fp.exists())
-            try {
-                fp.delete();
-                fp.createNewFile();
-            } catch (Exception e) {
-                logger.println("ERROR: Could not re-create the junit file. Ensure that it is not in use and you have write permission.");
-            }
-        return new FilePath(fp);
-    }
+		if (fitnessePathToJunitResults == null || !fitnessePathToJunitResults.endsWith(".xml"))
+			return null;
+
+		File fp = new File(workingDirectory + "\\" + fitnessePathToJunitResults);
+
+		try {
+			if (fp.createNewFile())
+				logger.println(fp.getAbsolutePath() + " created.");
+			else
+				logger.println(fp.getAbsolutePath() +" already exists. Will be replaced.");
+		} catch (Exception e) {
+			logger.println("ERROR: Could not re-create the junit file. Ensure that it is not in use and you have write permission.");
+		}
+		return new FilePath(fp);
+	}
 }
