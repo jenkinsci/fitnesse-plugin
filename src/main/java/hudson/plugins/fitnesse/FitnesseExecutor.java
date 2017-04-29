@@ -33,6 +33,7 @@ public class FitnesseExecutor {
 	private final TaskListener listener;
 
 	private String fitnesseTestId = null;
+    private static String fitnessePathToJunitResults;
 
 	public FitnesseExecutor(FitnesseBuilder builder, TaskListener listener, EnvVars envVars) {
 		this.builder = builder;
@@ -53,6 +54,7 @@ public class FitnesseExecutor {
 			}
 
 			FilePath resultsFilePath = getFilePath(logger, workspace, builder.getFitnessePathToXmlResultsOut(envVars));
+            fitnessePathToJunitResults = builder.getFitnessePathToJunitResultsOut(envVars);
 			readAndWriteFitnesseResults(getFitnessePage(build, true), resultsFilePath);
 			return true;
 		} catch (Throwable t) {
@@ -383,4 +385,27 @@ public class FitnesseExecutor {
 			return new FilePath(fileNameFile);
 		}
 	}
+
+    static FilePath getJunitFilePath(PrintStream logger, FilePath workingDirectory) {
+        if (fitnessePathToJunitResults == null || !fitnessePathToJunitResults.endsWith(".xml"))
+            return null;
+        File fp;
+        //Determine if it is in custom folder or in working directory
+        if (fitnessePathToJunitResults.contains("/") || fitnessePathToJunitResults.contains("\\")) {
+            fp = new File(fitnessePathToJunitResults);
+            //if(fp.getPath().
+        }
+        else
+            fp = new File(workingDirectory + "\\" + fitnessePathToJunitResults);
+
+        //Recreate the file if exists. We want to start on a clean file.
+        if (fp.exists())
+            try {
+                fp.delete();
+                fp.createNewFile();
+            } catch (Exception e) {
+                logger.println("ERROR: Could not re-create the junit file. Ensure that it is not in use and you have write permission.");
+            }
+        return new FilePath(fp);
+    }
 }
