@@ -62,8 +62,7 @@ public class FitnesseExecutor {
 
 			FilePath resultsFilePath = getFilePath(logger, workspace, builder.getFitnessePathToXmlResultsOut(envVars));
 			String junitResultsFileName = builder.getFitnessePathToJunitResultsOut(envVars);
-			if(junitResultsFileName.trim().length()>1)
-				setFitnessePathToJunitResults(junitResultsFileName.trim());
+			setFitnessePathToJunitResults(junitResultsFileName.trim());
 			readAndWriteFitnesseResults(getFitnessePage(build, true), resultsFilePath);
 			return true;
 		} catch (Throwable t) {
