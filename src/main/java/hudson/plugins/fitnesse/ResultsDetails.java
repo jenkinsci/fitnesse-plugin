@@ -90,7 +90,7 @@ public class ResultsDetails extends TestResult {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), Charset.forName("ISO-8859-1")));
 			String strLine;
 			while ((strLine = br.readLine()) != null) {
-				ret.append(strLine);
+				ret.append("<br>" + strLine + "</br>");
 			}
 		} catch (IOException e) {
 			return "exception while reading file: " + fileName + "\n" + e.toString();
