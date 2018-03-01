@@ -38,7 +38,7 @@ public class FitnesseResults extends TabulatedResult implements
 	private FitnesseResults parent;
 	private List<FitnesseResults> details = new ArrayList<FitnesseResults>();
 	private transient Run<?,?> owner;
-	private TaskListener listener;
+	private transient TaskListener listener;
 
 	public FitnesseResults(Counts pageCounts) {
 		this.pageCounts = pageCounts;

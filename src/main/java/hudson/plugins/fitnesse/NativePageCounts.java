@@ -133,8 +133,6 @@ public class NativePageCounts extends DefaultHandler {
 	static final class Counts implements Serializable {
 		private static final long serialVersionUID = 1L;
 
-		final SimpleDateFormat RESULTS_DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
-
 		public final String page;
 		public final String resultsDate;
 		public final int right;
@@ -161,6 +159,7 @@ public class NativePageCounts extends DefaultHandler {
 		}
 
 		public Date resultsDateAsDate() throws ParseException {
+			SimpleDateFormat RESULTS_DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 			return RESULTS_DATE_FORMAT.parse(resultsDate);
 		}
 
