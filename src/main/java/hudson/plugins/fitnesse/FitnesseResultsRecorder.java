@@ -93,14 +93,6 @@ public class FitnesseResultsRecorder extends Recorder implements SimpleBuildStep
 
 		if (resultsFile.exists()) {
 			// directly configured single file
-			// Also convert the fitnesse result xml file into junit file if required. This will be useful if we want to process as junit result
-			try {
-				FilePath junitFilePath = FitnesseExecutor.getJunitFilePath(logger, workingDirectory);
-				if(junitFilePath !=null)
-				    ConvertReport.generateJunitResult(resultsFile.getRemote(),junitFilePath.getRemote());
-			} catch (TransformerException e) {
-				e.printStackTrace(logger);
-			}
 			return new FilePath[] { resultsFile };
 		} else {
 			// glob

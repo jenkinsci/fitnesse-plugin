@@ -1,9 +1,12 @@
 package hudson.plugins.fitnesse;
 
+import hudson.FilePath;
+
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
@@ -12,7 +15,7 @@ import java.io.StringReader;
  */
 public class ConvertReport {
 
-    public static void generateJunitResult(String inputFileName, String outputFileName) throws TransformerException {
+    public static void generateJunitResult(FilePath inputFilePath, FilePath outputFilePath) throws InterruptedException,IOException,TransformerException {
 
         Reader reader = new StringReader(getFitnesseToJunitResultStyle());
         Source stylesheetSource = new StreamSource(reader);
@@ -20,8 +23,8 @@ public class ConvertReport {
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(stylesheetSource);
 
-        Source inputSource = new StreamSource(new File(inputFileName).getAbsoluteFile());
-        Result outputResult = new StreamResult(new File(outputFileName).getAbsoluteFile());
+        Source inputSource = new StreamSource(inputFilePath.read());
+        Result outputResult = new StreamResult(outputFilePath.write());
 
         transformer.transform(inputSource, outputResult);
 
@@ -45,6 +48,9 @@ public class ConvertReport {
                         "    <xsl:attribute name=\"errors\">\n" +
                         "      <xsl:value-of select=\"testResults/finalCounts/exceptions\" />\n" +
                         "    </xsl:attribute>\n" +
+                        "    <xsl:attribute name=\"time\">\n" +
+                        "      <xsl:value-of select=\"testResults/totalRunTimeInMillis div 1000\" />\n" +
+                        "    </xsl:attribute>\n" +
                         "    <xsl:attribute name=\"name\">AcceptanceTests</xsl:attribute>\n" +
                         "  <xsl:for-each select=\"testResults/result\">\n" +
                         "    <xsl:element name=\"testcase\">\n" +
@@ -53,6 +59,9 @@ public class ConvertReport {
                         "      </xsl:attribute>\n" +
                         "      <xsl:attribute name=\"name\">\n" +
                         "        <xsl:value-of select=\"relativePageName\" />\n" +
+                        "      </xsl:attribute>\n" +
+                        "      <xsl:attribute name=\"time\">\n" +
+                        "        <xsl:value-of select=\"runTimeInMillis div 1000\" />\n" +
                         "      </xsl:attribute>\n" +
                         "      <xsl:choose>\n" +
                         "        <xsl:when test=\"counts/exceptions > 0\">\n" +

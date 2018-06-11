@@ -60,10 +60,35 @@ public class FitnesseExecutor {
 				}
 			}
 
-			FilePath resultsFilePath = getFilePath(logger, workspace, builder.getFitnessePathToXmlResultsOut(envVars));
+                        // Handle the fitnesse junit result xml file if specified
 			String junitResultsFileName = builder.getFitnessePathToJunitResultsOut(envVars);
 			setFitnessePathToJunitResults(junitResultsFileName.trim());
+                        FilePath junitFilePath = getJunitFilePath(logger, workspace);
+                        if (junitFilePath != null) {
+                             // Remove any existing junit result xml file
+                             try {
+				logger.println("Attempt to delete " + junitFilePath);
+                                junitFilePath.delete();
+                             } catch (Exception e) {
+                                e.printStackTrace(logger);
+                             }
+                        }
+
+                        // Execute fitnesse and capture the fitnesse testing results
+			FilePath resultsFilePath = getFilePath(logger, workspace, builder.getFitnessePathToXmlResultsOut(envVars));
 			readAndWriteFitnesseResults(getFitnessePage(build, true), resultsFilePath);
+
+                        // Produce the fitnesse junit result xml file if specified
+                        if (junitFilePath != null) {
+                             // Convert the fitnesse result xml file into junit result xml file
+                             try {
+				logger.println("Attempt to convert " + resultsFilePath + " to " + junitFilePath);
+                                ConvertReport.generateJunitResult(resultsFilePath,junitFilePath);
+                             } catch (Exception e) {
+                                e.printStackTrace(logger);
+                             }
+                        }
+
 			return true;
 		} catch (Throwable t) {
 			t.printStackTrace(logger);
@@ -400,16 +425,7 @@ public class FitnesseExecutor {
 		if (fitnessePathToJunitResults == null || !fitnessePathToJunitResults.endsWith(".xml"))
 			return null;
 
-		File fp = new File(workingDirectory + "\\" + fitnessePathToJunitResults);
+                return getFilePath(logger, workingDirectory, fitnessePathToJunitResults);
 
-		try {
-			if (fp.createNewFile())
-				logger.println(fp.getAbsolutePath() + " created.");
-			else
-				logger.println(fp.getAbsolutePath() +" already exists. Will be replaced.");
-		} catch (Exception e) {
-			logger.println("ERROR: Could not re-create the junit file. Ensure that it is not in use and you have write permission.");
-		}
-		return new FilePath(fp);
 	}
 }
