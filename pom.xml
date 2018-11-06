@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>2.2</version>
+		<version>3.0</version>
 	</parent>
 
 	<profiles>
@@ -35,7 +35,7 @@
 	</profiles>
 
 	<artifactId>fitnesse</artifactId>
-	<version>1.22</version>
+	<version>1.23</version>
 	<packaging>hpi</packaging>
 	<name>Jenkins FitNesse plugin</name>
 	<url>http://wiki.jenkins-ci.org/display/HUDSON/Fitnesse+Plugin</url>
@@ -59,7 +59,7 @@
 		<connection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-		<tag>HEAD</tag>
+		<tag>fitnesse-1.23</tag>
 	</scm>
 
 	<build>
