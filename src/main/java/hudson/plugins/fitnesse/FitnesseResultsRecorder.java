@@ -143,6 +143,8 @@ public class FitnesseResultsRecorder extends Recorder implements SimpleBuildStep
 					resultsInputStream.close();
 				} catch (Exception e) {
 					// swallow
+					// TODO: handle this exception somehow
+					logger.println("Exception ignored: " + e.getMessage());
 				}
 			}
 		}
