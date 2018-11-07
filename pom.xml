@@ -38,7 +38,7 @@
 	<version>1.24-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	<name>Jenkins FitNesse plugin</name>
-	<url>http://wiki.jenkins-ci.org/display/HUDSON/Fitnesse+Plugin</url>
+	<url>https://wiki.jenkins-ci.org/display/HUDSON/Fitnesse+Plugin</url>
 
 	<developers>
 		<developer>
@@ -59,7 +59,7 @@
 		<connection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-		<tag>HEAD</tag>
+		<tag>fitnesse-1.24</tag>
 	</scm>
 
 	<build>
@@ -86,24 +86,17 @@
     	<maven.javadoc.skip>true</maven.javadoc.skip>
 	</properties>
 	
-	<distributionManagement>
-		<repository>
-			<id>maven.jenkins-ci.org</id>
-			<url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
-		</repository>
-	</distributionManagement>
-
 	<repositories>
 		<repository>
 			<id>repo.jenkins-ci.org</id>
-			<url>http://repo.jenkins-ci.org/public/</url>
+			<url>https://repo.jenkins-ci.org/public/</url>
 		</repository>
 	</repositories>
 
 	<pluginRepositories>
 		<pluginRepository>
 			<id>repo.jenkins-ci.org</id>
-			<url>http://repo.jenkins-ci.org/public/</url>
+			<url>https://repo.jenkins-ci.org/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
 
