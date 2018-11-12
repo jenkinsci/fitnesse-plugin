@@ -37,7 +37,7 @@ public class FitnesseResults extends TabulatedResult implements
 	private Counts pageCounts;
 	private FitnesseResults parent;
 	private List<FitnesseResults> details = new ArrayList<FitnesseResults>();
-	private transient Run<?,?> owner;
+	private Run<?,?> owner;
 	private transient TaskListener listener;
 
 	public FitnesseResults(Counts pageCounts) {
@@ -91,11 +91,11 @@ public class FitnesseResults extends TabulatedResult implements
 	}
 
 	@Override
-	public AbstractBuild<?, ?> getOwner() {
+	public Run<?,?> getRun() {
 		if (owner != null)
-			return (AbstractBuild<?, ?>) owner;
+			return owner;
 		if (parent != null)
-			return parent.getOwner();
+			return parent.getRun();
 		return null;
 	}
 
@@ -255,7 +255,7 @@ public class FitnesseResults extends TabulatedResult implements
 	 */
 	@Override
 	public FitnesseResultsAction getParentAction() {
-		FitnesseResultsAction action = getOwner().getAction(
+		FitnesseResultsAction action = getRun().getAction(
 				FitnesseResultsAction.class);
 		return action;
 	}
