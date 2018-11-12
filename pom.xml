@@ -4,7 +4,13 @@
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
 		<version>3.0</version>
+		<relativePath />
 	</parent>
+
+	<properties>
+		<jenkins.version>2.60.1</jenkins.version>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+	</properties>
 
 	<artifactId>fitnesse</artifactId>
 	<version>1.25-SNAPSHOT</version>
@@ -58,12 +64,8 @@
           		</configuration> 
 			</plugin> 
 		</plugins> 
-	</build> 
-	
-	<properties>
-    	<maven.javadoc.skip>true</maven.javadoc.skip>
-	</properties>
-	
+	</build>
+
 	<repositories>
 		<repository>
 			<id>repo.jenkins-ci.org</id>
