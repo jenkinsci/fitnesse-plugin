@@ -51,7 +51,7 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep {
 	static final String _HOSTNAME_SLAVE_PROPERTY = "HOST_NAME";
 
 
-	private Map<String, String> options;
+	public Map<String, String> options;
 
 	@DataBoundConstructor
 	public FitnesseBuilder(Map<String, String> options) {
