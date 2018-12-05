@@ -22,8 +22,7 @@ import org.kohsuke.stapler.export.Exported;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class FitnesseResults extends TabulatedResult implements
-		Comparable<FitnesseResults> {
+public class FitnesseResults extends TabulatedResult implements Comparable<FitnesseResults> {
 	private static final String DETAILS = "Details";
 	private static final String FITNESSE_HOSTNAME = "FITNESSE_HOSTNAME";
 	private static final String FITNESSE_PORT = "FITNESSE_PORT";
@@ -37,7 +36,8 @@ public class FitnesseResults extends TabulatedResult implements
 	private Counts pageCounts;
 	private FitnesseResults parent;
 	private List<FitnesseResults> details = new ArrayList<FitnesseResults>();
-	private Run<?,?> owner;
+
+	private transient Run<?,?> owner;
 	private transient TaskListener listener;
 
 	public FitnesseResults(Counts pageCounts) {

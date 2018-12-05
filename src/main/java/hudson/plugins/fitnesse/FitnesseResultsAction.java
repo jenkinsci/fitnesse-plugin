@@ -1,5 +1,7 @@
 package hudson.plugins.fitnesse;
 
+import hudson.Util;
+import hudson.model.Job;
 import hudson.tasks.test.AbstractTestResultAction;
 import jenkins.tasks.SimpleBuildStep;
 import hudson.model.Action;
@@ -8,6 +10,7 @@ import hudson.model.TaskListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.kohsuke.stapler.StaplerProxy;
@@ -89,6 +92,16 @@ public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResu
 
 	@Override
 	public Collection<? extends Action> getProjectActions() {
+		Job<?,?> job = run.getParent();
+		if (!Util.filter(job.getActions(), FitnesseProjectAction.class).isEmpty()) {
+			return Collections.emptySet();
+		}
+		List<Action> projectActions = new ArrayList<Action>();
+		projectActions.add(new FitnesseProjectAction(job));
+		projectActions.add(new FitnesseHistoryAction(job));
+		this.projectActions = projectActions;
 		return this.projectActions;
 	}
+
+
 }
