@@ -13,7 +13,7 @@
 	</properties>
 
 	<artifactId>fitnesse</artifactId>
-	<version>1.27-SNAPSHOT</version>
+	<version>1.27</version>
 	<packaging>hpi</packaging>
 	<name>Jenkins FitNesse plugin</name>
 	<url>https://wiki.jenkins-ci.org/display/HUDSON/Fitnesse+Plugin</url>
@@ -43,7 +43,7 @@
 		<connection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-		<tag>fitnesse-1.25</tag>
+		<tag>fitnesse-1.27</tag>
 	</scm>
 
 	<build>
