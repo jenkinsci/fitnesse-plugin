@@ -89,6 +89,9 @@ public class History {
 				continue;
 			FitnesseResults o = (FitnesseResults) testObject.getResultInRun(b);
 			if (o != null) {
+				if (o.getOwner() == null) {
+					o.setOwner(b);
+				}
 				list.add(o);
 			}
 		}

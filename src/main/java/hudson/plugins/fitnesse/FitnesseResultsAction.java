@@ -100,8 +100,8 @@ public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResu
 		projectActions.add(new FitnesseProjectAction(job));
 		projectActions.add(new FitnesseHistoryAction(job));
 		this.projectActions = projectActions;
+		this.results.setOwner(run);
 		return this.projectActions;
 	}
-
 
 }
