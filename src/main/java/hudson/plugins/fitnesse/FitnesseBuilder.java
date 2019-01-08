@@ -42,6 +42,7 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep {
 	public static final String TARGET_PAGE = "fitnesseTargetPage";
 	public static final String TARGET_IS_SUITE = "fitnesseTargetIsSuite";
 	public static final String PATH_TO_RESULTS = "fitnessePathToXmlResultsOut";
+    public static final String PATH_TO_JUNIT_RESULTS = "fitnessePathToJunitResultsOut";
 	public static final String HTTP_TIMEOUT = "fitnesseHttpTimeout";
 	public static final String TEST_TIMEOUT = "fitnesseTestTimeout";
 	public static final String JAVA_WORKING_DIRECTORY = "fitnesseJavaWorkingDirectory";
@@ -254,6 +255,17 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep {
 		return getOption(PATH_TO_RESULTS, "fitnesse-results.xml", environment);
 	}
 
+    /**
+     * referenced in config.jelly
+     */
+    public String getFitnessePathToJunitResultsOut() {
+        return getOption(PATH_TO_JUNIT_RESULTS, "");
+    }
+
+    public String getFitnessePathToJunitResultsOut(EnvVars environment) {
+        return getOption(PATH_TO_JUNIT_RESULTS, "", environment);
+    }
+
 	/**
 	 * referenced in config.jelly
 	 */
@@ -407,6 +419,13 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep {
 			return FormValidation.ok();
 		}
 
+        public FormValidation doCheckFitnessePathToJunitResultsOut(@QueryParameter String value) throws IOException,
+                ServletException {
+            if (value.trim().length() > 0 && !value.endsWith("xml"))
+                return FormValidation.error("File name does not end with 'xml': will be ignored");
+            return FormValidation.ok();
+        }
+
 		/**
 		 * {@link BuildStepDescriptor}
 		 */
@@ -437,12 +456,12 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep {
 						startFitnesseValue,
 						collectFormData(formData, new String[]{FITNESSE_JDK, JAVA_OPTS, JAVA_WORKING_DIRECTORY, PATH_TO_JAR,
 								PATH_TO_ROOT, FITNESSE_PORT_LOCAL, TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, TEST_TIMEOUT,
-								PATH_TO_RESULTS, FITNESSE_ADDITIONAL_OPTIONS}));
+								PATH_TO_RESULTS, PATH_TO_JUNIT_RESULTS, FITNESSE_ADDITIONAL_OPTIONS}));
 			}
 			return newFitnesseBuilder(
 					startFitnesseValue,
 					collectFormData(formData, new String[]{FITNESSE_HOST, FITNESSE_PORT_REMOTE, FITNESSE_USERNAME, FITNESSE_PASSWORD, FITNESSE_ENABLE_SSL, TARGET_PAGE, TARGET_IS_SUITE,
-							HTTP_TIMEOUT, TEST_TIMEOUT, PATH_TO_RESULTS}));
+							HTTP_TIMEOUT, TEST_TIMEOUT, PATH_TO_RESULTS, PATH_TO_JUNIT_RESULTS}));
 		}
 
 		private FitnesseBuilder newFitnesseBuilder(String startFitnesseValue, Map<String, String> collectedFormData) {

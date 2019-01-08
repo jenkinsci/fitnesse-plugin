@@ -33,7 +33,15 @@ public class FitnesseExecutor {
 	private final TaskListener listener;
 
 	private String fitnesseTestId = null;
+	private static volatile String fitnessePathToJunitResults = null;
 
+	public synchronized static void setFitnessePathToJunitResults(String valuePassed) {
+		fitnessePathToJunitResults = valuePassed;
+	}
+
+	public static String getFitnessePathToJunitResults() {
+		return fitnessePathToJunitResults;
+	}
 	public FitnesseExecutor(FitnesseBuilder builder, TaskListener listener, EnvVars envVars) {
 		this.builder = builder;
 		this.listener = listener;
@@ -52,8 +60,35 @@ public class FitnesseExecutor {
 				}
 			}
 
+                        // Handle the fitnesse junit result xml file if specified
+			String junitResultsFileName = builder.getFitnessePathToJunitResultsOut(envVars);
+			setFitnessePathToJunitResults(junitResultsFileName.trim());
+                        FilePath junitFilePath = getJunitFilePath(logger, workspace);
+                        if (junitFilePath != null) {
+                             // Remove any existing junit result xml file
+                             try {
+				logger.println("Attempt to delete " + junitFilePath);
+                                junitFilePath.delete();
+                             } catch (Exception e) {
+                                e.printStackTrace(logger);
+                             }
+                        }
+
+                        // Execute fitnesse and capture the fitnesse testing results
 			FilePath resultsFilePath = getFilePath(logger, workspace, builder.getFitnessePathToXmlResultsOut(envVars));
 			readAndWriteFitnesseResults(getFitnessePage(build, true), resultsFilePath);
+
+                        // Produce the fitnesse junit result xml file if specified
+                        if (junitFilePath != null) {
+                             // Convert the fitnesse result xml file into junit result xml file
+                             try {
+				logger.println("Attempt to convert " + resultsFilePath + " to " + junitFilePath);
+                                ConvertReport.generateJunitResult(resultsFilePath,junitFilePath);
+                             } catch (Exception e) {
+                                e.printStackTrace(logger);
+                             }
+                        }
+
 			return true;
 		} catch (Throwable t) {
 			t.printStackTrace(logger);
@@ -382,5 +417,15 @@ public class FitnesseExecutor {
 			File fileNameFile = new File(fileName); // should not work on slave if OS is different than masters' one
 			return new FilePath(fileNameFile);
 		}
+	}
+
+	static FilePath getJunitFilePath(PrintStream logger, FilePath workingDirectory) {
+		String fitnessePathToJunitResults = getFitnessePathToJunitResults();
+
+		if (fitnessePathToJunitResults == null || !fitnessePathToJunitResults.endsWith(".xml"))
+			return null;
+
+                return getFilePath(logger, workingDirectory, fitnessePathToJunitResults);
+
 	}
 }

@@ -2,11 +2,10 @@ package hudson.plugins.fitnesse;
 
 import hudson.plugins.fitnesse.FitnesseBuilder.DescriptorImpl;
 import hudson.util.FormValidation.Kind;
-
-import java.io.File;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.File;
 
 public class BuilderDescriptorImplTest {
 	private DescriptorImpl descriptor;
@@ -75,6 +74,21 @@ public class BuilderDescriptorImplTest {
 	@Test
 	public void emptyPathToFitnesseResultsShouldBeError() throws Exception {
 		Assert.assertEquals(Kind.ERROR, descriptor.doCheckFitnessePathToXmlResultsOut("").kind);
+	}
+
+	@Test
+	public void emptyPathToJUnitResultsShouldBeOK() throws Exception {
+		Assert.assertEquals(Kind.OK, descriptor.doCheckFitnessePathToJunitResultsOut("").kind);
+	}
+
+	@Test
+	public void validPathToJUnitResultsShouldBeOK() throws Exception {
+		Assert.assertEquals(Kind.OK, descriptor.doCheckFitnessePathToJunitResultsOut("fitnesse-results-junit.xml").kind);
+	}
+
+	@Test
+	public void invalidPathToJUnitResultsShouldBeWarning() throws Exception {
+		Assert.assertEquals(Kind.ERROR, descriptor.doCheckFitnessePathToJunitResultsOut("al").kind);
 	}
 
 	public void nonExistentFitnesseResultsShouldBeOK() throws Exception {

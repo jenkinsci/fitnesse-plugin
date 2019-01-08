@@ -126,7 +126,7 @@
 <f:block><em>Output</em></f:block>
 
   <f:entry title="HTTP Timeout (ms)" field="fitnesseHttpTimeout"
-  help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/httpTimeout"> 
+  help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/httpTimeout">
     <f:textbox name="fitnesseHttpTimeout" />
   </f:entry>
   
@@ -139,5 +139,10 @@
   help="/descriptor/hudson.plugins.fitnesse.FitnesseResultsRecorder/help/pathToXmlResults">
       <f:textbox name="fitnessePathToXmlResultsOut" />
   </f:entry>
+
+   <f:entry title="JUnit xml filename" field="fitnessePathToJunitResultsOut"
+      help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/pathToJunitResults">
+          <f:textbox name="fitnessePathToJunitResultsOut" />
+   </f:entry>
 
 </j:jelly>
