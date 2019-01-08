@@ -5,10 +5,7 @@ import hudson.FilePath;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 
 /**
  * Created by surat_das on 4/27/2017.
@@ -24,11 +21,13 @@ public class ConvertReport {
         Transformer transformer = factory.newTransformer(stylesheetSource);
 
         Source inputSource = new StreamSource(inputFilePath.read());
-        Result outputResult = new StreamResult(outputFilePath.write());
+        OutputStream junitResultsStream = outputFilePath.write();
+        Result outputResult = new StreamResult(junitResultsStream);
 
         transformer.transform(inputSource, outputResult);
-
+        junitResultsStream.close();
     }
+
 
     private static String getFitnesseToJunitResultStyle() {
         return
