@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,9 @@ import java.util.Map;
  *
  * @author Tim Bacon
  */
-public class FitnesseBuilder extends Builder implements SimpleBuildStep {
+public class FitnesseBuilder extends Builder implements SimpleBuildStep, Serializable {
+
+        private static final long serialVersionUID = 931934300658830569L;
 
 	public static final String START_FITNESSE = "fitnesseStart";
 	public static final String FITNESSE_HOST = "fitnesseHost";
@@ -42,7 +45,7 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep {
 	public static final String TARGET_PAGE = "fitnesseTargetPage";
 	public static final String TARGET_IS_SUITE = "fitnesseTargetIsSuite";
 	public static final String PATH_TO_RESULTS = "fitnessePathToXmlResultsOut";
-    public static final String PATH_TO_JUNIT_RESULTS = "fitnessePathToJunitResultsOut";
+	public static final String PATH_TO_JUNIT_RESULTS = "fitnessePathToJunitResultsOut";
 	public static final String HTTP_TIMEOUT = "fitnesseHttpTimeout";
 	public static final String TEST_TIMEOUT = "fitnesseTestTimeout";
 	public static final String JAVA_WORKING_DIRECTORY = "fitnesseJavaWorkingDirectory";

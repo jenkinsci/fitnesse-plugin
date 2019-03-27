@@ -7,6 +7,7 @@ import hudson.Launcher.ProcStarter;
 import hudson.Proc;
 import hudson.model.*;
 import jenkins.model.Jenkins;
+import jenkins.security.MasterToSlaveCallable;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -22,15 +23,18 @@ import java.util.regex.Pattern;
 /**
  * @author Tim Bacon
  */
-public class FitnesseExecutor {
+public class FitnesseExecutor implements Serializable {
+
+        private static final long serialVersionUID = 691934300658830569L;
+
 	private static final int SLEEP_MILLIS = 1000;
 	private static final int STARTUP_TIMEOUT_MILLIS = 30 * 1000;
 	private static final int READ_PAGE_TIMEOUT = 10 * 1000;
 
 	private final FitnesseBuilder builder;
 	private final EnvVars envVars;
-	private final PrintStream logger;
 	private final TaskListener listener;
+	private transient PrintStream logger;
 
 	private String fitnesseTestId = null;
 	private static volatile String fitnessePathToJunitResults = null;
@@ -49,7 +53,7 @@ public class FitnesseExecutor {
 		this.logger = listener.getLogger();
 	}
 
-	public boolean execute(Launcher launcher, FilePath workspace, Run<?, ?> build) throws InterruptedException {
+	public boolean execute(Launcher launcher, FilePath workspace, Run<?, ?> build) throws InterruptedException, IOException {
 		Proc fitnesseProc = null;
 		try {
 			build.addAction(getFitnesseBuildAction(build));
@@ -76,7 +80,13 @@ public class FitnesseExecutor {
 
                         // Execute fitnesse and capture the fitnesse testing results
 			FilePath resultsFilePath = getFilePath(logger, workspace, builder.getFitnessePathToXmlResultsOut(envVars));
-			readAndWriteFitnesseResults(getFitnessePage(build, true), resultsFilePath);
+                        // logger.println("Results file path " + resultsFilePath);
+                        URL fitnessePageURL = getFitnessePage(build, true);
+                        // logger.println("Fitnesse page URL " + fitnessePageURL.toString());
+                        boolean interrupted = launcher.getChannel().call(new ReadAndWriteFitnesseResults(fitnessePageURL, resultsFilePath));
+                        if (interrupted) {
+                          throw new InterruptedException("Call for requested fitnesse page was interrupted");
+                        }
 
                         // Produce the fitnesse junit result xml file if specified
                         if (junitFilePath != null) {
@@ -266,8 +276,10 @@ public class FitnesseExecutor {
 				+ "/" + connection.getResponseMessage());
 	}
 
-	private void readAndWriteFitnesseResults(final URL readFromURL, final FilePath writeToFilePath)
-			throws InterruptedException {
+	private boolean readAndWriteFitnesseResults(final URL readFromURL, final FilePath writeToFilePath) {
+                this.logger = this.listener.getLogger(); // needed for transient logger
+                // logger.println("Read from URL " + readFromURL);
+                // logger.println("Write to " + writeToFilePath);
 		final RunnerWithTimeOut runnerWithTimeOut = new RunnerWithTimeOut(builder.getFitnesseTestTimeout(envVars));
 
 		Runnable readAndWriteResults = new Runnable() {
@@ -282,7 +294,12 @@ public class FitnesseExecutor {
 			}
 		};
 
-		runnerWithTimeOut.run(readAndWriteResults);
+                try {
+                        runnerWithTimeOut.run(readAndWriteResults);
+                } catch (InterruptedException ie) {
+                  return true; // interrupted
+                }
+                return false; // not interrupted
 	}
 
 	public byte[] getHttpBytes(URL pageCmdTarget, Resettable timeout, int httpTimeout) {
@@ -428,4 +445,18 @@ public class FitnesseExecutor {
                 return getFilePath(logger, workingDirectory, fitnessePathToJunitResults);
 
 	}
+
+    private final class ReadAndWriteFitnesseResults extends MasterToSlaveCallable<Boolean, IOException> {
+        private final URL fitnessePageURL;
+        private final FilePath resultsFilePath;
+        ReadAndWriteFitnesseResults(URL fitnessePageURL, FilePath resultsFilePath) {
+          this.fitnessePageURL = fitnessePageURL;
+          this.resultsFilePath = resultsFilePath;
+        }
+        @Override
+        public Boolean call() throws IOException {
+             return readAndWriteFitnesseResults(fitnessePageURL, resultsFilePath);
+       }
+    }
+
 }
