@@ -1,12 +1,6 @@
 package hudson.plugins.fitnesse;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -187,7 +181,8 @@ public class NativePageCounts extends DefaultHandler {
 			return null;
 		}
 		BufferedWriter out = null;
-		String fileName = rootDirName + pageName;
+		String fileName = buildOutputFileNameToAvoidDuplicates(rootDirName + pageName);
+
 		try {
 			// Create separate file for every test in a suite
 			Writer fstream = new OutputStreamWriter(new FileOutputStream(fileName), Charset.forName("ISO-8859-1"));
@@ -207,5 +202,17 @@ public class NativePageCounts extends DefaultHandler {
 			}
 		}
 		return null;
+	}
+
+	private String buildOutputFileNameToAvoidDuplicates(String outputFilePath) {
+		int i = 1;
+		String outputFileNameWithoutDuplicates = outputFilePath;
+
+		File testOutputFile = new File(outputFilePath);
+		while (testOutputFile.exists())  {
+			outputFileNameWithoutDuplicates = outputFilePath + "_" + i++;
+			testOutputFile = new File(outputFileNameWithoutDuplicates);
+		}
+		return outputFileNameWithoutDuplicates;
 	}
 }

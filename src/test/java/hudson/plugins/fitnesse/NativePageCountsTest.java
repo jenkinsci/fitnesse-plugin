@@ -2,6 +2,7 @@ package hudson.plugins.fitnesse;
 
 import hudson.plugins.fitnesse.NativePageCounts.Counts;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class NativePageCountsTest {
+
 
 	@Test
 	public void countsShouldCollectValuesFromConstructor() {
@@ -79,6 +81,7 @@ public class NativePageCountsTest {
 
 	@Test
 	public void resultsShouldCollectDetailFromAttributes() {
+		new File("./target/name").delete();
 		NativePageCounts results = new NativePageCounts(System.out, "testResult.xml", "./target/");
 		AttributesImpl attributes = new AttributesImpl();
 		attributes.addAttribute("", "", NativePageCounts.PAGE, "String", "name");
@@ -123,5 +126,21 @@ public class NativePageCountsTest {
 		Assert.assertEquals(2, results.size());
 		Assert.assertEquals(1, results.getDetails().size());
 		Assert.assertSame(results.getSummary(), results.getDetails().get(0));
+	}
+
+	@Test
+	public void resultsOfTestShouldNotOverwriteExistingResultsFromOtherAgents() {
+		new File("./target/overwriteTest").delete();
+		new File("./target/overwriteTest_1").delete();
+
+		NativePageCounts results = new NativePageCounts(System.out, "testResult.xml", "./target/");
+		AttributesImpl attributes = new AttributesImpl();
+		attributes.addAttribute("", "", NativePageCounts.PAGE, "String", "overwriteTest");
+		String resultsDate = "20100311210804";
+		addDetailAttributes(attributes, resultsDate);
+		results.startElement("", "", NativePageCounts.DETAIL, attributes);
+		Assert.assertEquals("./target/overwriteTest", results.getDetails().get(0).contentFile);
+		results.startElement("", "", NativePageCounts.DETAIL, attributes);
+		Assert.assertEquals("./target/overwriteTest_1", results.getDetails().get(0).contentFile);
 	}
 }
