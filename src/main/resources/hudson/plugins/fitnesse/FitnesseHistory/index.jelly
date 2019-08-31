@@ -23,7 +23,7 @@
         <tr>
           <th>Page</th>
           <j:forEach var="build" items="${it.builds}">
-            <th width="25px">#${build.owner.number}</th>
+            <th width="25px">#${build.run.number}</th>
           </j:forEach>
         </tr>
         <j:forEach var="page" items="${it.getPages(file)}">
@@ -32,7 +32,7 @@
           <j:forEach var="build" items="${it.builds}">
 	        <j:set var="res" value="${it.getResult(file, page, build)}"/>
             <td class="${res}">
-              <a href="../${build.owner.number}/fitnesseReport/${file}/${page}/Details">${res}</a>
+              <a href="../${build.run.number}/fitnesseReport/${file}/${page}/Details">${res}</a>
             </td>
           </j:forEach>
         </tr>
