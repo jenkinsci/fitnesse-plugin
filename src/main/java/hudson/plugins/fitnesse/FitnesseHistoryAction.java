@@ -63,33 +63,34 @@ public class FitnesseHistoryAction implements StaplerProxy, Action {
 			FitnesseResultsAction action = build.getAction(FitnesseResultsAction.class);
 			if (action != null) {
 				FitnesseResults result = action.getResult();
+				if (result.getPageCounts() != null) {
 
-				if(!(result instanceof CompoundFitnesseResults))
-				{
-					FitnesseResults fakeResult = new FitnesseResults(new Counts("ALL", "", 0, 0, 0, 0, 0, "ALL"));
-					fakeResult.addChild(result);
-					fakeResult.setOwner(build);
-					result = fakeResult;
-				}
-				builds.add(result);
+					if (!(result instanceof CompoundFitnesseResults)) {
+						FitnesseResults fakeResult = new FitnesseResults(new Counts("", "", 0, 0, 0, 0, 0, "ALL"));
+						fakeResult.addChild(result);
+						fakeResult.setOwner(build);
+						result = fakeResult;
+					}
+					builds.add(result);
 
-				List<FitnesseResults> childResults = result.getChildResults();
+					List<FitnesseResults> childResults = result.getChildResults();
 
-				Set<String> files = extractfiles(childResults);
-				allFiles.addAll(files);
+					Set<String> files = extractfiles(childResults);
+					allFiles.addAll(files);
 
-				Map<String, List<String>> pages = extractPages(childResults);
-				for (Entry<String, List<String>> entry : pages.entrySet()) {
-					String newFile = entry.getKey();
-					List<String> newPages = entry.getValue();
-					List<String> existingPages = allPages.get(newFile);
-					if (existingPages != null) {
-						for (String newPage : newPages) {
-							if (!existingPages.contains(newPage))
-								existingPages.add(newPage);
+					Map<String, List<String>> pages = extractPages(childResults);
+					for (Entry<String, List<String>> entry : pages.entrySet()) {
+						String newFile = entry.getKey();
+						List<String> newPages = entry.getValue();
+						List<String> existingPages = allPages.get(newFile);
+						if (existingPages != null) {
+							for (String newPage : newPages) {
+								if (!existingPages.contains(newPage))
+									existingPages.add(newPage);
+							}
+						} else {
+							allPages.put(newFile, newPages);
 						}
-					} else {
-						allPages.put(newFile, newPages);
 					}
 				}
 			}
