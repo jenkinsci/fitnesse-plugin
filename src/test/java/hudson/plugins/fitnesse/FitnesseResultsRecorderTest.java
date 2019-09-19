@@ -22,6 +22,16 @@ public class FitnesseResultsRecorderTest {
 	}
 
 	@Test
+	public void getResultsFromSuiteShouldStoreFileName() throws Exception {
+		startPlugin();
+		String resultsFile = "src/test/resources/hudson/plugins/fitnesse/fitnesse-suite-results.xml";
+		FilePath resultsPath = new FilePath(new File(resultsFile));
+		FitnesseResultsRecorder recorder = new FitnesseResultsRecorder(resultsFile);
+		FitnesseResults results = recorder.getResults(System.out, resultsPath, new File("./target"));
+		Assert.assertEquals("fitnesse-suite-results.xml", results.getName());
+	}
+
+	@Test
 	public void getPatternResults() throws Exception {
 		startPlugin();
 		String resultsFile = "src/test/resources/hudson/plugins/fitnesse/fitnesse-*-results.xml";

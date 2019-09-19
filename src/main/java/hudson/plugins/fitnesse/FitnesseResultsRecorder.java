@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import javax.xml.transform.TransformerException;
 import jenkins.tasks.SimpleBuildStep;
+import org.apache.commons.io.FilenameUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -127,7 +128,7 @@ public class FitnesseResultsRecorder extends Recorder implements SimpleBuildStep
 			resultsInputStream = resultsFile.read();
 
 			Path p = Paths.get(resultsFile.getRemote());
-			String resultFileName = p.toFile().getName();
+			String resultFileName = FilenameUtils.getName(p.toString());
 
 			logger.println("Parsing results... ");
 			NativePageCountsParser pageCountsParser = new NativePageCountsParser();
