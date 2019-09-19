@@ -6,7 +6,7 @@ import hudson.model.Run;
 
 public class FitnesseProjectAction implements Action {
 
-	private Job<?,?> project;
+	private transient Job<?,?> project;
 
 	public FitnesseProjectAction(Job<?, ?> project2) {
 		this.project = project2;

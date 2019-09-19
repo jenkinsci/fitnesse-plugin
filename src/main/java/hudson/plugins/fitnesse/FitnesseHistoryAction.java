@@ -22,7 +22,7 @@ import org.kohsuke.stapler.StaplerProxy;
 import com.google.common.collect.Ordering;
 
 public class FitnesseHistoryAction implements StaplerProxy, Action {
-	private final Job<?,?> project;
+	private transient final Job<?,?> project;
 
 	private List<FitnesseResults> builds;
 	private Map<String, List<String>> allPages;
