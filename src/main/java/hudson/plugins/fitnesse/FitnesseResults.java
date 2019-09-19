@@ -255,9 +255,12 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	 */
 	@Override
 	public FitnesseResultsAction getParentAction() {
-		FitnesseResultsAction action = getRun().getAction(
-				FitnesseResultsAction.class);
-		return action;
+		Run<?,?> run = getRun();
+		if (run != null) {
+			FitnesseResultsAction action = run.getAction(FitnesseResultsAction.class);
+			return action;
+		}
+		else return null;
 	}
 
 	/**
@@ -384,20 +387,30 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	}
 
 	private FitnesseBuildAction getFitnesseBuildAction() throws IOException, InterruptedException {
-		FitnesseBuildAction buildAction = getOwner().getAction(FitnesseBuildAction.class);
-		if (buildAction == null) {
-			buildAction = getDefaultFitnesseBuildAction();
+		Run<?,?> owner = getOwner();
+		FitnesseBuildAction buildAction;
+		if (owner != null) {
+			buildAction = owner.getAction(FitnesseBuildAction.class);
+			if (buildAction == null) {
+				buildAction = getDefaultFitnesseBuildAction();
+			}
 		}
+		else buildAction = getDefaultFitnesseBuildAction();
 		return buildAction;
 	}
 
 	private FitnesseBuildAction getDefaultFitnesseBuildAction() throws IOException, InterruptedException {
-		final FitnesseBuildAction buildAction;Map<String, String> envVars =  getOwner().getEnvironment(listener);
-		if (envVars.containsKey(FITNESSE_HOSTNAME) && envVars.containsKey(FITNESSE_PORT)) {
-            buildAction = new FitnesseBuildAction(false, envVars.get(FITNESSE_HOSTNAME), Integer.parseInt(envVars.get(FITNESSE_PORT)));
-        } else {
-            buildAction = FitnesseBuildAction.NULL_ACTION;
-        }
+		final FitnesseBuildAction buildAction;
+		Run<?,?> owner = getOwner();
+		if (owner != null) {
+			Map<String, String> envVars =  getOwner().getEnvironment(listener);
+			if (envVars.containsKey(FITNESSE_HOSTNAME) && envVars.containsKey(FITNESSE_PORT)) {
+				buildAction = new FitnesseBuildAction(false, envVars.get(FITNESSE_HOSTNAME), Integer.parseInt(envVars.get(FITNESSE_PORT)));
+			} else {
+				buildAction = FitnesseBuildAction.NULL_ACTION;
+			}
+		}
+		else buildAction = FitnesseBuildAction.NULL_ACTION;
 		return buildAction;
 	}
 

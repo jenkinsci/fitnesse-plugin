@@ -18,7 +18,7 @@ import org.kohsuke.stapler.StaplerProxy;
 
 public class FitnesseResultsAction extends AbstractTestResultAction<FitnesseResultsAction> implements StaplerProxy, SimpleBuildStep.LastBuildAction {
 	private FitnesseResults results;
-	private List<Action> projectActions;
+	transient private List<Action> projectActions;
 
 	protected FitnesseResultsAction(Run<?,?> owner, FitnesseResults results, TaskListener listener) {
 		this.results = results;
