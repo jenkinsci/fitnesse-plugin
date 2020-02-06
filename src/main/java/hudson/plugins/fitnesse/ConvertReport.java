@@ -5,6 +5,7 @@ import hudson.FilePath;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.*;
 import java.io.*;
 
 /**
@@ -18,6 +19,8 @@ public class ConvertReport {
         Source stylesheetSource = new StreamSource(reader);
 
         TransformerFactory factory = TransformerFactory.newInstance();
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
         Transformer transformer = factory.newTransformer(stylesheetSource);
 
         Source inputSource = new StreamSource(inputFilePath.read());

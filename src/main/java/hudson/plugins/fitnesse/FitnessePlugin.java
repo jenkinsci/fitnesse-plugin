@@ -12,6 +12,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.*;
 
 public class FitnessePlugin extends Plugin {
 	static Templates templates;
@@ -31,6 +32,7 @@ public class FitnessePlugin extends Plugin {
 
 			StreamSource xslSource = new StreamSource(isDeBom);
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 			templates = transformerFactory.newTemplates(xslSource);
 		} finally {
 			if (is != null)
