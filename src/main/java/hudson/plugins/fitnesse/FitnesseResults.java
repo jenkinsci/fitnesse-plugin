@@ -119,7 +119,7 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 	@Override
 	@Exported(visibility = 2)
 	public String getName() {
-		return pageCounts.page;
+		return hudson.Util.escape(pageCounts.page);
 	}
 
 	/**
