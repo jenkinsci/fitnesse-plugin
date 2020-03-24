@@ -49,6 +49,17 @@ public class FitnesseResultsRecorderTest {
 		Assert.assertEquals(2, children.size());
 	}
 
+	@Test
+	public void getNameShouldFilterDangerousCharsForXSS() throws Exception {
+		startPlugin();
+		String resultsFile = "src/test/resources/hudson/plugins/fitnesse/security-1801.xml";
+		FilePath resultsPath = new FilePath(new File(resultsFile));
+		FitnesseResultsRecorder recorder = new FitnesseResultsRecorder(resultsFile);
+		FitnesseResults results = recorder.getResults(System.out, resultsPath, new File("./target"));
+                Collection<? extends TestResult> children = results.getChildren();
+		Assert.assertFalse(children.iterator().next().getName().contains("<script>"));
+	}
+
 	@Before
 	public void startPlugin() throws Exception {
 		new FitnessePlugin().start();

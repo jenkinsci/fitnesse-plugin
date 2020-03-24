@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<testResults>
+  <FitNesseVersion>$formatter.getFitNesseVersion()</FitNesseVersion>
+  <rootPath>fedepellSuiteBranchMain</rootPath>
+    <result>
+    <counts>
+      <right>6</right>
+      <wrong>5</wrong>
+      <ignores>1</ignores>
+      <exceptions>2</exceptions>
+    </counts>
+    <runTimeInMillis>36</runTimeInMillis>
+    <relativePageName>Foo</relativePageName>
+    <pageHistoryLink>&lt;script&gt;alert('stored xxs vulnerability!');&lt;/script&gt;WaferSlim.SuiteBranchMain.SuiteAll.TestComment?pageHistory&amp;resultDate=20100307181143&amp;format=xml</pageHistoryLink>    
+  </result>
+
+  <finalCounts>
+    <right>6</right>
+    <wrong>5</wrong>
+    <ignores>1</ignores>
+    <exceptions>2</exceptions>
+  </finalCounts>
+  <totalRunTimeInMillis>36</totalRunTimeInMillis>
+</testResults>
+
