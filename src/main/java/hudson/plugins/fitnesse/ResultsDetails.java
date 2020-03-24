@@ -43,7 +43,7 @@ public class ResultsDetails extends TestResult {
 	 */
 	@Override
 	public String getName() {
-		return name;
+		return hudson.Util.escape(name);
 	}
 
 	public String getDisplayName() {
