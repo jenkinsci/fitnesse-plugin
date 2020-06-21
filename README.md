@@ -100,9 +100,9 @@ or by overridden JAVA\_HOME environment variable.
 Older versions of this plugin may not be safe to use. Please review the
 following warnings before using an older version:
 
--   **1.33** (2019-09-19)
+-   **1.33** (2020-04-04)
     -   **Fixed**: [Stored XSS vulnerability](https://jenkins.io/security/advisory/2020-04-07/#SECURITY-1801)
--   **1.31** (2019-09-19)
+-   **1.31** (2020-02-12)
     -   **Fixed**: [XXE vulnerability](https://jenkins.io/security/advisory/2020-02-12/#SECURITY-1751)
 -   **1.30** (2019-09-19)
     -   **Fixed**: [JENKINS-58923](https://issues.jenkins-ci.org/browse/JENKINS-58923) Cannot browse result of tests when publishing several fitnesse result files on Windows
