@@ -1,6 +1,5 @@
 # FitNesse Plugin for Jenkins
 
-
 This plugin can be used to both execute and report on [FitNesse](http://fitnesse.org/) tests so that they can be integrated
 into a Jenkins build.  
 Contributions are welcome, both bug fixes and new features. Just raise a pull request via GitHub.
@@ -9,23 +8,23 @@ Contributions are welcome, both bug fixes and new features. Just raise a pull re
 
 ## Configuration
 
-#### **Global**
+### **Global**
 
--   You could define a JDK installation (not mandatory). All JDKs will
+- You could define a JDK installation (not mandatory). All JDKs will
     be available in the job configuration.
 
-#### **Slave node**
+### **Agent node**
 
--   If your job runs on a slave and launch FitNesse, you should add the
-    HOST\_NAME environment variable in slave configuration and set its
-    value to the slave’s hostname or IP. You can name it as
+- If your job runs on an agent and launch FitNesse, you should add the
+    HOST\_NAME environment variable in agent configuration and set its
+    value to the agent’s hostname or IP. You can name it as
     FITNESSE\_HOST\_NAME (whatever you like). This environment variable
     will be used when you set up fitnesse instance below (replace
     localhost by $FITNESSE\_HOST\_NAME).
 
 ![](https://wiki.jenkins.io/download/attachments/43090053/fitnesse_config_slave_1.png?version=1&modificationDate=1415698337000&api=v2)
 
--   You could also override JDK location used, by set a *Tool location*:
+- You could also override JDK location used, by set a *Tool location*:
 
 ![](https://wiki.jenkins.io/download/attachments/43090053/fitnesse_config_slave_2.png?version=1&modificationDate=1415698373000&api=v2)
 
@@ -33,17 +32,17 @@ or by overridden JAVA\_HOME environment variable.
 
 ## Usage
 
-#### **Project settings in build step**
+### **Project settings in build step**
 
--   **For existing FitNesse instance**: host and port where FitNesse is
+- **For existing FitNesse instance**: host and port where FitNesse is
     running
 
 ![](https://wiki.jenkins.io/download/attachments/43090053/fitnesse_config_job_1.png?version=1&modificationDate=1415698337000&api=v2)
 
--   **For new FitNesse instance**:
-    -   **JDK**: selected JDK, JVM args and Java working directory
-    -   **Paths**: fitnesse.jar and FitNesseRoot path
-    -   **Fitnesse**: port use and command line args
+- **For new FitNesse instance**:
+  -   **JDK**: selected JDK, JVM args and Java working directory
+  -   **Paths**: fitnesse.jar and FitNesseRoot path
+  -   **Fitnesse**: port use and command line args
 
 ![](https://wiki.jenkins.io/download/attachments/43090053/fitnesse_config_job_2.png?version=1&modificationDate=1415698337000&api=v2)
 
@@ -97,8 +96,7 @@ or by overridden JAVA\_HOME environment variable.
 
 ## Change Log
 
-Older versions of this plugin may not be safe to use. Please review the
-following warnings before using an older version:
+Older versions of this plugin may not be safe to use. Please review the following changelog before using an older version:
 
 -   **1.33** (2020-04-04)
     -   **Fixed**: [Stored XSS vulnerability](https://jenkins.io/security/advisory/2020-04-07/#SECURITY-1801)
@@ -114,8 +112,8 @@ following warnings before using an older version:
     -   ****![(plus)](https://wiki.jenkins.io/s/en_GB/8100/5084f018d64a97dc638ca9a178856f851ea353ff/_/images/icons/emoticons/add.svg)**** Added: Changes
         to read and write results in distributed Jenkins
         ([PR-37](https://github.com/jenkinsci/fitnesse-plugin/pull/37))
-        (Fixes:  Fitnesse should run on the slave of the build, not on
-        the head node
+        (Fixes:  Fitnesse should run on the agent of the build, not on
+        the master node
          [JENKINS-13696](https://issues.jenkins-ci.org/browse/JENKINS-13696))
 -   **1.28 **(2019-01-12)
     -   ****![(plus)](https://wiki.jenkins.io/s/en_GB/8100/5084f018d64a97dc638ca9a178856f851ea353ff/_/images/icons/emoticons/add.svg)**** Added: Produces
@@ -219,7 +217,7 @@ following warnings before using an older version:
         request](https://github.com/jenkinsci/fitnesse-plugin/pull/16))
     -   ![(thumbs
         up)](https://wiki.jenkins.io/s/en_GB/8100/5084f018d64a97dc638ca9a178856f851ea353ff/_/images/icons/emoticons/thumbs_up.svg)
-        Fixed: support Jenkins slave with a different OS than master's
+        Fixed: support Jenkins agent with a different OS than master's
         one ([pull
         request](https://github.com/jenkinsci/fitnesse-plugin/pull/18))
     -   ![(thumbs
@@ -246,7 +244,7 @@ following warnings before using an older version:
         request](https://github.com/jenkinsci/fitnesse-plugin/pull/10))
 -   **1.8** (2013-10-21)
     -   ![(plus)](https://wiki.jenkins.io/s/en_GB/8100/5084f018d64a97dc638ca9a178856f851ea353ff/_/images/icons/emoticons/add.svg)
-        Added support for Jenkins slaves ([pull
+        Added support for Jenkins agents ([pull
         request](https://github.com/swestcott/fitnesse-plugin/pull/8))
     -   ![(plus)](https://wiki.jenkins.io/s/en_GB/8100/5084f018d64a97dc638ca9a178856f851ea353ff/_/images/icons/emoticons/add.svg)
         Expose FitNesse tests results throught Jenkins API ([pull
