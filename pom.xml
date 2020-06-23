@@ -16,7 +16,7 @@
 	<version>1.34-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	<name>Jenkins FitNesse plugin</name>
-	<url>https://wiki.jenkins-ci.org/display/HUDSON/Fitnesse+Plugin</url>
+	<url>https://github.com/jenkinsci/fitnesse-plugin/</url>
 
 	<developers>
 		<developer>
@@ -26,8 +26,8 @@
 		</developer>
 		<developer>
 			<id>jaruzafa</id>
-			<name>jaruza</name>
-			<email>ja ruzafa at gmail dotcom</email>
+			<name>jaruzafa</name>
+			<email>jaruzafa at gmail dotcom</email>
 		</developer>
 
 	</developers>
@@ -43,7 +43,7 @@
 		<connection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-		<tag>fitnesse-1.25</tag>
+		<tag>fitnesse-1.34</tag>
 	</scm>
 
 	<build>
