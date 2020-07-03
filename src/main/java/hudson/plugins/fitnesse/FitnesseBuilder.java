@@ -105,7 +105,7 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep, Seriali
 	 */
 	public String getFitnesseHost() {
 		if (getFitnesseStart()) {
-			return _LOCALHOST;
+			return getOption(FITNESSE_HOST, _LOCALHOST);
 		} else {
 			return getOption(FITNESSE_HOST, "unknown_host");
 		}
@@ -113,7 +113,7 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep, Seriali
 
 	public String getFitnesseHost(EnvVars environment) {
 		if (getFitnesseStart()) {
-			return _LOCALHOST;
+			return getOption(FITNESSE_HOST, _LOCALHOST);
 		} else {
 			return getOption(FITNESSE_HOST, "unknown_host", environment);
 		}
@@ -124,7 +124,7 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep, Seriali
 			if (build != null && environment != null && environment.get(_HOSTNAME_SLAVE_PROPERTY) != null) {
 				return environment.get(_HOSTNAME_SLAVE_PROPERTY);
 			} else {
-				return _LOCALHOST;
+				return getOption(FITNESSE_HOST, _LOCALHOST);
 			}
 		} else
 			return getOption(FITNESSE_HOST, "unknown_host", environment);
@@ -457,7 +457,7 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep, Seriali
 			if (Boolean.parseBoolean(startFitnesseValue)) {
 				return newFitnesseBuilder(
 						startFitnesseValue,
-						collectFormData(formData, new String[]{FITNESSE_JDK, JAVA_OPTS, JAVA_WORKING_DIRECTORY, PATH_TO_JAR,
+						collectFormData(formData, new String[]{FITNESSE_HOST, FITNESSE_JDK, JAVA_OPTS, JAVA_WORKING_DIRECTORY, PATH_TO_JAR,
 								PATH_TO_ROOT, FITNESSE_PORT_LOCAL, TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, TEST_TIMEOUT,
 								PATH_TO_RESULTS, PATH_TO_JUNIT_RESULTS, FITNESSE_ADDITIONAL_OPTIONS}));
 			}
