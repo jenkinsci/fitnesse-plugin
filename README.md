@@ -15,14 +15,20 @@ Contributions are welcome, both bug fixes and new features. Just raise a pull re
 
 ### **Agent node**
 
-- If your job runs on an agent and launch FitNesse, you should add the
-    HOST\_NAME environment variable in agent configuration and set its
-    value to the agent’s hostname or IP. You can name it as
-    FITNESSE\_HOST\_NAME (whatever you like). This environment variable
-    will be used when you set up fitnesse instance below (replace
-    localhost by $FITNESSE\_HOST\_NAME).
+- If your job runs on a remote node and launches FitNesse, you should add the
+    HOST\_NAME environment variable in the node configuration and set its
+    value to the node’s hostname or IP. You can name it as
+    fitnesse.yourdomain.com (whatever you like). This environment variable
+    will be used when you set up the fitnesse instance below (it will replace
+    localhost by the content of HOST\_NAME).
 
 ![](https://wiki.jenkins.io/download/attachments/43090053/fitnesse_config_slave_1.png?version=1&modificationDate=1415698337000&api=v2)
+
+Note: If you have the [EnvInject](https://plugins.jenkins.io/envinject/) plugin
+    installed, Environment variables configured like in the image will not work.
+    Use the EnvInject way instead. You will notice this by fitnesse still trying
+    to connect to localhost, instead of the content in HOST\_NAME.
+
 
 - You could also override JDK location used, by set a *Tool location*:
 
@@ -73,6 +79,42 @@ or by overridden JAVA\_HOME environment variable.
 -   And finally, captured details of a test:
 
 ![](https://wiki.jenkins.io/download/attachments/43090053/fitnesse_result_catured.png?version=1&modificationDate=1415698373000&api=v2)
+
+## Pipeline
+
+The plugin supports pipeline the following way:
+
+### Run your tests
+
+With some sample values, this step looks like this:
+
+```
+step([ $class: 'FitnesseBuilder',
+        options: [
+        fitnessePathToRoot: "",
+        additionalFitnesseOptions: "-v",  // -v for verbose
+        fitnesseTestTimeout: '',
+        fitnesseStart: 'true',
+        fitnesseHttpTimeout: '',
+        fitnesseTargetIsSuite: "true/false",
+        fitnesseJavaOpts: '',
+        fitnessePathToJar: "/opt/var/fitnesse/lib/fitnesse-20180127-standalone.jar",
+        fitnesseTargetPage: "suiteMyTestSuite",
+        fitnessePathToXmlResultsOut: 'fitnesse-results.xml',
+        fitnessePathToJunitResultsOut: 'fitnesse-junit-results.xml',
+        fitnessePortLocal: '8083',
+        fitnesseJavaWorkingDirectory: "/opt/var/fitnesse/lib/"
+      ]])
+```
+
+
+### Render results
+
+```
+step([ $class: 'FitnesseResultsRecorder',
+        fitnessePathToXmlResultsIn: 'fitnesse-results.xml'
+])
+```
 
 ## Todo
 
