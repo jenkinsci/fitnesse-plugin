@@ -13,7 +13,7 @@
 	</properties>
 
 	<artifactId>fitnesse</artifactId>
-	<version>1.34-SNAPSHOT</version>
+	<version>1.34</version>
 	<packaging>hpi</packaging>
 	<name>Jenkins FitNesse plugin</name>
 	<url>https://github.com/jenkinsci/fitnesse-plugin/</url>
