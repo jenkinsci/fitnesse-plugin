@@ -219,7 +219,7 @@ public class FitnesseExecutorTest {
 	public void fitnesseStartedShouldBeTrue() throws Exception {
 		init(new String[] {}, new String[] {});
 
-		Assert.assertTrue(executor.isFitnesseStarted(new URL("https://jenkins.io/")));
+		Assert.assertTrue(executor.isFitnesseStarted(new URL("https://www.jenkins.io/")));
 		Assert.assertTrue(output.toString().contains("Fitnesse server started "));
 	}
 
@@ -242,11 +242,11 @@ public class FitnesseExecutorTest {
 				resetWasCalled = true;
 			}
 		};
-		byte[] bytes = executor.getHttpBytes(new URL("https://jenkins.io/"), resettable, 60 * 1000);
+		byte[] bytes = executor.getHttpBytes(new URL("https://www.jenkins.io/"), resettable, 60 * 1000);
 		Assert.assertTrue(bytes.length > 0);
 		Assert.assertTrue(new String(bytes).contains("<html"));
 		Assert.assertTrue(new String(bytes).contains("</html>"));
-		Assert.assertTrue(output.toString().startsWith("Connecting to https://jenkins.io/"));
+		Assert.assertTrue(output.toString().startsWith("Connecting to https://www.jenkins.io/"));
 		Assert.assertTrue(output.toString().contains("Connection Status: 200/OK"));
 		Assert.assertTrue(resetWasCalled);
 	}
