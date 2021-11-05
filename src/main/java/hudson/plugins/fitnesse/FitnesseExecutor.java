@@ -384,10 +384,24 @@ public class FitnesseExecutor implements Serializable {
 		if (pos == -1)
 			pos = targetPageExpression.length();
 
-		return String.format("/%1$s?%2$s%3$s", targetPageExpression.substring(0, pos),
-				builder.getFitnesseTargetIsSuite() ? "suite" : "test", targetPageExpression.substring(pos)
-						+ "&format=xml&includehtml");
-	}
+        return String.format("/%1$s?%2$s%3$s", targetPageExpression.substring(0, pos),
+                "suite", targetPageExpression.substring(pos)
+                        + "&format=xml&includehtml" + getPartitioningDetails());
+    }
+
+    private String getPartitioningDetails() {
+        String valueToReturn = "";
+        int partitionCount = builder.getFitnessePartitionCount();
+        if (builder.getFitnessePartitionEnabled() && partitionCount > 1) {
+            int partitionToExecute = builder.getFitnessePartitionIndex();
+            valueToReturn = "&partitionCount=" + partitionCount + "&partitionIndex=" + partitionToExecute;
+            String partitionFileName = builder.getFitnessePartitionIndexFile();
+            if (partitionFileName.length() > 0) {
+                valueToReturn += "&partitionIndexFile=" + partitionFileName;
+            }
+        }
+        return valueToReturn;
+    }
 
 	private void writeFitnesseResults(FilePath resultsFilePath, byte[] results) {
 		OutputStream resultsStream = null;
