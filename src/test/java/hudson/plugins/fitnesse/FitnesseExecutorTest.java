@@ -191,16 +191,44 @@ public class FitnesseExecutorTest {
 	}
 
 	@Test
-	public void fitnessePageCmdShouldBeTestIfPageIsNotSuite() {
+	public void fitnessePageCmdShouldBeSuiteIfPageIsNotSuite() {
 		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE }, new String[] { "WikiPage",
 				"false" });
-		Assert.assertEquals("/WikiPage?test&format=xml&includehtml", executor.getFitnessePageCmd());
+		Assert.assertEquals("/WikiPage?suite&format=xml&includehtml", executor.getFitnessePageCmd());
 	}
 
 	@Test
 	public void fitnessePageCmdShouldBeSuiteIfPageIsSuite() {
 		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE }, new String[] { "WikiPage",
 				"true" });
+		Assert.assertEquals("/WikiPage?suite&format=xml&includehtml", executor.getFitnessePageCmd());
+	}
+
+	@Test
+	public void fitnessePageCmdShouldReturnPartitionEnabledPartitionCountButNoPartitionIndex() {
+		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE, FitnesseBuilder.PARTITION_ENABLED, FitnesseBuilder.PARTITION_COUNT }, new String[] { "WikiPage",
+				"true", "true","2" });
+		Assert.assertEquals("/WikiPage?suite&format=xml&includehtml&partitionCount=2&partitionIndex=0", executor.getFitnessePageCmd());
+	}
+
+	@Test
+	public void fitnessePageCmdShouldReturnPartitionEnabledPartitionCountButWithPartitionIndex() {
+		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE, FitnesseBuilder.PARTITION_ENABLED, FitnesseBuilder.PARTITION_COUNT, FitnesseBuilder.PARTITION_INDEX }, new String[] { "WikiPage",
+				"true", "true","2","1" });
+		Assert.assertEquals("/WikiPage?suite&format=xml&includehtml&partitionCount=2&partitionIndex=1", executor.getFitnessePageCmd());
+	}
+
+	@Test
+	public void fitnessePageCmdShouldReturnPartitionEnabledPartitionCountButWithPartitionIndexAndFileName() {
+		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE, FitnesseBuilder.PARTITION_ENABLED, FitnesseBuilder.PARTITION_COUNT, FitnesseBuilder.PARTITION_INDEX, FitnesseBuilder.PARTITION_INDEX_FILE }, new String[] { "WikiPage",
+				"true", "true","2","1","Sample.tsv" });
+		Assert.assertEquals("/WikiPage?suite&format=xml&includehtml&partitionCount=2&partitionIndex=1&partitionIndexFile=Sample.tsv", executor.getFitnessePageCmd());
+	}
+
+	@Test
+	public void fitnessePageCmdShouldReturnPartitionDisabledPartitionCountButWithPartitionIndex() {
+		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE, FitnesseBuilder.PARTITION_ENABLED, FitnesseBuilder.PARTITION_COUNT, FitnesseBuilder.PARTITION_INDEX }, new String[] { "WikiPage",
+				"true", "false","2","1" });
 		Assert.assertEquals("/WikiPage?suite&format=xml&includehtml", executor.getFitnessePageCmd());
 	}
 

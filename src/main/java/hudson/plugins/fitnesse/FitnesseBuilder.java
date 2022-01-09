@@ -29,26 +29,30 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep, Seriali
 
         private static final long serialVersionUID = 931934300658830569L;
 
-	public static final String START_FITNESSE = "fitnesseStart";
-	public static final String FITNESSE_HOST = "fitnesseHost";
-	public static final String FITNESSE_PORT = "fitnessePort";
-	public static final String FITNESSE_USERNAME = "fitnesseUsername";
-	public static final String FITNESSE_PASSWORD = "fitnessePassword";
-	public static final String FITNESSE_PORT_REMOTE = "fitnessePortRemote";
-	public static final String FITNESSE_ENABLE_SSL = "fitnesseEnableSsl";
-	public static final String FITNESSE_PORT_LOCAL = "fitnessePortLocal";
-	public static final String FITNESSE_ADDITIONAL_OPTIONS = "additionalFitnesseOptions";
-	public static final String JAVA_OPTS = "fitnesseJavaOpts";
-	public static final String FITNESSE_JDK = "fitnesseJdk";
-	public static final String PATH_TO_JAR = "fitnessePathToJar";
-	public static final String PATH_TO_ROOT = "fitnessePathToRoot";
-	public static final String TARGET_PAGE = "fitnesseTargetPage";
-	public static final String TARGET_IS_SUITE = "fitnesseTargetIsSuite";
-	public static final String PATH_TO_RESULTS = "fitnessePathToXmlResultsOut";
-	public static final String PATH_TO_JUNIT_RESULTS = "fitnessePathToJunitResultsOut";
-	public static final String HTTP_TIMEOUT = "fitnesseHttpTimeout";
-	public static final String TEST_TIMEOUT = "fitnesseTestTimeout";
-	public static final String JAVA_WORKING_DIRECTORY = "fitnesseJavaWorkingDirectory";
+    public static final String START_FITNESSE = "fitnesseStart";
+    public static final String FITNESSE_HOST = "fitnesseHost";
+    public static final String FITNESSE_PORT = "fitnessePort";
+    public static final String FITNESSE_USERNAME = "fitnesseUsername";
+    public static final String FITNESSE_PASSWORD = "fitnessePassword";
+    public static final String FITNESSE_PORT_REMOTE = "fitnessePortRemote";
+    public static final String FITNESSE_ENABLE_SSL = "fitnesseEnableSsl";
+    public static final String FITNESSE_PORT_LOCAL = "fitnessePortLocal";
+    public static final String FITNESSE_ADDITIONAL_OPTIONS = "additionalFitnesseOptions";
+    public static final String JAVA_OPTS = "fitnesseJavaOpts";
+    public static final String FITNESSE_JDK = "fitnesseJdk";
+    public static final String PATH_TO_JAR = "fitnessePathToJar";
+    public static final String PATH_TO_ROOT = "fitnessePathToRoot";
+    public static final String TARGET_PAGE = "fitnesseTargetPage";
+    public static final String PARTITION_ENABLED = "fitnessePartitionEnabled";
+    public static final String PARTITION_COUNT = "fitnessePartitionCount";
+    public static final String PARTITION_INDEX = "fitnessePartitionIndex";
+    public static final String PARTITION_INDEX_FILE = "fitnessePartitionIndexFile";
+    public static final String TARGET_IS_SUITE = "fitnesseTargetIsSuite";
+    public static final String PATH_TO_RESULTS = "fitnessePathToXmlResultsOut";
+    public static final String PATH_TO_JUNIT_RESULTS = "fitnessePathToJunitResultsOut";
+    public static final String HTTP_TIMEOUT = "fitnesseHttpTimeout";
+    public static final String TEST_TIMEOUT = "fitnesseTestTimeout";
+    public static final String JAVA_WORKING_DIRECTORY = "fitnesseJavaWorkingDirectory";
 
 	static final int _URL_READ_TIMEOUT_MILLIS = 60 * 1000;
 	static final String _LOCALHOST = "localhost";
@@ -240,12 +244,44 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep, Seriali
 		return getOption(TARGET_PAGE, "", environment);
 	}
 
-	/**
-	 * referenced in config.jelly
-	 */
-	public boolean getFitnesseTargetIsSuite() {
-		return Boolean.parseBoolean(getOption(TARGET_IS_SUITE, "False"));
-	}
+    /**
+     * referenced in config.jelly
+     */
+    public boolean getFitnessePartitionEnabled() {
+        return Boolean.parseBoolean(getOption(PARTITION_ENABLED, "False"));
+    }
+
+    /**
+     * referenced in config.jelly
+     */
+    public int getFitnessePartitionCount() {
+        try {
+            return Integer.parseInt(getOption(PARTITION_COUNT, "0"));
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    /**
+     * referenced in config.jelly
+     */
+    public int getFitnessePartitionIndex() {
+        try {
+            int index = Integer.parseInt(getOption(PARTITION_INDEX, "0"));
+            if (index < getFitnessePartitionCount()) {
+                return index;
+            }
+        } catch (Exception ex) {
+        }
+        return 0;
+    }
+
+    /**
+     * referenced in config.jelly
+     */
+    public String getFitnessePartitionIndexFile() {
+        return getOption(PARTITION_INDEX_FILE, "");
+    }
 
 	/**
 	 * referenced in config.jelly
@@ -382,10 +418,27 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep, Seriali
 			return FormValidation.ok();
 		}
 
-		public FormValidation doCheckFitnesseTargetIsSuite(@QueryParameter String value) throws IOException,
-				ServletException {
-			return FormValidation.ok();
-		}
+        public FormValidation doCheckFitnessePartitionCount(@QueryParameter String value) {
+            try {
+                if (Integer.parseInt(value) < 2) {
+                    throw new Exception("");
+                }
+            } catch (Exception ex) {
+                return FormValidation.warning("If you don't use a numeric value greater than 1, partitioning will not be applied.");
+            }
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckFitnessePartitionIndex(@QueryParameter String value) {
+            try {
+                if (Integer.parseInt(value) < 0) {
+                    throw new Exception("");
+                }
+            } catch (Exception ex) {
+                return FormValidation.warning("If you don't provide a numeric value less than partition count, it will consider index 0.");
+            }
+            return FormValidation.ok();
+        }
 
 		public FormValidation doCheckFitnesseHttpTimeout(@QueryParameter String value) throws IOException, ServletException {
 			if (value.length() == 0)
@@ -447,30 +500,56 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep, Seriali
 			return "Execute FitNesse tests";
 		}
 
-		/**
-		 * {@link Descriptor} config.jelly uses hide-able fields so take control of
-		 * instance creation
-		 */
-		@Override
-		public FitnesseBuilder newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-			String startFitnesseValue = formData.getJSONObject(START_FITNESSE).getString("value");
-			if (Boolean.parseBoolean(startFitnesseValue)) {
-				return newFitnesseBuilder(
-						startFitnesseValue,
-						collectFormData(formData, new String[]{FITNESSE_JDK, JAVA_OPTS, JAVA_WORKING_DIRECTORY, PATH_TO_JAR,
-								PATH_TO_ROOT, FITNESSE_PORT_LOCAL, TARGET_PAGE, TARGET_IS_SUITE, HTTP_TIMEOUT, TEST_TIMEOUT,
-								PATH_TO_RESULTS, PATH_TO_JUNIT_RESULTS, FITNESSE_ADDITIONAL_OPTIONS}));
-			}
-			return newFitnesseBuilder(
-					startFitnesseValue,
-					collectFormData(formData, new String[]{FITNESSE_HOST, FITNESSE_PORT_REMOTE, FITNESSE_USERNAME, FITNESSE_PASSWORD, FITNESSE_ENABLE_SSL, TARGET_PAGE, TARGET_IS_SUITE,
-							HTTP_TIMEOUT, TEST_TIMEOUT, PATH_TO_RESULTS, PATH_TO_JUNIT_RESULTS}));
-		}
+        /**
+         * {@link Descriptor} config.jelly uses hide-able fields so take control of
+         * instance creation
+         */
+        @Override
+        public FitnesseBuilder newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+            computePartitioningData(formData);
+            String startFitnesseValue = formData.getJSONObject(START_FITNESSE).getString("value");
+            if (Boolean.parseBoolean(startFitnesseValue)) {
+                return newFitnesseBuilder(
+                        startFitnesseValue,
+                        collectFormData(formData, new String[]{FITNESSE_JDK, JAVA_OPTS, JAVA_WORKING_DIRECTORY, PATH_TO_JAR,
+                                PATH_TO_ROOT, FITNESSE_PORT_LOCAL, TARGET_PAGE, PARTITION_ENABLED, PARTITION_COUNT, PARTITION_INDEX, PARTITION_INDEX_FILE, HTTP_TIMEOUT, TEST_TIMEOUT,
+                                PATH_TO_RESULTS, PATH_TO_JUNIT_RESULTS, FITNESSE_ADDITIONAL_OPTIONS}));
+            }
+            return newFitnesseBuilder(
+                    startFitnesseValue,
+                    collectFormData(formData, new String[]{FITNESSE_HOST, FITNESSE_PORT_REMOTE, FITNESSE_USERNAME, FITNESSE_PASSWORD, FITNESSE_ENABLE_SSL, TARGET_PAGE, PARTITION_ENABLED, PARTITION_COUNT, PARTITION_INDEX, PARTITION_INDEX_FILE,
+                            HTTP_TIMEOUT, TEST_TIMEOUT, PATH_TO_RESULTS, PATH_TO_JUNIT_RESULTS}));
+        }
 
-		private FitnesseBuilder newFitnesseBuilder(String startFitnesseValue, Map<String, String> collectedFormData) {
-			collectedFormData.put(START_FITNESSE, startFitnesseValue);
-			return new FitnesseBuilder(collectedFormData);
-		}
+        private void computePartitioningData(JSONObject formData) {
+            try {
+                int partitionCount = formData.getInt(PARTITION_COUNT);
+                if (partitionCount <= 1) {
+                    formData.put(PARTITION_ENABLED, false);
+                    return;
+                }
+                formData.put(PARTITION_COUNT, partitionCount);
+                formData.put(PARTITION_ENABLED, formData.getBoolean(PARTITION_ENABLED));
+                try {
+                    int partitionIndex = formData.getInt(PARTITION_INDEX);
+                    partitionIndex = (partitionIndex >= 0 && partitionIndex < partitionCount) ? partitionIndex : 0;
+                    formData.put(PARTITION_INDEX, partitionIndex);
+                } catch (Exception ex1) {
+                    formData.put(PARTITION_INDEX, 0);
+                }
+            } catch (Exception ex) {
+                formData.put(PARTITION_ENABLED, false);
+                return;
+            }
+            if (formData.getString(PARTITION_INDEX_FILE).length() > 0) {
+                formData.put(PARTITION_INDEX_FILE, formData.get(PARTITION_INDEX_FILE));
+            }
+        }
+
+        private FitnesseBuilder newFitnesseBuilder(String startFitnesseValue, Map<String, String> collectedFormData) {
+            collectedFormData.put(START_FITNESSE, startFitnesseValue);
+            return new FitnesseBuilder(collectedFormData);
+        }
 
 		private Map<String, String> collectFormData(JSONObject formData, String[] keys) {
 			Map<String, String> targetElements = new HashMap<String, String>();
@@ -486,5 +565,5 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep, Seriali
 			return targetElements;
 		}
 
-	}
+    }
 }

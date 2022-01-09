@@ -118,9 +118,20 @@
     <f:textbox name="fitnesseTargetPage" />
   </f:entry>
 
-  <f:entry title="Is target a suite?" field="fitnesseTargetIsSuite"
-  help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/targetIsSuite">
-    <f:checkbox name="fitnesseTargetIsSuite" />
+  <f:entry title="Enable partitioning" field="fitnessePartitionEnabled" help="/descriptor/hudson.plugins.fitnesse.FitnesseBuilder/help/partition">
+      <f:checkbox/>
+  </f:entry>
+
+  <f:entry title="Number of partition" field="fitnessePartitionCount">
+    <f:textbox name="fitnessePartitionCount" />
+  </f:entry>
+
+  <f:entry title="Partition index to execute" field="fitnessePartitionIndex">
+    <f:textbox name="fitnessePartitionIndex" />
+  </f:entry>
+
+  <f:entry title="Partition index file" field="fitnessePartitionIndexFile">
+    <f:textbox name="fitnessePartitionIndexFile" />
   </f:entry>
 
 <f:block><em>Output</em></f:block>
