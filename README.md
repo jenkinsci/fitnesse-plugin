@@ -135,7 +135,8 @@ step([ $class: 'FitnesseResultsRecorder',
 ## Change Log
 
 Older versions of this plugin may not be safe to use. Please review the following changelog before using an older version:
-
+-   **1.35** (2022-09-01)
+    -   Added: Option to use [Fitnesse suite partitioning](http://fitnesse.org/FitNesse.FullReferenceGuide.UserGuide.WritingAcceptanceTests.TestSuites.SuitePartitioning)  ([PR-41](https://github.com/jenkinsci/fitnesse-plugin/pull/41))
 -   **1.33** (2020-04-04)
     -   **Fixed**: [Stored XSS vulnerability](https://jenkins.io/security/advisory/2020-04-07/#SECURITY-1801)
 -   **1.31** (2020-02-12)
