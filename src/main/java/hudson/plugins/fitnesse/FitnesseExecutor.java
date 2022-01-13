@@ -372,7 +372,8 @@ public class FitnesseExecutor implements Serializable {
 		int pos = targetPageExpression.indexOf('?');
 		if (pos == -1)
 			pos = targetPageExpression.length();
-		return "/" + targetPageExpression.substring(0, pos);
+               int posOfAmp = targetPageExpression.contains("&") ? targetPageExpression.indexOf("&") : pos;
+               return "/" + targetPageExpression.substring(0, Math.min(pos, posOfAmp));
 	}
 
 	/* package for test */String getFitnessePageCmd() {
