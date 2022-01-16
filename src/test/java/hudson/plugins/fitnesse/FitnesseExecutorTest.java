@@ -191,6 +191,22 @@ public class FitnesseExecutorTest {
 	}
 
 	@Test
+	public void fitnessePageBaseShouldRemoveAnExtraParameter() {
+		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE },
+				new String[] { "WikiPage&par=smoke,critical",
+						"true" });
+		Assert.assertEquals("/WikiPage", executor.getFitnessePageBase());
+	}
+
+	@Test
+	public void fitnessePageBaseShouldRemoveExtraParameters() {
+		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE },
+				new String[] { "WikiPage&par1=val1&par2=val2",
+						"true" });
+		Assert.assertEquals("/WikiPage", executor.getFitnessePageBase());
+	}
+
+	@Test
 	public void fitnessePageCmdShouldBeSuiteIfPageIsNotSuite() {
 		init(new String[] { FitnesseBuilder.TARGET_PAGE, FitnesseBuilder.TARGET_IS_SUITE }, new String[] { "WikiPage",
 				"false" });
