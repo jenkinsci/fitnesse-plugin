@@ -16,6 +16,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -313,7 +314,7 @@ public class FitnesseExecutor implements Serializable {
 			//If remote fitnesse is protected, let's use basic authentication taking in the username/password provided.
 			if (builder.getFitnesseUsername().trim().length() > 0) {
                                 byte[] message = (builder.getFitnesseUsername() + ":" + builder.getFitnessePassword()).getBytes("UTF-8");
-				String encoded = javax.xml.bind.DatatypeConverter.printBase64Binary(message);
+				String encoded = Base64.getEncoder().encodeToString(message);
 				connection.setRequestProperty("Authorization", "Basic " + encoded);
 			}
 			connection.setReadTimeout(httpTimeout);
