@@ -382,8 +382,8 @@ public class FitnesseResults extends TabulatedResult implements Comparable<Fitne
 
 	public String getRunTestRemoteLink() throws IOException, InterruptedException {
 		FitnesseBuildAction buildAction = getFitnesseBuildAction();
-		String image = "<img class=\"icon-next icon-md\" title=\"Run Test\" src=\"/static/abafcc7b/images/24x24/next.png\" />";
-		return buildAction.getLinkFor(getName() + "?test", null, image);
+		String text = "Run Test";
+		return buildAction.getLinkFor(getName() + "?test", null, text);
 	}
 
 	private FitnesseBuildAction getFitnesseBuildAction() throws IOException, InterruptedException {
