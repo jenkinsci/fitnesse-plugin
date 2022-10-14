@@ -117,7 +117,11 @@ public class FitnesseBuilder extends Builder implements SimpleBuildStep, Seriali
 
 	public String getFitnesseHost(EnvVars environment) {
 		if (getFitnesseStart()) {
-			return _LOCALHOST;
+      if (environment != null && environment.get(_HOSTNAME_SLAVE_PROPERTY) != null) {
+        return environment.get(_HOSTNAME_SLAVE_PROPERTY);
+      } else {
+        return _LOCALHOST;
+      }
 		} else {
 			return getOption(FITNESSE_HOST, "unknown_host", environment);
 		}
